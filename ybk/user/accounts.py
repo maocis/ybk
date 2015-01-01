@@ -5,7 +5,8 @@ from flask import render_template, redirect, request, jsonify
 from flask.ext.login import login_required, current_user
 
 from ybk.settings import CONFS
-from ybk.trade import update_trade_account, quote_detail, order, withdraw
+from ybk.trade import (update_trade_account, quote_detail,
+                       order, withdraw, transfer)
 from ybk.models import Investor, TradeAccount, Exchange
 from ybk.lighttrade import Trader
 
@@ -369,6 +370,27 @@ def trade_account_withdraw():
         else:
             if r:
                 return jsonify(status=200, reason='撤单成功')
+            else:
+                return jsonify(status=400, reason=err)
+    else:
+        return jsonify(status=500, reason='账号未找到')
+
+
+@user.route('/user/trade_account/transfer', methods=['POST'])
+@login_required
+def trade_account_transfer():
+    account_id = request.form.get('account_id')
+    inout = request.form.get('inout')
+    amount = float(request.form.get('amount') or 0)
+    ta = TradeAccount.query_one({'_id': account_id})
+    if ta:
+        try:
+            r, err = transfer(ta, inout, amount)
+        except Exception as e:
+            return jsonify(status=500, reason=str(e))
+        else:
+            if r:
+                return jsonify(status=200, reason='出入金已提交')
             else:
                 return jsonify(status=400, reason=err)
     else:

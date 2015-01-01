@@ -12,13 +12,17 @@ log = logging.getLogger('trader')
 configfile = open(os.path.join(os.path.dirname(__file__), 'trading.yaml'))
 config = yaml.load(configfile)
 try:
-    accountfile = open(os.path.join(os.path.dirname(__file__), 'accounts.yaml'))
+    accountfile = open(
+        os.path.join(os.path.dirname(__file__), 'accounts.yaml'))
     account = yaml.load(accountfile)
 except:
     account = {}
 
+
 class Trader(object):
+
     """ 交易调度 """
+
     def __init__(self, exchange, username=None, password=None):
         d = config[exchange]
         if d['system'] == 'sysframe':
@@ -39,7 +43,7 @@ class Trader(object):
 
         self.client = Client(front_url=d['front_url'],
                              tradeweb_url=d['tradeweb_url'])
-        # setattr(self.client, 'exchange', exchange)
+        setattr(self.client, 'exchange', exchange)
         self.client.login(username, password)
 
     def __getattr__(self, key):

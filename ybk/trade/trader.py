@@ -4,6 +4,18 @@ from ybk.models import Collection
 from ybk.lighttrade import Trader
 
 
+def transfer(trade_account, inout, amount):
+    ta = trade_account
+    if not ta.money_password:
+        return False, '未登录资金密码'
+    t = Trader(ta.exchange, ta.login_name, ta.login_password)
+    if inout == 'in':
+        r = t.money_in(amount, ta.money_password)
+    else:
+        r = t.money_out(amount, ta.money_password)
+    return r, t.last_error
+
+
 def withdraw(trade_account, order):
     ta = trade_account
     t = Trader(ta.exchange, ta.login_name, ta.login_password)

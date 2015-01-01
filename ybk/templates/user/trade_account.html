@@ -68,6 +68,8 @@
             <li role="presentation"><a href="#orders" aria-controls="orders" role="tab" data-toggle="tab">成交</a></li>
             <li role="presentation"><a href="#order" aria-controls="order" role="tab" data-toggle="tab">下单</a></li>
             <li role="presentation"><a href="#transfer" aria-controls="transfer" role="tab" data-toggle="tab">出入金</a></li>
+            <li role="presentation"><a href="#grab" aria-controls="grab" role="tab" data-toggle="tab">抢单</a></li>
+            <li role="presentation"><a href="#oplog" aria-controls="oplog" role="tab" data-toggle="tab">操作日志</a></li>
           </ul>
 
           <!-- Tab panes -->
@@ -158,7 +160,38 @@
                 </div>
               </div>
             </div>
-            <div role="tabpanel" class="tab-pane" id="transfer">transfer</div>
+            <div role="tabpanel" class="tab-pane" id="transfer">
+              <br>
+              <form class="form-horizontal">
+                <div class="form-group">
+                  <label for="inout" class="col-sm-4 control-label">出/入金</label>
+                  <div class="col-sm-8">
+                    <div class="btn-group" data-toggle="buttons">
+                      <label class="btn btn-default active">
+                        <input type="radio" name="inout" value="in" autocomplete="off" checked> 入金
+                      </label>
+                      <label class="btn btn-default">
+                        <input type="radio" name="inout" value="out" autocomplete="off"> 出金
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="text-right"  id="sell_price_limit"></div>
+                <div class="form-group">
+                  <label for="amount" class="col-sm-4 control-label">金额</label>
+                  <div class="col-sm-2">
+                    <input id="amount" type="text" class="form-control" placeholder="金额">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="col-sm-offset-4 col-sm-2">
+                    <button type="submit" name="transfer" class="btn btn-primary">提交</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="grab">施工中...</div>
+            <div role="tabpanel" class="tab-pane" id="oplog">施工中...</div>
           </div>
 
         </div>
@@ -271,7 +304,7 @@
     <button class="btn btn-xs btn-default" disabled>批量卖出</button>
     <button class="btn btn-xs btn-default" disabled>批量清仓</button>
     <button class="btn btn-xs btn-default" disabled>批量转账</button>
-    <button id="change-password-selected" class="btn btn-xs btn-default">批量修改密码</button>
+    <button id="change-password-selected" class="btn btn-xs btn-default" disabled>批量修改密码</button>
   </div>
   <!-- table -->
 
@@ -517,9 +550,11 @@
     if ($('input[type=checkbox]:checked').length > 0) {
       $('#delete-selected').prop('disabled', false);
       $('#update-selected').prop('disabled', false);
+      $('#change-password-selected').prop('disabled', false);
     } else {
       $('#delete-selected').prop('disabled', true);
       $('#update-selected').prop('disabled', true);
+      $('#change-password-selected').prop('disabled', true);
     }
   }
 
@@ -897,6 +932,24 @@
       })    
   })
    
+  $('body').on('click', '[name=transfer]', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    var params = {
+      account_id: account_id,
+      inout: $('[name=inout]:checked').val(),
+      amount: $('#amount').val(),
+    }
+    setTimeout(display_loading, 0);
+    $.post(
+      "{{ url_for('user.trade_account_transfer') }}",
+      params,
+      function (r) {
+        hide_loading();
+        alert(r.reason);
+      })
+  })
+
 
   // edit 
   $('table').on('click', '[name=edit]', function(e) {

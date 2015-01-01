@@ -10,7 +10,9 @@ requests.packages.urllib3.disable_warnings()
 
 log = logging.getLogger('sysframe')
 
+
 class Client(UserProtocol, TradeProtocol, MoneyProtocol):
+
     def __init__(self,
                  front_url,
                  tradeweb_url):
@@ -33,10 +35,10 @@ class Client(UserProtocol, TradeProtocol, MoneyProtocol):
         self._reset()
 
     def _reset(self):
-        self.cid = None # customer_id
-        self.uid = None # user_id
-        self.sid = None # session_id
-        self.mid = None # market_id
+        self.cid = None  # customer_id
+        self.uid = None  # user_id
+        self.sid = None  # session_id
+        self.mid = None  # market_id
         self.username = None
         self.password = None
         self.latency = None
@@ -73,7 +75,8 @@ class Client(UserProtocol, TradeProtocol, MoneyProtocol):
         xml = self._create_xml(protocol, params)
         log.debug('发送请求 {}: {}'.format(url, xml))
         try:
-            r = self.session.post(url, headers=headers, data=xml, verify=False, timeout=(1, 1))
+            r = self.session.post(
+                url, headers=headers, data=xml, verify=False, timeout=(1, 1))
         except requests.exceptions.RequestException:
             return self.request_xml(protocol, params, mode, headers)
         result = r.content.decode('gb18030', 'ignore')
