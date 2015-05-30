@@ -13,6 +13,11 @@ setup(
     packages=['ybk'],
     package_data={'': ['LICENSE']},
     license=open('LICENSE').read(),
+    install_requires=[
+        'requests>=2.5',
+        'flask>=0.10',
+        'pymongo>=3',
+    ],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
