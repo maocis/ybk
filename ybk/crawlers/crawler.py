@@ -17,6 +17,7 @@ log = logging.getLogger('ybk.crawlers')
 SITES = [
     'zgqbyp',
     'jscaee',
+    'shscce',
 ]
 
 ABBRS = {
@@ -42,11 +43,11 @@ def crawl(site):
     ex.upsert()
     for type_ in ['offer', 'result']:
         tconf = conf[type_]
-        content = requests.get(tconf['index']).content
+        content = requests.get(tconf['index'], timeout=(3, 7)).content
         parse_index(ex, type_, content, tconf)
         for page in range(2, tconf['maxpage'] + 1):
             url = tconf['page'].format(page=page)
-            content = requests.get(url).content
+            content = requests.get(url, timeout=(3, 7)).content
             parse_index(ex, type_, content, tconf)
 
 
@@ -61,7 +62,7 @@ def parse_index(ex, type_, content, conf):
             - timedelta(hours=8)
         d['exchange'] = ex._id
         d['type_'] = type_
-        content = requests.get(d['url']).content
+        content = requests.get(d['url'], timeout=(3, 7)).content
         d['html'] = content.decode(conf['encoding'], 'ignore')
         d['html'] = d['html'].replace(conf['encoding'], 'utf-8')
         log.info('[{exchange}]{published_at}: {title}'.format(**d))

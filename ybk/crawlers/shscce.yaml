@@ -1,0 +1,19 @@
+url: www.shscce.com
+name: 上海邮币卡交易中心
+abbr: 上邮所
+offer:
+    index: http://www.shscce.com/html/shscce/zxgg/index_1.shtml
+    relative: http://ybk.jscaee.com.cn
+    detail: <span>(\d+-\d+-\d+)</span><a .*?"(/html/shscce/zxgg/\d+_\d+.shtml)" title="([^"]+申购的[^"]+)"
+    fields: [published_at, url, title]
+    encoding: utf-8
+    page: http://www.shscce.com/html/shscce/zxgg/index_{page}.shtml
+    maxpage: 3
+result:
+    index: http://www.shscce.com/html/shscce/zxgg/index_1.shtml
+    relative: http://ybk.jscaee.com.cn
+    detail: <span>(\d+-\d+-\d+)</span><a .*?"(/html/shscce/zxgg/\d+_\d+.shtml)" title="([^"]+申购中签[^"]+)"
+    fields: [published_at, url, title]
+    encoding: utf-8
+    page: http://www.shscce.com/html/shscce/zxgg/index_{page}.shtml
+    maxpage: 3
