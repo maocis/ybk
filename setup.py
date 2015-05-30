@@ -23,7 +23,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'ybk = ybk.cli:main',
+            'ybk=ybk.cli:main',
         ],
     }
 )

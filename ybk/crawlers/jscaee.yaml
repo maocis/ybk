@@ -1,0 +1,19 @@
+url: ybk.jscaee.com.cn
+name: 江苏省文化产权交易所邮币卡交易中心
+abbr: 江苏所
+offer:
+    index: http://ybk.jscaee.com.cn/announcement/listing/
+    relative: http://ybk.jscaee.com.cn
+    detail: \"(/announcement/listing/(\d+-\d+/\d+)/\d+.html)\">([^>]+挂牌[^>]+)</a>
+    fields: [url, published_at, title]
+    encoding: utf-8
+    page: http://ybk.jscaee.com.cn/announcement/listing/index_p{page}.html
+    maxpage: 10
+result:
+    index: http://ybk.jscaee.com.cn/announcement/lottery-winnings/
+    relative: http://ybk.jscaee.com.cn
+    detail: \"(/announcement/lottery-winnings/(\d+-\d+/\d+)/\d+.html)\">([^>]+)</a>
+    fields: [url, published_at, title]
+    encoding: utf-8
+    page: http://ybk.jscaee.com.cn/announcement/lottery-winnings/index_p{page}.html
+    maxpage: 10
