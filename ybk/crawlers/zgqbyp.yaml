@@ -1,0 +1,11 @@
+home: www.zgqbyp.com
+name: 南京文交所钱币邮票交易中心
+abbr: 南交所
+offer:
+    index: http://www.zgqbyp.com/web/news/108.html
+    detail: href="?(?P<url>http://www.zgqbyp.com/html/\d+-\d+/\d+\.html)"?[^>]*>(?P<title>)</a> 
+    page: http://www.zgqbyp.com/web/news/108_{page}.html
+result:
+    index: http://www.zgqbyp.com/web/news/10.html 
+    detail: (?P<url>html/\d+-\d+/\d+.html)[^>]*>[^<]*中签[^<]*</a>
+    page: http://www.zgqbyp.com/web/news/10_{page}.html
