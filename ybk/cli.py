@@ -34,7 +34,8 @@ def do_parse(parser, args):
 def do_serve(parser, args):
     from ybk.app import app
     conf = setup_config(args)
-
+    if args.debug:
+        args.loglevel = 'DEBUG'
     app.config['SECRET_KEY'] = conf['secret_key']
     if args.debug:
         app.run(host='0.0.0.0', port=conf['port'], debug=True)
@@ -97,8 +98,6 @@ def main():
 
     # 子命令路由
     args = parser.parse_args()
-    if args.debug:
-        args.loglevel = 'DEBUG'
     for parser, sp in zip(
             [None, pcrawl, pparse, pserve],
             ['list', 'crawl', 'parse', 'serve']):
