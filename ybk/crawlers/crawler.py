@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import re
 import pathlib
-import logging
 from datetime import timedelta
 
 import yaml
@@ -10,9 +9,8 @@ import requests
 from dateutil.parser import parse as parse_datetime
 
 from ybk.models import Exchange, Announcement
+from ybk.log import crawl_log as log
 
-
-log = logging.getLogger('ybk.crawlers')
 
 SITES = [
     'zgqbyp',
@@ -67,11 +65,3 @@ def parse_index(ex, type_, content, conf):
         d['html'] = d['html'].replace(conf['encoding'], 'utf-8')
         log.info('[{exchange}]{published_at}: {title}'.format(**d))
         Announcement(d).upsert()
-
-
-if __name__ == '__main__':
-    from ybk.mangaa import setup
-    logging.getLogger('requests').setLevel(logging.CRITICAL)
-    logging.basicConfig(level=logging.INFO)
-    setup('mongodb://localhost/ybk')
-    crawl_all()

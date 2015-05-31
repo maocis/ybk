@@ -51,6 +51,3 @@ def forum():
 def about():
     nav = 'about'
     return render_template('about.html', **locals())
-
-if __name__ == '__main__':
-    app.run(debug=True)
