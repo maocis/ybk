@@ -30,6 +30,19 @@ def do_parse(parser, args):
     raise NotImplementedError
 
 
+def do_serve(parser, args):
+    from ybk.app import app
+    conf = setup_config()
+    if args.debug:
+        app.run(host='0.0.0.0', port=conf['port'], debug=True)
+    elif args.production:
+        app.run(host='0.0.0.0',
+                port=conf['port'],
+                processes=conf['num_processes'])
+    else:
+        parser.print_help()
+
+
 def main():
     parser = argparse.ArgumentParser(
         description='邮币卡命令行程序')
@@ -52,6 +65,14 @@ def main():
                         help='解析的站点简称,  e.g. "江苏所", 默认全部解析')
     pgroup.add_argument('--all', action='store_true', help='解析全部站点')
 
+    pserve = subparsers.add_parser('serve',
+                                   help='启动服务器端')
+    pgroup = pserve.add_mutually_exclusive_group(required=False)
+    pgroup.add_argument('--debug', action='store_true',
+                        help='是否使用debug模式')
+    pgroup.add_argument('--production', action='store_true',
+                        help='是否使用production模式, 该模式下将禁用reloader, 启用threaded')
+
     args = parser.parse_args()
     if args.subparser == 'list':
         do_list()
@@ -59,6 +80,8 @@ def main():
         do_crawl(pcrawl, args)
     elif args.subparser == 'parse':
         do_parse(pparse, args)
+    elif args.subparser == 'serve':
+        do_serve(pserve, args)
     else:
         parser.print_help()
 
