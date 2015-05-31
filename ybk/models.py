@@ -10,6 +10,7 @@ from ybk.mangaa import (
 
 
 class Exchange(Model):
+
     """ 交易所 """
     meta = {
         'idformat': '{abbr}',
@@ -17,18 +18,20 @@ class Exchange(Model):
     }
 
     name = StringField()
-    abbr = StringField() # 简称
+    abbr = StringField()  # 简称
     url = StringField()
     updated_at = DateTimeField(auto='modified')
 
 
 class Announcement(Model):
+
     """ 公告信息 """
     meta = {
         'idformat': '{url}',
         'unique': ['url'],
         'indexes': [
             [[('published_at', 1), ('type_', 1)], {}],
+            [[('exchange', 1), ('type_', 1)], {}],
         ],
     }
     exchange = StringField()        # 交易所简称(ID)
@@ -41,6 +44,7 @@ class Announcement(Model):
 
 
 class Offer(Model):
+
     """ 申购信息
 
     - 需要解析
