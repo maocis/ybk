@@ -4,7 +4,7 @@ abbr: 江苏文交所
 offer:
     index: http://ybk.jscaee.com.cn/announcement/listing/
     relative: http://ybk.jscaee.com.cn
-    detail: \"(/announcement/listing/(\d+-\d+/\d+)/\d+.html)\">([^>]+挂牌[^>]+)</a>
+    detail: (/announcement/listing/(\d+-\d+/\d+)/\w+.html)"?>([^>]+挂牌[^>]+)</a>
     fields: [url, published_at, title]
     encoding: utf-8
     page: http://ybk.jscaee.com.cn/announcement/listing/index_p{page}.html
@@ -12,7 +12,7 @@ offer:
 result:
     index: http://ybk.jscaee.com.cn/announcement/lottery-winnings/
     relative: http://ybk.jscaee.com.cn
-    detail: \"(/announcement/lottery-winnings/(\d+-\d+/\d+)/\d+.html)\">([^>]+)</a>
+    detail: (/announcement/lottery-winnings/(\d+-\d+/\d+)/\w+.html)"?>([^>]+)</a>
     fields: [url, published_at, title]
     encoding: utf-8
     page: http://ybk.jscaee.com.cn/announcement/lottery-winnings/index_p{page}.html

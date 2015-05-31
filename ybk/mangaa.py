@@ -32,7 +32,8 @@ db = None
 _manipulators = []
 
 # MongoDB will not store dates with milliseconds.
-milli_trim = lambda x: x.replace(microsecond=int((x.microsecond/1000)*1000))
+milli_trim = lambda x: x.replace(
+    microsecond=int((x.microsecond / 1000) * 1000))
 
 
 def setup(mongodb_url='mongodb://localhost:27017/test'):
@@ -59,7 +60,7 @@ def setup(mongodb_url='mongodb://localhost:27017/test'):
                         connection.admin.command(
                             'shardCollection',
                             '{}.{}'.format(database, x.cls_name),
-                            key = dict(x.cls._shardkey))
+                            key=dict(x.cls._shardkey))
                     except Exception as e:
                         if 'already' not in str(e):
                             log.warning('create shardkey failed, '
@@ -77,6 +78,7 @@ def setup(mongodb_url='mongodb://localhost:27017/test'):
 
 
 class _ModelManipulator(SONManipulator):
+
     '''
     Generates on-the-fly manipulators for newly registered models. Keeps track
     of collections already registered, to avoid double registration.
@@ -106,7 +108,9 @@ class _ModelManipulator(SONManipulator):
 class MangaException(Exception):
     pass
 
+
 class ValidationError(MangaException):
+
     def __init__(self, cls, attr, val):
         self.cls = cls
         self.attr = attr
@@ -114,10 +118,12 @@ class ValidationError(MangaException):
 
     def __str__(self):
         return "{}: trying to set {} <- {}:{}" \
-                "".format(self.cls, self.attr,
-                          type(self.val), self.val)
+            "".format(self.cls, self.attr,
+                      type(self.val), self.val)
+
 
 class DeserializationError(MangaException):
+
     def __init__(self, field, val):
         self.fld = field
         self.val = val
@@ -128,6 +134,7 @@ class DeserializationError(MangaException):
 
 
 class ModelType(type):
+
     """
     This is a type that generates Model classes properly, setting their
     attributes not to be instances of Field, but rather an API for MongoDB
@@ -184,6 +191,7 @@ class ModelType(type):
 
 
 class Field(object):
+
     '''Base field for all fields.'''
 
     def __init__(self, default=None, blank=False):
@@ -207,6 +215,7 @@ class Field(object):
 
 
 class SequenceField(Field):
+
     ''' Auto Increment integer field '''
 
     def __init__(self, name='default', default=None, blank=False):
@@ -224,9 +233,9 @@ class SequenceField(Field):
         while True:
             try:
                 r = db.counters.find_and_modify(
-                        query={'_id': self.name},
-                        update={'$inc': {'seq': 1}},
-                        new=True, upsert=True)
+                    query={'_id': self.name},
+                    update={'$inc': {'seq': 1}},
+                    new=True, upsert=True)
             except:
                 continue
             else:
@@ -235,6 +244,7 @@ class SequenceField(Field):
 
 
 class ObjectIdField(Field):
+
     def validate(self, value):
         assert isinstance(value, ObjectId)
 
@@ -243,6 +253,7 @@ class ObjectIdField(Field):
 
 
 class IntField(Field):
+
     def __init__(self, default=None, **kwargs):
         super(IntField, self).__init__(default, **kwargs)
 
@@ -252,7 +263,9 @@ class IntField(Field):
         if not self.blank:
             assert value is not None
 
+
 class BooleanField(Field):
+
     def __init__(self, default=None, **kwargs):
         super(BooleanField, self).__init__(default, **kwargs)
 
@@ -264,6 +277,7 @@ class BooleanField(Field):
 
 
 class FloatField(Field):
+
     def __init__(self, default=None, **kwargs):
         super(FloatField, self).__init__(default, **kwargs)
 
@@ -276,6 +290,7 @@ class FloatField(Field):
 
 
 class StringField(Field):
+
     def __init__(self, default='', length=None, **kwargs):
         super(StringField, self).__init__(default, **kwargs)
 
@@ -311,6 +326,7 @@ class EmailField(StringField):
 
 
 class DateTimeField(Field):
+
     def __init__(self, default=None, blank=False, auto=None, **kwargs):
         super(DateTimeField, self).__init__(default, blank, **kwargs)
 
@@ -333,6 +349,7 @@ class DateTimeField(Field):
 
 
 class DictField(Field):
+
     def __init__(self, default=None, **kwargs):
 
         super(DictField, self).__init__(default or {}, **kwargs)
@@ -345,6 +362,7 @@ class DictField(Field):
 
 
 class DocumentField(Field):
+
     def __init__(self, default=None, document=None, **kwargs):
         super(DocumentField, self).__init__(default, **kwargs)
 
@@ -368,7 +386,9 @@ class DocumentField(Field):
     def to_python(self, value):
         return self.document_class(son=value)
 
+
 class ListField(Field):
+
     def __init__(self, default=None, field=None, **kwargs):
         default = default or []
 
@@ -406,6 +426,7 @@ class ListField(Field):
 
 
 class Document(object, metaclass=ModelType):
+
     '''
     A MongoDB storable document, without interface to persistant storage. It's
     the base class for Models (with do have persistance) and also embedded
@@ -439,7 +460,6 @@ class Document(object, metaclass=ModelType):
 
             self._data[fname] = val_storage
 
-
         # fields that not specified, "flexible fields"
         if data:
             for fname in set(data.keys()) - set(self._fields.keys()):
@@ -470,6 +490,7 @@ class Document(object, metaclass=ModelType):
 
 
 class Model(Document, metaclass=ModelType):
+
     '''Base class for all classes.'''
 
     # The _id field is required, nevertheless its blank attribute is True.
@@ -498,7 +519,6 @@ class Model(Document, metaclass=ModelType):
         if '_id' in doc and doc['_id'] is None:
             del doc['_id']
 
-
     @classmethod
     def cached(cls, timeout=60, cache_none=False):
         """ Cache queries
@@ -511,7 +531,6 @@ class Model(Document, metaclass=ModelType):
         >>> Model.cached(60).find_one({...})
         """
         return CachedModel(cls=cls, timeout=timeout, cache_none=cache_none)
-
 
     @classmethod
     def find(cls, *args, **kwargs):
@@ -608,7 +627,6 @@ class Model(Document, metaclass=ModelType):
             r = db[self._collection].find_one(spec)
             self._data['_id'] = r['_id']
 
-
     def update(self, update_dict):
         """ 更具Unique字段更新update_dict
 
@@ -622,7 +640,6 @@ class Model(Document, metaclass=ModelType):
             spec[key] = self._data[key]
 
         db[self._collection].update_one(spec, update_dict)
-
 
     @classmethod
     def upsert_bulk(cls, docs, on_insert=False):
@@ -640,7 +657,6 @@ class Model(Document, metaclass=ModelType):
             op.find(spec).upsert().update({setop: data})
         op.execute()
 
-
     @classmethod
     def update_bulk(cls, docs, update_dict):
         """ 根据Unique字段更新update_dict, 批量执行 """
@@ -655,7 +671,6 @@ class Model(Document, metaclass=ModelType):
             op.find(spec).update(update_dict)
         op.execute()
 
-
     @classmethod
     def raw_update(cls, *args, **kwargs):
         log.warning('Deprecated since pymongo 3.0')
@@ -663,6 +678,7 @@ class Model(Document, metaclass=ModelType):
 
 
 class FlexibleModel(Model):
+
     """ A Model that allows undefined field values.
 
     An otherwise *strict* model will refuse to save any undefined value
@@ -671,8 +687,10 @@ class FlexibleModel(Model):
 
 
 class CachedModel(object):
+
     """ Used in Model.cached """
     caches = {}
+
     def __init__(self, cls, timeout, cache_none):
         self.cls = cls
         self.timeout = timeout
@@ -704,7 +722,7 @@ class CachedModel(object):
                 cache = self.caches[self.cls]
                 key = pickle.dumps([attr.__name__, args, kwargs])
                 cache_miss = key not in cache
-                timedout = lambda : cache[key][0] < time.time() - self.timeout
+                timedout = lambda: cache[key][0] < time.time() - self.timeout
                 if cache_miss or timedout():
                     value = attr(*args, **kwargs)
                     if isinstance(value, Cursor):

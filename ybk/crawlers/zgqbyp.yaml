@@ -4,7 +4,7 @@ abbr: 南京文交所
 offer:
     index: http://www.zgqbyp.com/web/news/108.html
     relative: http://www.zgqbyp.com/
-    detail: <span>(\d+-\d+-\d+).*?(html/\d+-\d+/\d+.html)[^>]*>([^>]+)</a>
+    detail: <span>(\d+-\d+-\d+)</span><a href[^>]+(html/\d+-\d+/\d+.html)[^>]*>([^>]+)</a>
     fields: [published_at, url, title]
     encoding: gb2312
     page: http://www.zgqbyp.com/web/news/108_{page}.html
@@ -12,7 +12,7 @@ offer:
 result:
     index: http://www.zgqbyp.com/web/news/10.html 
     relative: http://www.zgqbyp.com/
-    detail: <span>(\d+-\d+-\d+).*?(html/\d+-\d+/\d+.html)[^>]*>([^>]*中签[^>]*)</a>
+    detail: <span>(\d+-\d+-\d+)</span><a href[^>]+(html/\d+-\d+/\d+.html)[^>]*>([^>]*中签[^>]*)</a>
     fields: [published_at, url, title]
     encoding: gb2312
     page: http://www.zgqbyp.com/web/news/10_{page}.html

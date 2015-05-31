@@ -62,7 +62,7 @@ def main():
                                    help='从各大邮币卡交易中心爬取最新数据')
     cgroup = pcrawl.add_mutually_exclusive_group(required=False)
     cgroup.add_argument('--sites', nargs='+',
-                        help='爬取的站点简称, e.g. "江苏所"')
+                        help='爬取的站点简称, e.g. "南京文交所"')
     cgroup.add_argument('--all', action='store_true', help='爬取全部站点')
 
     # 解析相关

@@ -63,7 +63,7 @@ def configure_template_filters(app):
     @app.template_filter()
     def bjdate(d):
         from datetime import timedelta
-        return (d + timedelta(hours=8)).strformat('%Y-%m-%d')
+        return (d + timedelta(hours=8)).strftime('%Y-%m-%d')
 
 
 def configure_error_handlers(app):
