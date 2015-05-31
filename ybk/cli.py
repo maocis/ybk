@@ -32,8 +32,9 @@ def do_parse(parser, args):
 
 
 def do_serve(parser, args):
-    from ybk.app import app
+    from ybk.app import create_app
     conf = setup_config(args)
+    app = create_app(conf)
     if args.debug:
         args.loglevel = 'DEBUG'
     app.config['SECRET_KEY'] = conf['secret_key']

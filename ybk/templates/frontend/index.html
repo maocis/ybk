@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+
+{% block main %}
+          <div class="jumbotron">
+            <h1>邮币卡全网通</h1>
+            <p>
+              整合国内全部邮币卡交易所的申购/中签信息
+              &nbsp; | &nbsp; 智能分析中签率、中签策略、潜在收益</p>
+            <p>
+              行情交易全部整合、客观分析
+              &nbsp; | &nbsp; 邮币卡选票经验讨论交流</p>
+            <p>
+                <a class="btn btn-lg btn-primary" href="{{ url_for('frontend.walkthrough') }}" role="button">查看开户攻略 »</a>
+                <a class="btn btn-lg btn-primary" href="{{ url_for('frontend.forum') }}" role="button">交流炒邮币卡心得 »</a>
+            </p>
+          </div>
+
+          <div class="row">
+            <div class="col-md-8">
+                <h2>交易所公告</h2>
+                <table class="table table-striped">
+                  <thead>
+                    <th class="col-md-2">交易所</th>
+                    <th class="col-md-2">类别</th>
+                    <th class="col-md-6">标题</th>
+                    <th class="col-md-2">日期</th>
+                  </thead>
+                  <tbody>
+                    {% for a in announcements %}
+                    <tr>
+                      <td>{{ a.exchange }}</td>
+                      <td>{{ a.type_ }}</td>
+                      <td>
+                        <a href="{{ a.url }}" target="_blank">
+                          {{ a.title }}
+                        </a>
+                      </td>
+                      <td>{{ a.published_at | bjdate }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <h2>交易所一览</h2>
+                <table class="table table-striped">
+                  <thead>
+                    <th>交易所主页</th>
+                    <th>申购公告地址</th>
+                    <th>中签公告地址</th>
+                  </thead>
+                  <tbody>
+                    <tr>
+                    </tr>
+                  </tbody>
+                </table>
+            </div>
+          </div>
+{% endblock %}
