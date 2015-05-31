@@ -35,14 +35,14 @@ _manipulators = []
 milli_trim = lambda x: x.replace(microsecond=int((x.microsecond/1000)*1000))
 
 
-def setup(mongo_url='mongodb://localhost:27017/test'):
+def setup(mongodb_url='mongodb://localhost:27017/test'):
     global db, connection, _manipulators
 
     if db:
         log.warning('Database is already configured')
 
-    database = mongo_url.rsplit('/', 1)[-1]
-    connection = MongoClient(mongo_url)
+    database = mongodb_url.rsplit('/', 1)[-1]
+    connection = MongoClient(mongodb_url)
     db = connection[database]
 
     for x in _manipulators:

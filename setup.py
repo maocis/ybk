@@ -16,6 +16,7 @@ setup(
     install_requires=[
         'requests>=2.5',
         'flask>=0.10',
+        'curses',
         'pymongo>=3',
     ],
     classifiers=[

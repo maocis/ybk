@@ -1,0 +1,5 @@
+mongodb_url: mongodb://localhost/ybk
+secret_key: ybk000
+loglevel: INFO
+port: 5100
+num_processes: 2

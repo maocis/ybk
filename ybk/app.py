@@ -6,8 +6,6 @@ from flask import Flask, render_template
 
 def create_app():
     app = Flask(__name__)
-
-    app.config['SECRET_KEY'] = 'ybk3284'
     return app
 
 app = create_app()
