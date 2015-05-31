@@ -11,18 +11,7 @@ from dateutil.parser import parse as parse_datetime
 from ybk.models import Exchange, Announcement
 from ybk.log import crawl_log as log
 
-
-SITES = [
-    'zgqbyp',
-    'jscaee',
-    'shscce',
-]
-
-ABBRS = {
-    yaml.load((pathlib.Path(__file__).parent
-               / (site + '.yaml')).open())['abbr']: site
-    for site in SITES
-}
+from .const import SITES
 
 
 def crawl_all():

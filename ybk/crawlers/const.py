@@ -1,8 +1,5 @@
 import pathlib
-
 import yaml
-
-from .crawler import crawl, crawl_all
 
 SITES = [
     'zgqbyp',
@@ -21,5 +18,3 @@ CONFS = [
                / (site + '.yaml')).open())
     for site in SITES
 ]
-
-__all__ = ['crawl', 'crawl_all', 'SITES', 'ABBRS', 'CONFS']
