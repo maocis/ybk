@@ -1,0 +1,34 @@
+      <!-- Static navbar -->
+      {% set navbars = [
+        {'nav': 'index', 'name': '首页', 'url': url_for('index')},
+        {'nav': 'walkthrough', 'name': '开户攻略', 'url': url_for('walkthrough')},
+        {'nav': 'announcement', 'name': '公告', 'url': url_for('announcement')},
+        {'nav': 'analysis', 'name': '中签分析', 'url': url_for('analysis')},
+        {'nav': 'trade', 'name': '交易行情', 'url': url_for('trade')},
+        {'nav': 'forum', 'name': '论坛交流', 'url': url_for('forum')},
+        {'nav': 'about', 'name': '关于', 'url': url_for('about')},
+        ]
+      %}
+      {{ navs }}
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">显示/隐藏导航</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">邮币卡全网通</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+            {% for nb in navbars %}
+              <li {% if nav == nb.nav %}class="active"{% endif %}>
+                <a href="{{ nb.url }}">{{ nb.name }}</a>
+              </li>
+            {% endfor %}
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container-fluid -->
+      </nav>

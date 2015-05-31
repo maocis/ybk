@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import logging
 import argparse
 
-from ybk.mangaa import setup
 from ybk.crawlers import crawl, crawl_all, ABBRS
+from ybk.config import setup_config
 
 
 def _get_site_by_abbr(abbr):
@@ -17,9 +16,7 @@ def do_list():
 
 
 def do_crawl(parser, args):
-    logging.getLogger('requests').setLevel(logging.CRITICAL)
-    logging.basicConfig(level=logging.INFO)
-    setup('mongodb://localhost/ybk')
+    setup_config()
     if args.all:
         crawl_all()
     elif args.sites:
