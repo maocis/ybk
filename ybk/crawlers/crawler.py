@@ -52,7 +52,7 @@ def parse_index(ex, type_, content, conf):
     for values in re.compile(conf['detail']).findall(text):
         d = {key: value
              for key, value in zip(conf['fields'], values)}
-        if 'relative' in conf:
+        if 'relative' in conf and not d['url'].startswith('http'):
             d['url'] = conf['relative'] + d['url']
         d['published_at'] = parse_datetime(d['published_at']) \
             - timedelta(hours=8)
