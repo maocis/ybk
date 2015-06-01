@@ -4,7 +4,7 @@ abbr: 南方文交所
 offer:
     index: http://www.nfqbyp.com/infomation.html?newsTypeID=17509&newsType=%E7%94%B3%E8%B4%AD%E6%8C%82%E7%89%8C
     relative: http://www.nfqbyp.com
-    detail: <a href="(/displaynews.html\?newsID=\d+)" target="_blank" title="([^"]+(?:申购挂牌|发行申购)[^"]+)">[^<]*</a><span class="date">\[(\d+-\d+-\d+)\]</span>
+    detail: <a href="(/displaynews.html\?newsID=\d+)" target="_blank" title="([^"]*(?:申购挂牌|发行申购)[^"]*)">[^<]*</a><span class="date">\[(\d+-\d+-\d+)\]</span>
     fields: [url, title, published_at]
     encoding: utf-8
     page: http://www.nfqbyp.com/infomation.html?pageIndex={page}&newsTypeID=17509&newsType=%E7%94%B3%E8%B4%AD%E6%8C%82%E7%89%8C
@@ -12,7 +12,7 @@ offer:
 result:
     index: http://www.nfqbyp.com/infomation.html?newsTypeID=17509&newsType=%E7%94%B3%E8%B4%AD%E6%8C%82%E7%89%8C
     relative: http://www.nfqbyp.com
-    detail: <a href="(/displaynews.html\?newsID=\d+)" target="_blank" title="([^"]+申购中签[^"]+)">[^<]*</a><span class="date">\[(\d+-\d+-\d+)\]</span>
+    detail: <a href="(/displaynews.html\?newsID=\d+)" target="_blank" title="([^"]*申购中签[^"]*)">[^<]*</a><span class="date">\[(\d+-\d+-\d+)\]</span>
     fields: [url, title, published_at]
     encoding: utf-8
     page: http://www.nfqbyp.com/infomation.html?pageIndex={page}&newsTypeID=17509&newsType=%E7%94%B3%E8%B4%AD%E6%8C%82%E7%89%8C
