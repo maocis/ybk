@@ -1,0 +1,19 @@
+url: www.nxscae.com
+name: 宁夏文化艺术品产权交易中心
+abbr: 宁夏文交所
+offer:
+    index: http://www.nxscae.com/pl/tz/
+    relative: http://nxscae.com
+    detail: href="(/pl/tz/(\d+-\d+-\d+)/\d+.html)" title="([^"]*挂牌交易[^"]*)"
+    fields: [url, published_at, title]
+    encoding: utf-8
+    page: http://www.nxscae.com/pl/tz/index_{page}.html
+    maxpage: 3
+result:
+    index: http://www.nxscae.com/pl/tz/
+    relative: http://nxscae.com
+    detail: href="(/pl/tz/(\d+-\d+-\d+)/\d+.html)" title="([^"]*中签[^"]*)"
+    fields: [url, published_at, title]
+    encoding: utf-8
+    page: http://www.nxscae.com/pl/tz/index_{page}.html
+    maxpage: 3
