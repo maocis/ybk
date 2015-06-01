@@ -21,10 +21,10 @@ session.headers = {
 
 def crawl_all():
     for site in SITES:
-        crawl(site)
+        crawl(site, maxpage=3)
 
 
-def crawl(site):
+def crawl(site, maxpage=None):
     cpath = pathlib.Path(__file__).parent / (site + '.yaml')
     conf = yaml.load(cpath.open())
     ex = Exchange({
@@ -35,9 +35,13 @@ def crawl(site):
     ex.upsert()
     for type_ in ['offer', 'result']:
         tconf = conf[type_]
+        if maxpage is None:
+            maxpage = tconf['maxpage']
+        else:
+            maxpage = min(maxpage, tconf['maxpage'])
         content = session.get(tconf['index'], timeout=(3, 7)).content
         parse_index(ex, type_, content, tconf)
-        for page in range(2, tconf['maxpage'] + 1):
+        for page in range(2, maxpage + 1):
             url = tconf['page'].format(page=page)
             content = requests.get(url, timeout=(3, 7)).content
             parse_index(ex, type_, content, tconf)

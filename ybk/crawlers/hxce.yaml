@@ -1,0 +1,19 @@
+url: ybk.hxce.cn
+name: 海西商品交易所邮币卡交易中心
+abbr: 海西文交所
+offer:
+    index: http://ybk.hxce.cn/html/xxpl/sggg/
+    relative: http://ybk.hxce.cn
+    detail: href="(/html/xxpl/sggg/(\d+-\d+-\d+)/\w+.html)" title="([^"]*)"
+    fields: [url, published_at, title]
+    encoding: GBK
+    page: http://ybk.hxce.cn/html/xxpl/sggg/index_{page}.html
+    maxpage: 4
+result:
+    index: http://ybk.hxce.cn/html/xxpl/zqgg/
+    relative: http://ybk.hxce.cn
+    detail: href="(/html/xxpl/zqgg/(\d+-\d+-\d+)/\w+.html)" title="([^"]*)"
+    fields: [url, published_at, title]
+    encoding: GBK
+    page: http://ybk.hxce.cn/html/xxpl/zqgg/index_{page}.html
+    maxpage: 4
