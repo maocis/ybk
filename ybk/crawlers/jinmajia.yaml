@@ -1,0 +1,19 @@
+url: qbyp.jinmajia.com
+name: 金马甲
+abbr: 金马甲
+offer:
+    index: http://qbyp.jinmajia.com/article/mtbd/qbyp/gggs/sggp/
+    relative: http://ybk.hncae.net
+    detail: href="([^"]+)" class="artitlelist">([^>]*申购公告[^>]*)</a><span class="timedefault">(\d+-\d+-\d+)</span>
+    fields: [url, title, published_at]
+    encoding: utf-8
+    page: http://qbyp.jinmajia.com/article/mtbd/qbyp/gggs/sggp/index.shtml?{page}
+    maxpage: 3
+result:
+    index: http://qbyp.jinmajia.com/article/mtbd/qbyp/gggs/sggp/
+    relative: http://ybk.hncae.net
+    detail: href="([^"]+)" class="artitlelist">([^>]*申购中签[^>]*)</a><span class="timedefault">(\d+-\d+-\d+)</span>
+    fields: [url, title, published_at]
+    encoding: utf-8
+    page: http://qbyp.jinmajia.com/article/mtbd/qbyp/gggs/sggp/index.shtml?{page}
+    maxpage: 3
