@@ -1,11 +1,10 @@
 import pathlib
 import yaml
 
-SITES = [
-    'zgqbyp',
-    'jscaee',
-    'shscce',
-]
+
+SITES = [p.parts[-1].split('.')[0]
+         for p in filter(lambda x: x.match('*.yaml'),
+                         pathlib.Path(__file__).parent.iterdir())]
 
 ABBRS = {
     yaml.load((pathlib.Path(__file__).parent
