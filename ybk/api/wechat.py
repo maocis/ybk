@@ -19,20 +19,18 @@ def wechat():
     """
     if request.method == 'GET':
         # 验证消息(微信接入)
-        token = request.args.get('token')
-        if token != current_app.config.get('token'):
-            return render_template('errors/403.html')
-
+        token = current_app.config.get('token', '')
         signature = request.args.get('signature', '')
         timestamp = request.args.get('timestamp', '')
         nonce = request.args.get('nonce', '')
         echostr = request.args.get('echostr', '')
-        sign = hashlib.sha1(''.join(sorted([token, timestamp, nonce])))
+
+        concat = ''.join(sorted([token, timestamp, nonce]))
+        sign = hashlib.sha1(concat.encode('utf-8')).hexdigest()
         if sign != signature:
             return render_template('errors/403.html')
 
         return (echostr, 200)
-
     elif request.method == 'POST':
         # 其他消息, 直接存了再说
         xml = request.body

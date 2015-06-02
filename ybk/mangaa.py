@@ -513,7 +513,7 @@ class Model(Document, metaclass=ModelType):
         """ Delete or Format _id as required """
         doc = self._get_document()
 
-        if self._idformat:
+        if hasattr(self, '_idformat') and self._idformat:
             doc['_id'] = self._idformat.format(**doc)
 
         if '_id' in doc and doc['_id'] is None:
