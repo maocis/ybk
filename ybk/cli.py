@@ -108,6 +108,8 @@ def main():
                         help='flask启动进程个数')
     pserve.add_argument('--port', '-p', type=int,
                         help='端口')
+    pserve.add_argument('--token', type=str,
+                        help='微信订阅号验证token')
     pserve.add_argument('--wechat_appid', type=str,
                         help='微信订阅号appid')
     pserve.add_argument('--wechat_appsecret', type=str,

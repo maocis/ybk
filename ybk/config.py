@@ -16,7 +16,8 @@ def setup_config(args=None):
         conf = load_config()
         if args:
             for field in ['loglevel', 'port', 'mongodb_url',
-                          'secret_key', 'num_processes']:
+                          'secret_key', 'num_processes',
+                          'token', 'wechat_appid', 'wechat_appsecret']:
                 value = getattr(args, field, None)
                 if value:
                     conf[field] = value
