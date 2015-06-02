@@ -32,8 +32,12 @@ def announcement():
     for a in announcements:
         a.type_ = '申购' if a.type_ == 'offer' else '中签'
 
-    updated_at = list(Exchange.find()
-                      .sort([('updated_at', -1)])
-                      .limit(1))[0].updated_at
+    try:
+        updated_at = list(Exchange.find()
+                        .sort([('updated_at', -1)])
+                        .limit(1))[0].updated_at
+    except:
+        # 只有当数据库为空时才会这样
+        updated_at = None
 
     return render_template('frontend/announcement.html', **locals())

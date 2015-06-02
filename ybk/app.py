@@ -61,12 +61,14 @@ def configure_template_filters(app):
     @app.template_filter()
     def bjdate(d):
         from datetime import timedelta
-        return (d + timedelta(hours=8)).strftime('%Y-%m-%d')
+        if d:
+            return (d + timedelta(hours=8)).strftime('%Y-%m-%d')
 
     @app.template_filter()
     def bjtime(t):
         from datetime import timedelta
-        return (t + timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')
+        if t:
+            return (t + timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')
 
 
 def configure_error_handlers(app):
