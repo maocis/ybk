@@ -3,7 +3,7 @@
 {% block css %}
     <link href="{{ url_for('static', filename='css/selectize.bootstrap3.css') }}" rel="stylesheet">
 
-    <link rel="alternate" type="application/rss+xml" title="交易所公告 {% if exchange %}- {{exchange }} {% endif %}{% if type_ %}- {{typecn}} {% endif %}- RSS订阅" href="{{ url_for('frontend.announcement_feed', exchange=exchange, type=type_) }}" />
+    <link rel="alternate" type="application/rss+xml" title="邮币卡公告聚合 {% if exchange %}- {{exchange }} {% endif %}{% if type_ %}- {{typecn}} {% endif %}- RSS订阅" href="{{ url_for('frontend.announcement_feed', exchange=exchange, type=type_) }}" />
 {% endblock %}
 
 {% block main %}
