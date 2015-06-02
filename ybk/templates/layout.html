@@ -43,8 +43,8 @@
       {% include "footer.html" %}
     </div> <!-- /container -->
 
-
-    <!-- 站长统计(百度) -->
+    {% if not config.DEBUG %}
+    <!-- 站长统计(百度) 只在生产环境起作用 -->
     <script>
     var _hmt = _hmt || [];
     (function() {
@@ -54,6 +54,7 @@
       s.parentNode.insertBefore(hm, s);
     })();
     </script>
+    {% endif %}
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
@@ -62,8 +63,6 @@
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="{{ url_for('static', filename='js/ie10-viewport-bug-workaround.js') }}"></script>
-
-
 
     {% block js %}
     {% endblock %}

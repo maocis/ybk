@@ -2,12 +2,20 @@
 
 {% block css %}
     <link href="{{ url_for('static', filename='css/selectize.bootstrap3.css') }}" rel="stylesheet">
+
+    <link rel="alternate" type="application/rss+xml" title="交易所公告 {% if exchange %}- {{exchange }} {% endif %}{% if type_ %}- {{typecn}} {% endif %}- RSS订阅" href="{{ url_for('frontend.announcement_feed', exchange=exchange, type_=type_) }}" />
 {% endblock %}
 
 {% block main %}
     <div class="row">
       <div class="col-md-12">
-        <h2>公告信息聚合</h2>
+        <h2>
+            {{ config.DEBUG }}
+            公告信息聚合 
+            <a href="{{ url_for('frontend.announcement_feed', exchange=exchange, type_=type_) }}">
+                <img src="{{ url_for('static', filename='img/feed-icon-28x28.png') + '?offer='}}">
+            </a>
+        </h2> 
         <p>*每逢整点更新, 上次更新时间 {{ updated_at | bjtime }}</p>
         <div class="pull-right filters">
            <select id="select-exchange" class="" placeholder="交易所">
