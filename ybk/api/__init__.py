@@ -1,3 +1,6 @@
 from .views import api
 
-__all__ = ['api']
+from .wechat import wechat
+
+__all__ = ['api',
+           'wechat',]

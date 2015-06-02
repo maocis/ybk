@@ -1,5 +1,8 @@
 mongodb_url: mongodb://localhost/ybk
-secret_key: ybk369
+secret_key: SECRETKEY
 loglevel: INFO
 port: 5100
 num_processes: 2
+token: TOKEN
+wechat_appid: WECHAT_APPID
+wechat_appsecret: WECHAT_APPSECRET

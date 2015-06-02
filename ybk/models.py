@@ -9,6 +9,16 @@ from ybk.mangaa import (
 )
 
 
+class WechatEvent(Model):
+
+    """ 微信事件
+
+    暂时只保存, 不处理
+    """
+    xml = StringField() # xml格式数据主题
+    updated_at = DateTimeField(auto='modified')
+
+
 class Exchange(Model):
 
     """ 交易所 """

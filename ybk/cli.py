@@ -108,6 +108,10 @@ def main():
                         help='flask启动进程个数')
     pserve.add_argument('--port', '-p', type=int,
                         help='端口')
+    pserve.add_argument('--wechat_appid', type=str,
+                        help='微信订阅号appid')
+    pserve.add_argument('--wechat_appsecret', type=str,
+                        help='微信订阅号appsecret')
 
     pgroup = pserve.add_mutually_exclusive_group(required=False)
     pgroup.add_argument('--debug', action='store_true',
