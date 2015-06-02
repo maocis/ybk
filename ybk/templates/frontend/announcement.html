@@ -3,16 +3,15 @@
 {% block css %}
     <link href="{{ url_for('static', filename='css/selectize.bootstrap3.css') }}" rel="stylesheet">
 
-    <link rel="alternate" type="application/rss+xml" title="交易所公告 {% if exchange %}- {{exchange }} {% endif %}{% if type_ %}- {{typecn}} {% endif %}- RSS订阅" href="{{ url_for('frontend.announcement_feed', exchange=exchange, type_=type_) }}" />
+    <link rel="alternate" type="application/rss+xml" title="交易所公告 {% if exchange %}- {{exchange }} {% endif %}{% if type_ %}- {{typecn}} {% endif %}- RSS订阅" href="{{ url_for('frontend.announcement_feed', exchange=exchange, type=type_) }}" />
 {% endblock %}
 
 {% block main %}
     <div class="row">
       <div class="col-md-12">
         <h2>
-            {{ config.DEBUG }}
             公告信息聚合 
-            <a href="{{ url_for('frontend.announcement_feed', exchange=exchange, type_=type_) }}">
+            <a href="{{ url_for('frontend.announcement_feed', exchange=exchange, type=type_) }}">
                 <img src="{{ url_for('static', filename='img/feed-icon-28x28.png') + '?offer='}}">
             </a>
         </h2> 
@@ -44,8 +43,8 @@
           <tbody>
           {% for a in announcements %}
             <tr>
-              <td>{{ a.exchange }}</td>
-              <td>{{ a.type_ }}</td>
+              <td><a href="{{ url_for('frontend.announcement', exchange=a.exchange) }}">{{ a.exchange }}</a></td>
+              <td><a href="{{ url_for('frontend.announcement', type=a.type_) }}">{{ a.typecn }}</a></td>
               <td>
                 <a href="{{ a.url }}" target="_blank">
                   {{ a.title }}

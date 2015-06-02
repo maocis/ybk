@@ -32,7 +32,7 @@ def announcement():
         .sort([('published_at', -1)])
         .skip(skip).limit(limit))
     for a in announcements:
-        a.type_ = '申购' if a.type_ == 'offer' else '中签'
+        a.typecn = '申购' if a.type_ == 'offer' else '中签'
 
     try:
         updated_at = list(Exchange.find()
@@ -52,14 +52,18 @@ def announcement_feed():
         return (d + timedelta(hours=8)).strftime('%Y年%m月%d日')
 
     type_ = request.args.get('type', '')
+    typecn = '申购' if type_ == 'offer' else '中签'
     exchange = request.args.get('exchange', '')
     cond = {}
+    feedtitle = '邮币卡公告聚合'
     if type_:
         cond['type_'] = type_
+        feedtitle += ' - {}'.format(typecn)
     if exchange:
         cond['exchange'] = exchange
+        feedtitle += ' - {}'.format(exchange)
 
-    feed = AtomFeed('最新公告',
+    feed = AtomFeed(feedtitle,
                     feed_url=request.url,
                     url=request.url_root)
 
