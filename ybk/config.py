@@ -43,7 +43,7 @@ def load_config():
     return {
         'loglevel': 'INFO',
         'port': 5100,
-        'secret_key': 'ybk000',
+        'secret_key': 'ybk369',
         'num_processes': 2,
         'mongodb_url': 'mongodb://localhost/ybk',
     }

@@ -30,16 +30,16 @@ vim config.yaml
 直接执行
 
 ```bash
-ybk serve --production --mongodb_url=mongodb://localhost/ybk --num_processes=4 --port=PORT --secret_key=ybk000
+ybk serve --production --mongodb_url=mongodb://localhost/ybk --num_processes=4 --port=PORT --secret_key=ybk369
 ```
 
 或者用supervisor来起这个服务
 
 ```bash
-; /etc/supervisor/conf.d/ybk000.conf 
+; /etc/supervisor/conf.d/ybk369.conf 
 
-[program:ybk000]
-command=PYBIN/ybk serve --production --port=5001 --num_processes=2 --secret_key=ybk000
+[program:ybk369]
+command=PYBIN/ybk serve --production --port=5001 --num_processes=2 --secret_key=ybk369
 stdout_logfile=SERVELOG
 directory=DEPLOYDIR
 user=USER
@@ -52,22 +52,22 @@ redirect_stderr=True
 ```bash
 sudo apt-get install supervisor
 mkdir -p DEPLOYDIR/log
-sudo supervisorctl start ybk000
+sudo supervisorctl start ybk369
 ```
 
 
 设置Nginx转发
 
 ```bash
-# /etc/nginx/sites-enabled/ybk000.com
+# /etc/nginx/sites-enabled/ybk369.com
 
 server {
-    server_name ybk000.com;
-    return 301 $scheme://www.ybk000.com$request_uri;
+    server_name ybk369.com;
+    return 301 $scheme://www.ybk369.com$request_uri;
 }
 
 server {
-    server_name www.ybk000.com;
+    server_name www.ybk369.com;
 
     location /static/ {
         root DEPLOYDIR/ybk;
