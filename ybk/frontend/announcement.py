@@ -32,4 +32,8 @@ def announcement():
     for a in announcements:
         a.type_ = '申购' if a.type_ == 'offer' else '中签'
 
+    updated_at = list(Exchange.find()
+                      .sort([('updated_at', -1)])
+                      .limit(1))[0].updated_at
+
     return render_template('frontend/announcement.html', **locals())

@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import pathlib
-
 from flask import Flask, render_template
 
 from ybk.frontend import frontend
@@ -64,6 +62,11 @@ def configure_template_filters(app):
     def bjdate(d):
         from datetime import timedelta
         return (d + timedelta(hours=8)).strftime('%Y-%m-%d')
+
+    @app.template_filter()
+    def bjtime(t):
+        from datetime import timedelta
+        return (t + timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')
 
 
 def configure_error_handlers(app):
