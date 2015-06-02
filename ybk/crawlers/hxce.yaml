@@ -4,7 +4,7 @@ abbr: 海西文交所
 offer:
     index: http://ybk.hxce.cn/html/xxpl/sggg/
     relative: http://ybk.hxce.cn
-    detail: href="(/html/xxpl/sggg/(\d+-\d+-\d+)/\w+.html)" title="([^"]*)"
+    detail: href="(/html/xxpl/sggg/(\d+-\d+-\d+)/\w+.html)" title="([^"]*申购[^"]*)"
     fields: [url, published_at, title]
     encoding: GBK
     page: http://ybk.hxce.cn/html/xxpl/sggg/index_{page}.html
@@ -12,7 +12,7 @@ offer:
 result:
     index: http://ybk.hxce.cn/html/xxpl/zqgg/
     relative: http://ybk.hxce.cn
-    detail: href="(/html/xxpl/zqgg/(\d+-\d+-\d+)/\w+.html)" title="([^"]*)"
+    detail: href="(/html/xxpl/zqgg/(\d+-\d+-\d+)/\w+.html)" title="([^"]*中签[^"]*)"
     fields: [url, published_at, title]
     encoding: GBK
     page: http://ybk.hxce.cn/html/xxpl/zqgg/index_{page}.html
