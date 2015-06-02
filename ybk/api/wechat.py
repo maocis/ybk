@@ -33,7 +33,7 @@ def wechat():
         return (echostr, 200)
     elif request.method == 'POST':
         # 其他消息, 直接存了再说
-        xml = request.body
+        xml = request.data.decode('utf-8')
         WechatEvent({'xml': xml}).save()
         return ('', 204)
     else:
