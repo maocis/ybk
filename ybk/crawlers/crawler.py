@@ -21,7 +21,7 @@ session.headers = {
 
 def crawl_all():
     for site in SITES:
-        crawl(site, maxpage=3)
+        crawl(site, maxpage=1)
 
 
 def crawl(site, maxpage=None):
