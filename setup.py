@@ -18,6 +18,7 @@ setup(
         'flask>=0.10',
         'pyyaml',
         'pymongo>=3',
+        'python-dateutil',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
