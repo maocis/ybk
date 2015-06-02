@@ -6,6 +6,9 @@ bower_components/
 # config file
 config.yaml
 
+# mongodb dump
+dump/
+
 # C extensions
 *.so
 
