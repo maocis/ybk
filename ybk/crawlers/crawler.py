@@ -21,7 +21,10 @@ session.headers = {
 
 def crawl_all():
     for site in SITES:
-        crawl(site, maxpage=1)
+        try:
+            crawl(site, maxpage=1)
+        except:
+            log.exception('')
 
 
 def crawl(site, maxpage=None):
