@@ -168,11 +168,11 @@ class ModelType(type):
             if attr == 'meta':
                 if 'idformat' in val:
                     dct['_idformat'] = val['idformat']
-                elif 'unique' in val:
+                if 'unique' in val:
                     dct['_unique'] = val['unique']
-                elif 'indexes' in val:
+                if 'indexes' in val:
                     dct['_indexes'] = val['indexes']
-                elif 'shardkey' in val:
+                if 'shardkey' in val:
                     dct['_shardkey'] = val['shardkey']
             elif isinstance(val, Field):
                 dct['_fields'][attr] = val
