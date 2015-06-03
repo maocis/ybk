@@ -9,6 +9,9 @@ from .views import frontend
 
 @frontend.route('/announcement/')
 def announcement():
+    def type_to_cn(type_):
+        return '申购' if type_ == 'offer' else '中签'
+
     nav = 'announcement'
     type_ = request.args.get('type', '')
     typecn = '申购' if type_ == 'offer' else '中签'
@@ -27,13 +30,13 @@ def announcement():
     total = Announcement.find(cond).count()
     pagination = Pagination(page, limit, total)
     exchanges = list(e.abbr for e in Exchange.find())
-    typecns = ['申购', '中签']
+    types = ['offer', 'result']
     announcements = list(
         Announcement.find(cond)
         .sort([('published_at', -1)])
         .skip(skip).limit(limit))
     for a in announcements:
-        a.typecn = '申购' if a.type_ == 'offer' else '中签'
+        a.typecn = type_to_cn(a.type_)
 
     try:
         updated_at = list(Exchange.find()

@@ -29,7 +29,7 @@
             <ul class="values col-md-11">
               {% if type_ %}
                 <li class="selected">
-                  <a href="#">
+                  <a href="#" data-type="type" data-value="">
                   公告类型: 
                   <strong>{{ typecn }} &times;</strong>&nbsp;
                   </a>
@@ -37,7 +37,7 @@
               {% endif %}
               {% if exchange %}
                 <li class="selected">
-                  <a href="#">
+                  <a href="#" data-type="exchange" data-value="">
                   交易所: 
                   <strong>{{ exchange }} &times;</strong>&nbsp;
                   </a>
@@ -50,14 +50,22 @@
 
           <!-- 筛选条件 -->
           {% for fname, ftype, fvalue, fchoices in 
-                  [['公告类型', 'type', type_, typecns],
+                  [['公告类型', 'type', type_, types],
                    ['交易所', 'exchange', exchange, exchanges],] %}
           {% if not fvalue %}
           <div class="filter row">
             <span class="name col-md-1">{{ fname }}:</span>
             <ul class="values col-md-11">
             {% for choice in fchoices %}
-              <li><a href="#" data-type="{{ ftype }}">{{ choice }}</a></li>
+              <li><a href="#" 
+                     data-type="{{ ftype }}" 
+                     data-value="{{ choice }}">
+                {% if ftype == "type" %}
+                  {{ type_to_cn(choice) }}
+                {% else %}
+                  {{ choice }}
+                {% endif %}
+              </a></li>
             {% endfor %}
             </ul>
           </div>
@@ -123,25 +131,29 @@
 {% block js %}
     <script src="{{ url_for('static', filename='js/selectize.min.js') }}"></script>
     <script>
-        function reselect(page){
-            if (isNaN(page)){
-                page = 1;
+        function reselect(params){
+            if (!params.page){
+              params.page = 1;
             }
-            var params = {
-                exchange: $('#select-exchange').val(),
-                type: $('#select-type').val(),
-                page: page,
+            if (params.type === undefined && "{{ type_ }}") {
+              params.type = "{{ type_ }}";
+            }
+            if (params.exchange === undefined && "{{ exchange }}"){
+              params.exchange = "{{ exchange }}";
             }
             location.href = "{{ url_for('frontend.announcement') }}"+ '?' + $.param(params);
         }
-        $('#select-exchange').selectize({
-            onChange: reselect,
-        })
-        $('#select-type').selectize({
-            onChange: reselect,
+        $('.filter .values li a').on('click', function(){
+          var ftype = $(this).data('type');
+          var fvalue = $(this).data('value');
+          if (ftype){
+            params = {}
+            params[ftype] = fvalue;
+            reselect(params);
+          }
         });
         $('.pagination').on('click', 'a', function(){
-            reselect($(this).data('page'));
+            reselect({page: $(this).data('page')});
         });
     </script>
 {% endblock %}
