@@ -10,16 +10,17 @@
     <div class="row">
       <div class="col-md-12">
         <h2>
-            公告信息聚合 
-            <a href="{{ url_for('frontend.announcement_feed', exchange=exchange, type=type_) }}">
-                <img src="{{ url_for('static', filename='img/feed-icon-28x28.png') + '?offer='}}">
-            </a>
+            公告信息聚合
         </h2> 
         <p>*每逢整点更新, 上次更新时间 {{ updated_at | bjtime }}</p>
         <div class="filters">
           <div class="header">
             <span class="title">公告筛选</span> 
             <span class="total">(共{{ total }}个公告)</span>
+            &nbsp;
+            <a href="{{ url_for('frontend.announcement_feed', exchange=exchange, type=type_) }}">
+                <img src="{{ url_for('static', filename='img/feed-icon-14x14.png') + '?offer='}}">
+            </a>
           </div>
 
           <!-- 已选中 -->
