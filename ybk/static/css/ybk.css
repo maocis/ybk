@@ -5,7 +5,74 @@
 
 /* frontend/announcement.html */
 
-.filters .selectize-control {
-    width: 120px;
-    display: inline-block;
+.filters {
+}
+
+.filters .header {
+    background: #f7f7f7;
+    line-height: 35px;
+    height: 35px;
+    padding: 0 10px;
+    border: 1px solid #ddd;
+}
+
+.filters .header .title {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.filters .header .total {
+    color: #999;
+}
+
+.filters .filter {
+    margin: 0;
+    padding-top: 8px;
+    margin-top: -1px;
+    border-width: 0 1px;
+    border: 1px solid #ddd;
+    border-bottom: 1px dotted #ccc;
+}
+
+.filters .filter .name {
+    font-weight: bold;
+    font-size: 14px;
+    text-align: right;
+}
+
+.fiters .filter .values {
+    display: inline;
+    font-size: 13px;
+}
+
+.filters .filter .values li {
+    list-style-type: none;
+    margin: 0 10px;
+    float: left;
+}
+
+.filters .filter .values li a {
+    text-decoration: none;
+}
+
+.filters .filter .values li a:hover {
+    color: red;
+}
+
+.filters .filter strong {
+    color: red;
+    font-weight: bold;
+}
+
+.filters .filter li.selected a {
+    text-decoration: none;
+    font-size: 0.9em;
+    border: 1px dotted #ccc;
+    margin-right: -1px;
+    padding: 2px 4px;
+}
+
+.filters .filter li.selected a:hover {
+    cursor: pointer;
+    border: 1px solid #ccc;
 }

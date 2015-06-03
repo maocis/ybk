@@ -16,22 +16,54 @@
             </a>
         </h2> 
         <p>*每逢整点更新, 上次更新时间 {{ updated_at | bjtime }}</p>
-        <div class="pull-right filters">
-           <select id="select-exchange" class="" placeholder="交易所">
-            <option value="">交易所</option>
-            {% for e in exchanges %}
-              <option value="{{ e.abbr }}"
-                {% if exchange == e.abbr %}selected{% endif %}>
-                {{ e.abbr }}
-              </option>
+        <div class="filters">
+          <div class="header">
+            <span class="title">公告筛选</span> 
+            <span class="total">(共{{ total }}个公告)</span>
+          </div>
+
+          <!-- 已选中 -->
+          {% if type_ or exchange %}
+          <div class="filter row">
+            <span class="name col-md-1">已选条件:</span>
+            <ul class="values col-md-11">
+              {% if type_ %}
+                <li class="selected">
+                  <a href="#">
+                  公告类型: 
+                  <strong>{{ typecn }} &times;</strong>&nbsp;
+                  </a>
+                </li>
+              {% endif %}
+              {% if exchange %}
+                <li class="selected">
+                  <a href="#">
+                  交易所: 
+                  <strong>{{ exchange }} &times;</strong>&nbsp;
+                  </a>
+                </li>
+              {% endif %}
+              <a class="pull-right" href="{{ url_for('frontend.announcement') }}">全部撤销</a>
+            </ul>
+          </div>
+          {% endif %}
+
+          <!-- 筛选条件 -->
+          {% for fname, ftype, fvalue, fchoices in 
+                  [['公告类型', 'type', type_, typecns],
+                   ['交易所', 'exchange', exchange, exchanges],] %}
+          {% if not fvalue %}
+          <div class="filter row">
+            <span class="name col-md-1">{{ fname }}:</span>
+            <ul class="values col-md-11">
+            {% for choice in fchoices %}
+              <li><a href="#" data-type="{{ ftype }}">{{ choice }}</a></li>
             {% endfor %}
-          </select>
-          <select id="select-type" class="" placeholder="类别">
-            <option value="">类别</option>
-            <option value="offer" {% if type_ == 'offer' %}selected{% endif %}>申购</option>
-            <option value="result" {% if type_ == 'result' %}selected{% endif %}>中签</option>
-          </select>
-          <a href="{{ url_for('frontend.announcement') }}" class="btn btn-md btn-primary" role="button" style="margin-top:-25px;">清空</a>
+            </ul>
+          </div>
+          {% endif %}
+          {% endfor %}
+
         </div>
         <table class="table table-striped">
           <thead>

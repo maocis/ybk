@@ -26,7 +26,8 @@ def announcement():
 
     total = Announcement.find(cond).count()
     pagination = Pagination(page, limit, total)
-    exchanges = list(Exchange.find())
+    exchanges = list(e.abbr for e in Exchange.find())
+    typecns = ['申购', '中签']
     announcements = list(
         Announcement.find(cond)
         .sort([('published_at', -1)])
