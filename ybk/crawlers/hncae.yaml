@@ -17,3 +17,10 @@ result:
     encoding: utf-8
     page: http://ybk.hncae.net/wjs/index_{page}.htm
     maxpage: 9
+opening:
+    url: http://uc.hncae.net/custm/user/user_reg_add.htm
+    guide: http://ybk.hncae.net/rszn/600012.htm
+    bank: [建设银行, 浦发银行]
+    code: [4420000180, 08160000]
+    name: [湖南文化艺术品产权交易所有限责任公司, 湖南文交所]
+    download: http://ybk.hncae.net/rjxzJyzn/index.htm

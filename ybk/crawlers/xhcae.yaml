@@ -17,3 +17,10 @@ result:
     encoding: gb2312
     page: http://www.xhcae.com/notice/Latest/index_{page}.html
     maxpage: 6
+opening:
+    url: http://www.huaxiacae.com/zxkh/
+    guide: 
+    bank: [工商银行, 建设银行]
+    code: [00001188, 1200000119]
+    name: [华夏文化艺术品交易所有限公司, 华夏文化艺术品交易所有限公司]
+    download: http://www.huaxiacae.com/download/price/d1.html

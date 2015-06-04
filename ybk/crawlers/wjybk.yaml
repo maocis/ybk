@@ -17,3 +17,10 @@ result:
     encoding: utf-8
     page: http://dzp.wjybk.com/?action-category-catid-128-page-{page}
     maxpage: 2
+opening:
+    url: http://dzp.wjybk.com/?action-channel-name-register
+    guide: http://dzp.wjybk.com/?action-viewnews-itemid-133
+    bank: [工商银行, 农业银行]
+    code: [00001211, 无]
+    name: [北京产权交易所有限公司, 北京产权交易所有限公司]
+    download: http://dzp.wjybk.com/?action-category-catid-113

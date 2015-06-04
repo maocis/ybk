@@ -17,3 +17,10 @@ result:
     encoding: utf-8
     page: http://qbyp.jinmajia.com/article/mtbd/qbyp/gggs/sggp/index.shtml?{page}
     maxpage: 3
+opening:
+    url: http://qbyp.jinmajia.com/user/regist/step1
+    guide: http://qbyp.jinmajia.com/article/mtbd/qbyp/jyzn/ptqa/201412/20141200033998.shtml
+    bank: [建设银行]
+    code: [1100000061]
+    name: [北京金马甲产权网络交易有限公司]
+    download: http://www.jinmajia.com/lyzt/2014/02/coin/download.shtml

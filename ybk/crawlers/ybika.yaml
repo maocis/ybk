@@ -17,3 +17,10 @@ result:
     encoding: utf-8
     page: http://www.ybika.com/notice/index_{page}.htm
     maxpage: 5
+opening:
+    url: http://www.ybika.com/register/index.htm
+    guide: http://www.ybika.com/establish/56.htm
+    bank: [建设银行]
+    code: [1500000230]
+    name: [内蒙古文化产权交易所]
+    download: http://121.43.73.201:8080/nmgcaee/szcaee/download/nmgwjs_V5.1.160.6.exe

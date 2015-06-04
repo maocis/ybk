@@ -17,3 +17,10 @@ result:
     encoding: utf-8
     page: http://www.hbcpre.com/index.php/index-show-tid-26-p-{page}.html
     maxpage: 5
+opening:
+    url: http://trade.hbcpre.com:16915/SelfOpenAccount/index.jsp?memNo=
+    guide: http://www.hbcpre.com/index.php/index-show-tid-48.html
+    bank: [建设银行, 工商银行]
+    code: [4200000135, 00001207]
+    name: [湖北华中文化产权交易有限公司, 湖北华中文化产权交易所]
+    download: http://www.hbcpre.com/index.php/index-show-tid-40.html

@@ -17,3 +17,9 @@ result:
     encoding: GBK
     page: http://ybk.hxce.cn/html/xxpl/zqgg/index_{page}.html
     maxpage: 4
+opening:
+    url: http://ucybk.hxce.cn/custm/user/user_reg_add.htm
+    guide: http://ybk.hxce.cn/html/tzzn/khlc/2014-12-01/63.html
+    bank: [农业银行]
+    code: [235010100372E02]
+    download: http://ybk.hxce.cn/upload/haixi_ybk_V5.1.169.1(20150128).exe

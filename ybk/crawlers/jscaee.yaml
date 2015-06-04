@@ -17,3 +17,10 @@ result:
     encoding: utf-8
     page: http://ybk.jscaee.com.cn/announcement/lottery-winnings/index_p{page}.html
     maxpage: 10
+opening:
+    url: http://180.96.20.223/mnginfo/investor/personApply.jsp
+    guide: http://ybk.jscaee.com.cn/guide/accounting-process/2014-03/21/03214R014.html
+    bank: [工商银行, 华夏银行, 交通银行]
+    code: [00001163, 250008, SPMS000018]
+    name: [???, ???, ???]
+    download: http://ybk.jscaee.com.cn/guide/downloads/2014-04/01/0401I2014.html

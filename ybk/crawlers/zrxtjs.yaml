@@ -17,3 +17,10 @@ result:
     encoding: gb2312
     page: http://www.zrxtjs.com/news/46-p-{page}.html
     maxpage: 1
+opening: 
+    url: http://www.zrxtjs.com/kaihu.asp
+    guide: http://www.zrxtjs.com/about/66.html
+    bank: [农业银行]
+    code: [??]
+    download: http://www.zrxtjs.com/downs/80.html
+

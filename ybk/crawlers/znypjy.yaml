@@ -17,3 +17,10 @@ result:
     encoding: utf-8
     page: http://www.znypjy.com/a/xinxipilu/shengougonggao/list_9_{page}.html
     maxpage: 2
+opening:
+    url: http://www.znypjy.com/a/rushizhinan/woyaokaihu/
+    guide: http://www.znypjy.com/a/rushizhinan/kaihuliucheng/
+    bank: [建设银行, 工商银行, 招商银行]
+    code: [4300000175, 00001290, 999292]
+    name: [中南邮票交易中心, 湖南省中南邮票交易中心, 湖南省中南邮票交易中心有限公司]
+    download: http://www.znypjy.com/a/rushizhinan/xiangguanxiazai/2015/0212/361.html

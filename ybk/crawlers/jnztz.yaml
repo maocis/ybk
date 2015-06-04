@@ -17,3 +17,10 @@ result:
     encoding: utf-8
     page: http://www.jnztz.com/xinxi/&newsCategoryId=14&page={page}.html
     maxpage: 1
+opening:
+    url: http://www.jnztz.com/wskh.html
+    guide: 
+    bank: [交通银行]
+    code: [SPMS000025]
+    name: [宁夏文化艺术品产权交易中心有限公司]
+    download: http://www.jnztz.com/xiazai.html
