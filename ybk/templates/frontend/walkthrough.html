@@ -1,6 +1,133 @@
 {% extends "layout.html" %}
 {% block main %}
-        <div class="jumbotron">
-            <h1>施工中...</h1>
+    <div class="row" style="margin-bottom: 20px;">
+      <div class="text-center" style="border: 1px solid #ccc; margin: 30px; padding-bottom: 10px;">
+        <h1>施工中... 20%</h1>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">
+        <nav class="steps">
+          <ul class="sidenav">
+            <li><a href="#prepare">0. 账户准备</a></li>
+            <ul class="nav">
+              <li><a href="#mobile">手机</a></li>
+              <li><a href="#id-card">身份证</a></li>
+              <li><a href="#bank-card">银行卡</a></li>
+            </ul>
+            <li><a href="#open-account">1. 交易所开户</a></li>
+            <ul class="nav">
+              <li><a href="#oa-workflow">开户流程</a></li>
+              <li><a href="#oa-url">开户申请地址一览</a></li>
+            </ul>
+            <li><a href="#bind-bank-card">2. 银商绑定</a></li>
+            <ul class="nav">
+              <li><a href="#login-ebank">登陆网银</a></li>
+              <li><a href="#bind-merchant">绑定商户</a></li>
+            </ul>
+            <li><a href="#deposit-withdraw-trade">3. 出入金与交易</a></li>
+            <ul class="nav">
+              <li><a href="#download">下载客户端</a></li>
+              <li><a href="#trade">出入金与交易</a></li>
+            </ul>
+            <li><a href="#help">4. 开户帮助</a></li>
+            <ul class="nav">
+              <li><a href="#list-exchange">交易所一览</a></li>
+              <li><a href="#list-bank">银商绑定一览</a></li>
+              <li><a href="#faq">常见问题</a></li>
+            </ul>
+          </ul>
+        </nav>
+      </div>
+      <div class="col-md-9">
+        <div class="step">
+          <h2 id="prepare" class="header">0. 账户准备</h2>
+          <p class="lead">在开户前, 一定要准备好以下这些材料</p>
+
+          <h3 id="mobile">手机</h3>
+          <p>确保有一个本人姓名的正常接收消息的手机即可</p>
+
+          <h3 id="id-card">身份证</h3>
+          <p>大部分交易所都支持身份证以及等效证件，用手机给身份证正反面各拍一张照, 上传到电脑，并且用画图软件打开另存为900x500(或者竖着的500x900)像素的jpg格式文件。</p>
+          <!-- 此处应有画图工具截图 -->
+          <p>存成统一格式可以省去多个交易所对图片需求不一致的问题</p>
+
+          <h3 id="bank-card">银行卡</h3>
+          <p>去"工商银行", "建设银行", "农业银行"等银行开一张普通的借记卡, 并且开通网上银行和U盾, 另外也可以开通"中国银行", "交通银行", "招商银行", "浦发银行"等银行的网银和U盾。</p>
+          <p>和身份证类似, 用手机拍正反面照片并保存为统一格式的文件</p>
         </div>
+
+        <div class="step">
+          <h2 id="open-account" class="header">1. 交易所开户</h2>
+          <p class="lead">每个交易所开户的流程大同小异, 总结如下。</p>
+
+          <h3 id="oa-workflow">开户流程</h3>
+          <p>注: 交易所开户审核一般都在工作日的9:00-17:00。</p>
+          <ul class="oa-workflow">
+            <li>1. 打开交易所开户申请链接(具体交易所的链接列表见<a href="oa-url">这里</a>)</li>
+            <li>2. 填写个人资料</li>
+            <li>3. 上传身份证和银行卡的(正反面)照片</li>
+            <li>4. 绑定手机(交易所会发验证码)并提交申请</li>
+            <li>5. 等待交易所审核通过, 记录交易所席位代码</li>
+          </ul>
+
+          <h3 id="oa-url">开户申请地址一览</h3>
+          <!-- 申请链接列表 -->
+          <ul class="oa-url">
+            {% for exchange, url in oas %}
+              <li><a href="{{ url }}">{{ exchange }}开户申请</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <div class="step">
+          <h2 id="bind-bank-card">2. 银商绑定</h2>
+          <p class="lead">每个银行的银商绑定流程也大同小异，总结如下。</p>
+
+          <h3 id="login-ebank">登陆网银</h3>
+          <p>不同银行的网银登陆各有不同, 见下表的汇总方式</p>
+          <!-- 此处应有汇总 -->
+
+          <h3 id="bind-merchant">绑定商户</h3>
+          <p>各个银行的详细攻略，可绑商户如下表所示</p>
+          <!-- 此处应有列表，指向各自的攻略 -->
+        </div>
+
+        <div class="step">
+          <h2 id="deposit-withdraw-trade">3. 出入金与交易</h2>
+          <p class="lead">出入金与交易需要先下载客户端</p>
+
+          <h3 id="download">下载客户端</h3>
+          <p>各交易所的下载地址如下</p>
+          <!-- 下载客户端列表 -->
+          <ul class="download">
+            {% for exchange, url in downloads %}
+              <li><a href="{{ url }}">{{ exchange }}客户端下载</a></li>
+            {% endfor %}
+          </ul>
+
+          <h3 id="trade">出入金与交易</h3>
+          <p>各软件的出入金与交易攻略地址如下</p>
+          <ul class="trade">
+            {% for exchange, url in trades %}
+              <li><a href="{{ url }}">{{ exchange }}客户端下载</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <div class="step">
+          <h2 id="help">4. 开户帮助</h2>
+          <p class="lead">开户过程中的问题解答</p>
+
+          <h3 id="list-exchange">交易所一览</h3>
+          <!-- 此处应有交易所完整属性表格 -->
+
+          <h3 id="list-bank">银行一览</h3>
+          <!-- 此处应有银行完整属性表格 -->
+
+          <h3 id="faq">常见问题</h3>
+          <!-- 此处应有常见问题列表, 可从其他交易所抄 -->
+        </div>
+      </div>
+    </div>
 {% endblock %}
