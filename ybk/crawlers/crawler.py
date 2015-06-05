@@ -53,7 +53,7 @@ def crawl(site, maxpage=None):
 def parse_index(ex, type_, content, conf):
     text = content.decode(conf['encoding'], 'ignore')
     for values in re.compile(conf['detail'], re.DOTALL).findall(text):
-        d = {key: value
+        d = {key: re.sub(r'</?[a-zA-Z]+>', '', value.strip())
              for key, value in zip(conf['fields'], values)}
         if 'relative' in conf and not d['url'].startswith('http'):
             d['url'] = conf['relative'] + d['url']

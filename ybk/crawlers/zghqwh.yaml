@@ -1,0 +1,26 @@
+url: http://www.zghqwh.com
+name: 华强文化艺术品交易中心
+abbr: 华强文交所
+offer:
+    index: http://www.zghqwh.com/list.asp?id=2
+    relative: http://www.zghqwh.com/
+    detail: (\d+-\d+-\d+)</span>\s+<a href="([^"]+)"[^>]*>([^<]*挂牌交易[^<]*)</a>
+    fields: [published_at, url, title]
+    encoding: gb2312
+    page: http://www.zghqwh.com/list.asp?id=2&page={page}
+    maxpage: 1
+result:
+    index: http://www.zghqwh.com/
+    relative: http://www.zghqwh.com/
+    detail: (\d+-\d+-\d+)</span>\s+<a href="([^"]+)"[^>]*>([^<]*中签[^<]*)</a>
+    fields: [published_at, url, title]
+    encoding: gb2312
+    page: http://www.zghqwh.com/list.asp?id=2&page={page}
+    maxpage: 1
+opening:
+    url: http://www.zghqwh.com/kh/
+    guide: http://www.zghqwh.com/show.asp?id=191
+    bank: [工商银行, 建设银行, 招商银行]
+    code: [00001212, 4300000194, 999307]
+    name: [湖南华强文化艺术品交易中心有限责任公司, 湖南华强文化艺术品交易中心有限责任公司, 湖南华强文化艺术品交易中心有限责任公司]
+    download: http://www.zghqwh.com/about.asp?id=33
