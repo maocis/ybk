@@ -33,7 +33,7 @@ def announcement():
     types = ['offer', 'result']
     announcements = list(
         Announcement.find(cond)
-        .sort([('_id', -1)])
+        .sort([('published_at', -1)])
         .skip(skip).limit(limit))
     for a in announcements:
         a.typecn = type_to_cn(a.type_)
@@ -73,7 +73,7 @@ def announcement_feed():
 
     announcements = list(
         Announcement.find(cond)
-        .sort([('_id', -1)])
+        .sort([('published_at', -1)])
         .limit(20))
 
     for a in announcements:
