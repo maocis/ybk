@@ -1,5 +1,5 @@
 from flask import render_template
-from ybk.crawlers import CONFS
+from ybk.settings import CONFS
 from ybk.models import Announcement
 
 from .views import frontend

@@ -10,8 +10,7 @@ from dateutil.parser import parse as parse_datetime
 
 from ybk.models import Exchange, Announcement
 from ybk.log import crawl_log as log
-
-from .const import SITES
+from ybk.settings import SITES
 
 session = requests.Session()
 session.headers = {
@@ -28,7 +27,7 @@ def crawl_all():
 
 
 def crawl(site, maxpage=None):
-    cpath = pathlib.Path(__file__).parent / (site + '.yaml')
+    cpath = pathlib.Path(__file__).parent.parent / 'conf.d' / (site + '.yaml')
     conf = yaml.load(cpath.open())
     ex = Exchange({
         'name': conf['name'],
@@ -53,7 +52,7 @@ def crawl(site, maxpage=None):
 def parse_index(ex, type_, content, conf):
     text = content.decode(conf['encoding'], 'ignore')
     for values in re.compile(conf['detail'], re.DOTALL).findall(text):
-        d = {key: re.sub(r'</?[a-zA-Z]+>', '', value.strip())
+        d = {key: re.sub(r'(</?[a-zA-Z]+>|\s+)', '', value.strip())
              for key, value in zip(conf['fields'], values)}
         if 'relative' in conf and not d['url'].startswith('http'):
             d['url'] = conf['relative'] + d['url']

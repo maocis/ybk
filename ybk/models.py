@@ -10,6 +10,7 @@ from ybk.mangaa import (
     IntField,
     FloatField,
     StringField,
+    BooleanField,
     DateTimeField,
 )
 
@@ -58,7 +59,7 @@ class WechatEvent(Model):
 
     暂时只保存, 不处理
     """
-    xml = StringField() # xml格式数据主题
+    xml = StringField()  # xml格式数据主题
     updated_at = DateTimeField(auto='modified')
 
 
@@ -94,6 +95,8 @@ class Announcement(Model):
     html = StringField()            # 原始html
     published_at = DateTimeField()  # 交易所发布时间
     updated_at = DateTimeField(auto='modified')
+
+    parsed = BooleanField(default=False)
 
 
 class Offer(Model):

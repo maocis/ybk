@@ -3,9 +3,10 @@
 import pathlib
 import argparse
 
-from ybk.crawlers import crawl, crawl_all, ABBRS
-from ybk.log import crawl_log
+from ybk.settings import ABBRS
 from ybk.config import setup_config
+from ybk.crawlers import crawl, crawl_all
+from ybk.log import crawl_log
 
 
 def _get_site_by_abbr(abbr):
