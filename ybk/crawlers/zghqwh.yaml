@@ -10,7 +10,7 @@ offer:
     page: http://www.zghqwh.com/list.asp?id=2&page={page}
     maxpage: 1
 result:
-    index: http://www.zghqwh.com/
+    index: http://www.zghqwh.com/list.asp?id=2
     relative: http://www.zghqwh.com/
     detail: (\d+-\d+-\d+)</span>\s+<a href="([^"]+)"[^>]*>([^<]*中签[^<]*)</a>
     fields: [published_at, url, title]
