@@ -11,22 +11,32 @@ from dateutil.parser import parse as parse_datetime
 from ybk.models import Exchange, Announcement
 from ybk.log import crawl_log as log
 from ybk.settings import SITES
+import ybk.config
 
 session = requests.Session()
 session.headers = {
-    'User-Agent': 'Mozilla 5.0',
+    'User-Agent': 'Mozilla/5.0',
 }
 
 
 def crawl_all():
     for site in SITES:
-        try:
-            crawl(site, maxpage=1)
-        except:
-            log.exception('')
+        retries = 5
+        while retries > 0:
+            retries -= 1
+            try:
+                crawl(site, maxpage=1)
+            except:
+                log.exception('站点{}爬取失败, retries={}'.format(site, retries))
+            else:
+                break
 
 
 def crawl(site, maxpage=None):
+    proxy = ybk.config.conf.get('proxy')
+    if proxy:
+        session.proxies = {'http': proxy}
+
     cpath = pathlib.Path(__file__).parent.parent / 'conf.d' / (site + '.yaml')
     conf = yaml.load(cpath.open())
     ex = Exchange({
@@ -41,13 +51,34 @@ def crawl(site, maxpage=None):
             maxpage = tconf['maxpage']
         else:
             maxpage = min(maxpage, tconf['maxpage'])
-        content = session.get(tconf['index'], timeout=(3, 7)).content
+        content = session.get(tconf['index'], timeout=(5, 10)).content
+        content = fix_javascript(tconf['index'], content)
         parse_index(ex, type_, content, tconf)
         for page in range(2, maxpage + 1):
             url = tconf['page'].format(page=page)
-            content = requests.get(url, timeout=(3, 7)).content
+            content = session.get(url, timeout=(5, 10)).content
+            content = fix_javascript(url, content)
             parse_index(ex, type_, content, tconf)
 
+
+def fix_javascript(url, content):
+    """ 中南文交所的幺蛾子 
+
+    假定至少安装过node
+    """
+    import execjs 
+    try:
+        assert 'znypjy' in url
+        text = content.decode('gb18030', 'ignore')
+        m = re.compile('(function.*?;})window.location').search(text)
+        if m:
+            script = m.group(1)
+            code = execjs.compile(script).call('decoder')
+            content = session.get(url+'?'+code, timeout=(5, 10)).content
+    except:
+        pass
+    return content
+    
 
 def parse_index(ex, type_, content, conf):
     text = content.decode(conf['encoding'], 'ignore')
@@ -60,7 +91,7 @@ def parse_index(ex, type_, content, conf):
             - timedelta(hours=8)
         d['exchange'] = ex._id
         d['type_'] = type_
-        content = session.get(d['url'], timeout=(3, 7)).content
+        content = session.get(d['url'], timeout=(5, 10)).content
         d['html'] = content.decode(conf['encoding'], 'ignore')
         d['html'] = d['html'].replace(conf['encoding'], 'utf-8')
         log.info('[{exchange}]{published_at}: {title}'.format(**d))

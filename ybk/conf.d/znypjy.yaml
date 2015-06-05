@@ -2,21 +2,21 @@ url: http://www.znypjy.com
 name: 中南邮票交易中心
 abbr: 中南文交所
 offer:
-    index: http://www.znypjy.com/a/xinxipilu/shengougonggao/list_9_1.html
+    index: http://www.znypjy.com/a/xinxipilu/shengougonggao/
     relative: http://www.znypjy.com
     detail: href="([^"]+)">([^<]*挂牌交易[^<]*)</a><span>(\d+-\d+-\d+)
     fields: [url, title, published_at]
     encoding: utf-8
     page: http://www.znypjy.com/a/xinxipilu/shengougonggao/list_9_{page}.html
-    maxpage: 2
+    maxpage: 1
 result:
-    index: http://www.znypjy.com/a/xinxipilu/shengougonggao/list_9_1.html
+    index: http://www.znypjy.com/a/xinxipilu/shengougonggao/
     relative: http://www.znypjy.com
     detail: href="([^"]+)">([^<]*中签[^<]*)</a><span>(\d+-\d+-\d+)
     fields: [url, title, published_at]
     encoding: utf-8
     page: http://www.znypjy.com/a/xinxipilu/shengougonggao/list_9_{page}.html
-    maxpage: 2
+    maxpage: 1
 opening:
     url: http://www.znypjy.com/a/rushizhinan/woyaokaihu/
     guide: http://www.znypjy.com/a/rushizhinan/kaihuliucheng/
