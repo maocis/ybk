@@ -6,9 +6,6 @@ Heavily modified from Wladston Viana's Manga
 Copyright (c) 2015, Jingchao Hu
 """
 
-__author__ = 'Jingchao Hu'
-__version__ = '0.2.4'
-__license__ = 'MIT'
 
 import time
 import pickle
@@ -26,14 +23,21 @@ from pymongo import MongoClient
 from pymongo.son_manipulator import SONManipulator
 from bson.objectid import ObjectId
 
+
+__author__ = 'Jingchao Hu'
+__version__ = '0.2.4'
+__license__ = 'MIT'
+
 log = logging.getLogger('mangaa')
 connection = None
 db = None
 _manipulators = []
 
+
 # MongoDB will not store dates with milliseconds.
-milli_trim = lambda x: x.replace(
-    microsecond=int((x.microsecond / 1000) * 1000))
+def milli_trim(x):
+    return x.replace(
+        microsecond=int((x.microsecond / 1000) * 1000))
 
 
 def setup(mongodb_url='mongodb://localhost:27017/test'):
@@ -69,8 +73,9 @@ def setup(mongodb_url='mongodb://localhost:27017/test'):
                             traceback.print_exc()
 
                 else:
-                    log.warning('create shardkey failed, if you are developping'
-                                ', it is probably ok for that')
+                    log.warning('create shardkey failed, '
+                                'if you are developping'
+                                ', it is probably ok')
                     traceback.print_exc()
         db.add_son_manipulator(x)
 
@@ -194,7 +199,7 @@ class Field(object):
 
     '''Base field for all fields.'''
 
-    def __init__(self, default=None, blank=False):
+    def __init__(self, default=None, blank=True):
         self.blank = blank
         self.default = default
 
@@ -722,7 +727,10 @@ class CachedModel(object):
                 cache = self.caches[self.cls]
                 key = pickle.dumps([attr.__name__, args, kwargs])
                 cache_miss = key not in cache
-                timedout = lambda: cache[key][0] < time.time() - self.timeout
+
+                def timedout():
+                    return cache[key][0] < time.time() - self.timeout
+
                 if cache_miss or timedout():
                     value = attr(*args, **kwargs)
                     if isinstance(value, Cursor):
