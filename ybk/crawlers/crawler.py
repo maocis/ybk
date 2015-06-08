@@ -62,11 +62,11 @@ def crawl(site, maxpage=None):
 
 
 def fix_javascript(url, content):
-    """ 中南文交所的幺蛾子 
+    """ 中南文交所的幺蛾子
 
     假定至少安装过node
     """
-    import execjs 
+    import execjs
     try:
         if 'znypjy' in url:
             text = content.decode('gb18030', 'ignore')
@@ -84,7 +84,7 @@ def fix_javascript(url, content):
     except:
         log.exception('')
     return content
-    
+
 
 def parse_index(ex, type_, content, conf):
     text = content.decode(conf['encoding'], 'ignore')
