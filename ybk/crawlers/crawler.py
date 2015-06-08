@@ -68,15 +68,21 @@ def fix_javascript(url, content):
     """
     import execjs 
     try:
-        assert 'znypjy' in url
-        text = content.decode('gb18030', 'ignore')
-        m = re.compile('(function.*?;})window.location').search(text)
-        if m:
-            script = m.group(1)
-            code = execjs.compile(script).call('decoder')
-            content = session.get(url+'?'+code, timeout=(5, 10)).content
+        if 'znypjy' in url:
+            text = content.decode('gb18030', 'ignore')
+            m = re.compile('(function.*?;})window.location').search(text)
+            if m:
+                script = m.group(1)
+                code = execjs.compile(script).call('decoder')
+                content = session.get(url+'?'+code, timeout=(5, 10)).content
+        elif 'xhcae' in url:
+            text = content.decode('gb18030', 'ignore')
+            m = re.compile('/notice/\w+/\?WebShieldSessionVerify=\w+').search(text)
+            if m:
+                url = m.group(0)
+                content = session.get('http://www.xhcae.com' + url, timeout=(5, 10)).content
     except:
-        pass
+        log.exception('')
     return content
     
 
