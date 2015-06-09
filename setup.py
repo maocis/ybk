@@ -16,6 +16,8 @@ setup(
     install_requires=[
         'requests>=2.5',
         'flask>=0.10',
+        'flask-login',
+        'bcrypt',
         'pyexecjs',
         'pyyaml',
         'pymongo>=3',
