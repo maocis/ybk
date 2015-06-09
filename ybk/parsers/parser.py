@@ -4,7 +4,7 @@ import importlib
 
 from ybk.settings import SITES, ABBRS
 from ybk.log import parse_log as log
-from ybk.models import Announcement
+from ybk.models import Announcement, Stamp
 
 
 def parse_all():
@@ -20,6 +20,21 @@ def parse(site):
     abbr = rabbrs[site]
     parser = importlib.__import__('ybk.parsers.{}'.format(site),
                                   fromlist=['Parser']).Parser()
+    log.info('解析交易所 {}'.format(abbr))
+    num_parsed = 0
+    num_failed = 0
     for a in Announcement.find({'exchange': abbr,
                                 'parsed': {'$ne': True}}):
-        parser.parse(a.type_, a.html)
+        log.info('parsing {}'.format(a.url))
+        try:
+            for stamp in parser.parse(a.type_, a.html):
+                Stamp(stamp).upsert()
+            a.update({'$set': {'parsed': True}})
+            num_parsed += 1
+        except Exception as e:
+            num_failed += 1
+            if not isinstance(e, NotImplementedError):
+                log.exception('解析错误')
+            continue
+
+    log.info('解析完毕, {}个成功, {}个失败'.format(num_parsed, num_failed))

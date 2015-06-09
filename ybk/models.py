@@ -112,8 +112,8 @@ class Stamp(Model):
     exchange = StringField(blank=False)        # 交易所ID(简称)
     symbol = StringField(blank=False)          # 交易代码
     name = StringField(blank=False)            # 交易名
-    type_ = StringField(blank=False)           # "邮票"/"钱币"/"卡片"
-    status = StringField(blank=False)          # "申购中"/"已上市"
+    type_ = StringField(default="邮票", blank=False)           # "邮票"/"钱币"/"卡片"
+    status = StringField(default="申购中", blank=False)          # "申购中"/"已上市"
 
     issuer = StringField()          # 发行机构
     texture = StringField()         # 材质
@@ -134,16 +134,14 @@ class Stamp(Model):
     pickup_min = IntField()         # 最小提货量
     trade_limit = FloatField()      # 单笔最大下单量
 
-    starts_at = DateTimeField(blank=False)     # 申购开始日 *
-    ends_at = DateTimeField(blank=False)       # 申购截止日 *
+    offers_at = DateTimeField(blank=False)     # 申购日 *
     draws_at = DateTimeField(blank=False)      # 抽签日 *
-    results_at = DateTimeField(blank=False)    # 中签公布日 *
     trades_at = DateTimeField(blank=False)     # 上市交易日 *
 
     invest_mv = FloatField()       # 申购市值(Market Value)
     invest_cash = FloatField()     # 申购资金 *
 
-    updated_at = DateTimeField(auto='modifield')
+    updated_at = DateTimeField(auto='modified')
 
     @property
     def offer_mv(self):

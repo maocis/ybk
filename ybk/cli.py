@@ -6,6 +6,7 @@ import argparse
 from ybk.settings import ABBRS
 from ybk.config import setup_config
 from ybk.crawlers import crawl, crawl_all
+from ybk.parsers import parse, parse_all
 from ybk.log import crawl_log
 
 
@@ -47,7 +48,13 @@ def do_crawl(parser, args):
 
 def do_parse(parser, args):
     setup_config(args)
-    raise NotImplementedError
+    if args.all:
+        parse_all()
+    elif args.sites:
+        for site in args.sites:
+            parse(_get_site_by_abbr(site))
+    else:
+        parser.print_help()
 
 
 def do_serve(parser, args):

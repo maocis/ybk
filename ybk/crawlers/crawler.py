@@ -74,13 +74,16 @@ def fix_javascript(url, content):
             if m:
                 script = m.group(1)
                 code = execjs.compile(script).call('decoder')
-                content = session.get(url+'?'+code, timeout=(5, 10)).content
+                content = session.get(
+                    url + '?' + code, timeout=(5, 10)).content
         elif 'xhcae' in url:
             text = content.decode('gb18030', 'ignore')
-            m = re.compile('/notice/\w+/\?WebShieldSessionVerify=\w+').search(text)
+            m = re.compile(
+                '/notice/\w+/\?WebShieldSessionVerify=\w+').search(text)
             if m:
                 url = m.group(0)
-                content = session.get('http://www.xhcae.com' + url, timeout=(5, 10)).content
+                content = session.get(
+                    'http://www.xhcae.com' + url, timeout=(5, 10)).content
     except:
         log.exception('')
     return content
