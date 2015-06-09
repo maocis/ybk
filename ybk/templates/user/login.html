@@ -1,0 +1,126 @@
+{% extends "layout.html" %}
+{% block css %}
+    <link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet">
+{% endblock %}
+{% block main %}
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        <div class="panel panel-login">
+          <div class="panel-heading">
+            <div class="row">
+              <div class="col-xs-6">
+                <a href="#" class="active" id="login-form-link">登录</a>
+              </div>
+              <div class="col-xs-6">
+                <a href="#" id="register-form-link">注册</a>
+              </div>
+            </div>
+            <hr>
+            <div class="error" style="margin-top:10px; margin-bottom:-10px; color:red">
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-lg-12">
+                <form id="login-form" action="#" method="post" role="form" style="display: block;">
+                  <div class="form-group">
+                    <input type="text" name="mobile" id="mobile" tabindex="1" class="form-control" placeholder="手机号码" value="">
+                  </div>
+                  <div class="form-group">
+                    <input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="密码">
+                  </div>
+                  <div class="form-group text-center">
+                    <input type="checkbox" tabindex="3" class="" name="remember" id="remember">
+                    <label for="remember"> 记住这次登录</label>
+                  </div>
+                  <div class="form-group">
+                    <div class="row">
+                      <div class="col-sm-6 col-sm-offset-3">
+                        <input type="submit" name="login-submit" id="login-submit" tabindex="4" class="form-control btn btn-login" value="登陆">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="row">
+                      <div class="col-lg-12">
+                        <div class="text-center">
+                          <a href="#" tabindex="5" class="forgot-password">忘记密码?</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+                <form id="register-form" action="#" method="post" role="form" style="display: none;">
+                  <h3 class="text-center">暂不开放</h3>
+                  <div class="form-group">
+                    <input type="text" name="mobile" id="mobile" tabindex="1" class="form-control" placeholder="手机号码" value="">
+                  </div>
+<!--                   <div class="form-group">
+                    <input type="text" name="username" id="username" tabindex="2" class="form-control" placeholder="用户名" value="">
+                  </div>
+                  <div class="form-group">
+                    <input type="password" name="password" id="password" tabindex="3" class="form-control" placeholder="密码">
+                  </div> -->
+<!--                   <div class="form-group">
+                    <input type="text" name="vcode" id="vcode" tabindex="4" class="form-control" placeholder="验证码">
+                  </div> -->
+                  <div class="form-group">
+                    <div class="row">
+                      <div class="col-sm-6 col-sm-offset-3">
+                        <input type="submit" name="register-submit" id="register-submit" tabindex="5" class="form-control btn btn-register" value="点击发送验证码">
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+<script>
+$(function() {
+  $('#login-form-link').click(function(e) {
+    $("#login-form").delay(100).fadeIn(100);
+    $("#register-form").fadeOut(100);
+    $('#register-form-link').removeClass('active');
+    $(this).addClass('active');
+    e.preventDefault();
+  });
+  $('#register-form-link').click(function(e) {
+    $("#register-form").delay(100).fadeIn(100);
+    $("#login-form").fadeOut(100);
+    $('#login-form-link').removeClass('active');
+    $(this).addClass('active');
+    e.preventDefault();
+  });
+  $('input[type=submit]').click(function(e){
+    e.preventDefault();
+    console.log($(this).attr('name'));
+    var name = $(this).attr('name');
+    if (name == 'login-submit') {
+        var mobile = $('[name=mobile]').val();
+        var password = $('[name=password]').val();
+        var remember = $('[name=remember]').val();
+        $.post(
+            "{{ url_for('user.check_login') }}",
+            {mobile: mobile, password: password, remember: remember},
+            function (data) {
+                if (data.status != 200) {
+                    $('.error').text('登录失败: ' + data.reason);
+                } else {
+                    $('.error').text('');
+                    location.href = '{{ next_url }}'
+                }
+            }
+            );
+    } else if (name == 'register-submit') {
+
+    }
+  })
+});
+</script>
+{% endblock %}

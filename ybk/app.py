@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from flask import Flask, render_template
+from flask.ext.login import LoginManager
 
 from ybk.frontend import frontend
 from ybk.user import user
 from ybk.api import api
 from ybk.admin import admin
+from ybk.models import User
 
 
 blueprints = [
@@ -50,7 +52,16 @@ def configure_extensions(app):
     # flask-cache
     # flask-login
     # flask-openid
-    pass
+    login_manager = LoginManager()
+
+    login_manager.login_view = 'user.login'
+    login_manager.refresh_view = 'user.refresh'
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.find_one({'_id': user_id})
+
+    login_manager.setup_app(app)
 
 
 def configure_logging(app):

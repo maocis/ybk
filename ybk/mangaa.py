@@ -579,7 +579,7 @@ class Model(Document, metaclass=ModelType):
         if self._id:
             spec = {'_id': self._id}
             doc = self._get_document()
-            db[self._collection].update_one(spec, doc, upsert=True)
+            db[self._collection].update_one(spec, {'$set': doc}, upsert=True)
 
         else:
             self._set_id()
