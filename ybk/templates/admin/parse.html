@@ -1,8 +1,219 @@
 {% extends "admin/layout.html" %}
 {% block main %}
-    <div class="row" style="margin-bottom: 20px;">
-      <div class="text-center" style="border: 1px solid #ccc; margin: 30px; padding-bottom: 10px;">
-        <h1>施工中... 0%</h1>
+    <div class="row">
+    {% if not url %}
+      <div class="text-center" style="border: 1px dashed #ccc; margin: 0px 20px;">
+        <h4>解析完成 {{ (num_parsed / num_total) | percentage }} ({{num_parsed}}/{{num_total}})</h3>
       </div>
+
+      <div class="text-center">
+          <div style="margin: 30px; font-size:18px;">
+          你可以&nbsp;<button class="btn btn-sm btn-primary" name="findone">解析最新公告</button>
+          </div>
+
+          <div style="margin: 30px; font-size:18px;">
+            或者输入一个想要解析的公告URL <input type="text" name="url" style="width: 360px;"> <button class="btn btn-sm btn-primary" name="url">解析url</button>
+          </div>
+      </div>
+    {% else %}
+    <style>
+    #frame { height: 5000px; border: 0px solid black; }
+    #frame { zoom: 0.5; -moz-transform: scale(0.5); -moz-transform-origin: 0 0; }
+    .affix { margin-top: -50px;}
+    </style>
+        <div class="col-md-8" style="overflow: hidden;">
+            <h3>原始页面</h3>
+            <iframe id="frame" class="col-md-12" src="{{announcement.url}}"></iframe>
+        </div>
+        <div class="col-md-4">
+          <nav class="sidebar-parse" data-spy="affix" data-offset-top="0">
+            <div class="row">
+                <h3 style="min-width: 390px;">解析</h3>
+                {% if announcement.type_ == 'offer' %}
+                <form id="parse-form" action="#" method="post" role="form" style="display: block; zoom: 0.9; -moz-transform: scale(0.9); -moz-transform-origin: 0 0;  ">
+                  <div class="form-group">
+                    <input type="text" name="name" tabindex="1" class="form-control" placeholder="藏品名称">
+                  </div>
+                  <div class="form-group">
+                    <input type="text" name="symbol" tabindex="2" class="form-control" placeholder="藏品代码" value="">
+                  </div>
+                  <div class="form-group">
+                    <input type="text" name="offer-quantity" tabindex="3" class="form-control" placeholder="供申购数量">
+                  </div>
+                  <div class="form-group">
+                    <input type="text" name="offer-price" tabindex="4" class="form-control" placeholder="申购价格">
+                  </div>
+                  <div class="form-group">
+                    <input type="text" name="offers-at" tabindex="5" class="form-control" placeholder="申购日(e.g. 20150608)">
+                  </div>
+                  <div class="form-group">
+                    <input type="text" name="offer-cash-ratio" tabindex="6" class="form-control" placeholder="资金申购比例(e.g. 100%)">
+                  </div>
+                  <div class="form-group">
+                    <div class="row">
+                      <div class="col-sm-6 col-sm-offset-3">
+                        <button class="btn btn-primary form-control" name="add-result">添加</button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+                <!-- 解析的结果综述 -->
+                <div class="summary" style="{% if not colls %}display: none;{% endif %}max-width: 400px;">
+                  <table class="table table-condensed">
+                    <thead>
+                      <th name="name">藏品名称</th>
+                      <th name="symbol">藏品代码</th>
+                      <th name="offer-quantity">供申购数量</th>
+                      <th name="offer-price">申购价格</th>
+                      <th name="offers-at">申购日</th>
+                      <th name="offer-cash-ratio">资金申购比例</th>
+                      <th>删除</th>
+                    </thead>
+                    <tbody name="tbody">
+                        {% for c in colls %}
+                        {% if c.name and c.symbol and c.offer_quantity and
+                        c.offer_price and c.offers_at and c.offer_cash_ratio %}
+                        <tr>
+                        <td>{{c.name}}</td>
+                        <td>{{c.symbol}}</td>
+                        <td>{{c.offer_quantity}}</td>
+                        <td>{{c.offer_price}}</td>
+                        <td>{{c.offers_at}}</td>
+                        <td>{{c.offer_cash_ratio}}</td>
+                        <td><button type="row">删</button></td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                  </table>
+                  <div class="col-sm-6 col-sm-offset-3">
+                    <div class="save-result" style="color:red"></div>
+                    <button class="btn btn-primary form-control" name="save-result">保存</button>
+                  </div>
+                </div>
+                {% elif announcement.type_ == 'result' %}
+                <!-- 解析的结果综述 -->
+
+                <form id="parse-form" action="#" method="post" role="form" style="display: block;">
+                  <div class="form-group">
+                    <input type="text" name="symbol" id="symbol" tabindex="1" class="form-control" placeholder="藏品代码" value="">
+                  </div>
+                  <div class="form-group">
+                    <input type="text" name="invest-cash" id="invest-cash" tabindex="2" class="form-control" placeholder="申购资金">
+                  </div>
+                  <div class="form-group">
+                    <div class="row">
+                      <div class="col-sm-6 col-sm-offset-3">
+                        <button class="btn btn-primary form-control" name="add-result">添加</button>
+                      </div>
+
+                    </div>
+                  </div>
+                </form>
+                <div class="summary" style="{% if not colls %}display: none;{% endif %}">
+                  <table class="table table-dense">
+                    <thead>
+                      <th name="symbol">藏品代码</th>
+                      <th name="">申购资金</th>
+                      <th>删除</th>
+                    </thead>
+                    <tbody name="tbody">
+                        {% for c in colls %}
+                        {% if c.symbol and c.invest_cash %}
+                        <tr>
+                        <td>{{c.symbol}}</td>
+                        <td>{{c.invest_cash}}</td>
+                        <td><button type="row">删除</button></td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                  </table>
+                  <div class="col-sm-6 col-sm-offset-3">
+                    <div class="save-result" style="color:red"></div>
+                    <button class="btn btn-primary form-control" name="save-result">保存</button>
+                  </div>
+                </div>
+                {% else %}
+                类型{{announcement.type_}}无法识别
+                {% endif %}
+            </div>
+          </nav> <!-- sidebar-parse -->
+        </div> <!-- col-md-4 -->
+    {% endif %}
     </div>
+{% endblock %}
+
+{% block js %}
+<script>
+$(function() {
+    $('button[name=findone]').on('click', function(){
+        location.href = "{{ url_for('admin.parse_findone') }}";
+    });
+
+    $('button[name=url]').on('click', function(){
+        var url = $('input[name=url]').val();
+        if (url) {
+            location.href = "{{ url_for('admin.parse') }}" + '?url=' + url;
+        }
+    });
+
+    $('input[type=text]').on('click', function(){
+        $(this).val('');
+    })
+
+    $('button[name=add-result]').on('click', function(e){
+        e.preventDefault();
+        var symbol = $('input[name=symbol]').val();
+        var invest_cash = $('input[name=invest-cash]').val();
+        if (symbol && invest_cash) {
+            var tr = '<tr>';
+            tr += '<td>' + symbol + '</td>';
+            tr += '<td>' + invest_cash + '</td>';
+            tr += '<td><button type="row">删除</button></td>';
+            tr += '</tr>';
+            var prev = $('[name=tbody]').html();
+            $('[name=tbody]').html(prev + tr);
+            $('.summary').show();
+        }
+    });
+
+
+    $('.summary').on('click', '[type=row]', function(){
+        $(this).parent().parent().remove();
+    });
+
+    {% if announcement %}
+    $('button[name=save-result').on('click', function(e){
+        e.preventDefault();
+        var result = []
+        $('.summary tbody tr').each(function(i, tr){
+            var tds = $(tr).children('td');
+            result.push({
+                symbol: $(tds[0]).text(),
+                invest_cash: $(tds[1]).text(),
+            })
+        });
+        data = {
+            from_url: "{{ announcement.url }}",
+            exchange: "{{ announcement.exchange }}",
+            type: "{{ announcement.type_ }}",
+            result: JSON.stringify(result),
+            status: "已上市",
+        }
+        $.post("{{ url_for('admin.parse_save') }}",
+                data,
+                function (data){
+                    var h = $('.save-result');
+                    if (data.status != 200){
+                        h.text('保存失败: ' + data.reason);
+                    } else{
+                        h.text('保存成功')
+                    }
+                    setTimeout(function(){h.text('')}, 1000);
+                });
+    })
+    {% endif %}
+});
+</script>
 {% endblock %}

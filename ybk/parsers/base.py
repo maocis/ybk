@@ -13,7 +13,7 @@ class BaseParser(object):
 
         :param type_: 解析类别, offer/result
         :param html: 解析网页文本
-        :returns: [dict, dict, ...], 其中dict的字段参照ybk.models.Stamp
+        :returns: [dict, dict, ...], 其中dict的字段参照ybk.models.Collection
         """
         if type_ == 'offer':
             r = self.parse_offer(html)

@@ -8,7 +8,7 @@ offer:
     fields: [url, title, published_at]
     encoding: utf-8
     page: http://www.nfqbyp.com/infomation.html?pageIndex={page}&newsTypeID=17509&newsType=%E7%94%B3%E8%B4%AD%E6%8C%82%E7%89%8C
-    maxpage: 3
+    maxpage: 4
 result:
     index: http://www.nfqbyp.com/infomation.html?newsTypeID=17509&newsType=%E7%94%B3%E8%B4%AD%E6%8C%82%E7%89%8C
     relative: http://www.nfqbyp.com
@@ -16,7 +16,7 @@ result:
     fields: [url, title, published_at]
     encoding: utf-8
     page: http://www.nfqbyp.com/infomation.html?pageIndex={page}&newsTypeID=17509&newsType=%E7%94%B3%E8%B4%AD%E6%8C%82%E7%89%8C
-    maxpage: 3
+    maxpage: 4
 opening:
     url: http://www.nfqbyp.com/guide.html?newsTypeID=16795&newsType=%E7%BD%91%E4%B8%8A%E5%BC%80%E6%88%B7
     guide: http://www.nfqbyp.com/guide.html?newsTypeID=16799&newsType=%E9%97%AE%E9%A2%98%E8%A7%A3%E7%AD%94

@@ -193,20 +193,26 @@ class Announcement(Model):
     parsed = BooleanField(default=False)
 
 
-class Stamp(Model):
+class Collection(Model):
 
-    """ Stamp/Coin/Card 交易品"""
+    """ 收藏品: Stamp/Coin/Card """
 
     meta = {
         'idformat': '{exchange}_{symbol}',
         'unique': ['exchange', 'symbol'],
+        'indexes': [
+            [[('exchange', 1), ('symbol', 1)], {}],
+            [[('from_url', 1)], {}],
+        ]
     }
+
+    from_url = StringField(blank=False)        # 来自哪个公告
 
     exchange = StringField(blank=False)        # 交易所ID(简称)
     symbol = StringField(blank=False)          # 交易代码
-    name = StringField(blank=False)            # 交易名
-    type_ = StringField(default="邮票", blank=False)           # "邮票"/"钱币"/"卡片"
-    status = StringField(default="申购中", blank=False)          # "申购中"/"已上市"
+    name = StringField()                        # 交易名
+    type_ = StringField(default="邮票")           # "邮票"/"钱币"/"卡片"
+    status = StringField(default="申购中")          # "申购中"/"已上市"
 
     issuer = StringField()          # 发行机构
     texture = StringField()         # 材质
@@ -214,12 +220,12 @@ class Stamp(Model):
     quantity_all = IntField()       # 挂牌总数量
     quantity_forsale = IntField()   # 限售总数
 
-    offer_fee = FloatField(default=0, blank=False)        # 申购手续费
-    offer_quantity = IntField(blank=False)     # 供申购数量 *
-    offer_price = FloatField(blank=False)      # 申购价格 *
-    offer_accmax = IntField(blank=False)       # 单账户最大中签数 *
-    offer_overbuy = BooleanField(blank=False)  # 是否可超额申购 *
-    offer_cash_ratio = FloatField(blank=False)  # 资金配售比例 *
+    offer_fee = FloatField(default=0.001)        # 申购手续费
+    offer_quantity = IntField()     # 供申购数量 *
+    offer_price = FloatField()      # 申购价格 *
+    offer_accmax = IntField()       # 单账户最大中签数 *
+    offer_overbuy = BooleanField()  # 是否可超额申购 *
+    offer_cash_ratio = FloatField()  # 资金配售比例 *
 
     change_min = FloatField()       # 最小价格变动单位
     change_limit_1 = FloatField()   # 首日涨跌幅
@@ -227,9 +233,9 @@ class Stamp(Model):
     pickup_min = IntField()         # 最小提货量
     trade_limit = FloatField()      # 单笔最大下单量
 
-    offers_at = DateTimeField(blank=False)     # 申购日 *
-    draws_at = DateTimeField(blank=False)      # 抽签日 *
-    trades_at = DateTimeField(blank=False)     # 上市交易日 *
+    offers_at = DateTimeField(blank=True)     # 申购日 *
+    draws_at = DateTimeField(blank=True)      # 抽签日 *
+    trades_at = DateTimeField(blank=True)     # 上市交易日 *
 
     invest_mv = FloatField()       # 申购市值(Market Value)
     invest_cash = FloatField()     # 申购资金 *

@@ -336,21 +336,25 @@ class DateTimeField(Field):
         super(DateTimeField, self).__init__(default, blank, **kwargs)
 
         self.auto = auto
+        self.blank = blank
 
         if auto in ['modified', 'created']:
             self.default = lambda: datetime.utcnow()
 
     def validate(self, value):
         super(DateTimeField, self).validate(value)
-
-        assert isinstance(value, datetime) or value is None
+        if not self.blank:
+            assert isinstance(value, datetime) or value is None
 
     def pre_save_val(self, value):
         return datetime.utcnow() if self.auto == 'modified' else None
 
     @staticmethod
     def to_storage(value):
-        return milli_trim(value) if value else None
+        try:
+            return milli_trim(value) if value else None
+        except:
+            return value
 
 
 class DictField(Field):

@@ -70,6 +70,10 @@ def configure_logging(app):
 
 def configure_template_filters(app):
     @app.template_filter()
+    def percentage(f):
+        return '{:4.2f}%'.format(float(f) * 100)
+
+    @app.template_filter()
     def bjdate(d):
         from datetime import timedelta
         if d:

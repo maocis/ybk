@@ -4,7 +4,7 @@ import importlib
 
 from ybk.settings import SITES, ABBRS
 from ybk.log import parse_log as log
-from ybk.models import Announcement, Stamp
+from ybk.models import Announcement, Collection
 
 
 def parse_all():
@@ -27,8 +27,9 @@ def parse(site):
                                 'parsed': {'$ne': True}}):
         log.info('parsing {}'.format(a.url))
         try:
-            for stamp in parser.parse(a.type_, a.html):
-                Stamp(stamp).upsert()
+            for c in parser.parse(a.type_, a.html):
+                c['from_url'] = a.url
+                Collection(c).upsert()
             a.update({'$set': {'parsed': True}})
             num_parsed += 1
         except Exception as e:
