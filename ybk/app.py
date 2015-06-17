@@ -70,8 +70,14 @@ def configure_logging(app):
 
 def configure_template_filters(app):
     @app.template_filter()
+    def strformat(v, fmt):
+        try:
+            return fmt.format(v)
+        except:
+            return v
+
+    @app.template_filter()
     def percentage(f, fmt='4.4'):
-        print(f)
         try:
             return ('{:' + fmt + '}%').format(float(f) * 100)
         except:

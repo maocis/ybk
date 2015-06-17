@@ -245,8 +245,18 @@ class Collection(Model):
 
     @property
     def offer_mv(self):
-        """ 申购总市值(Market Value) """
-        return self.offer_quantity * self.offer_price
+        """ 申购市值配额 """
+        return self.offer_quantity * self.offer_price * \
+            (1 - self.offer_cash_ratio)
+
+    @property
+    def offer_cash(self):
+        """ 申购资金配额 """
+        try:
+            return self.offer_quantity * self.offer_price * \
+                self.offer_cash_ratio
+        except:
+            pass
 
     @property
     def offer_max_invest(self):
@@ -263,7 +273,10 @@ class Collection(Model):
         if self.invest_cash_return_ratio:
             return self.invest_cash_return_ratio
         if self.status == "已上市" and self.invest_cash:
-            return self.offer_mv * self.offer_cash_ratio / self.invest_cash
+            try:
+                return self.offer_cash / self.invest_cash
+            except:
+                pass
 
     @property
     def result_ratio_mv(self):

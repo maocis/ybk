@@ -7,8 +7,15 @@
 {% endblock %}
 
 {% block main %}
-    <div class="row">
-      <div class="col-md-12">
+  <div class="row">
+    <div class="col-md-2">
+      <ul class="nav nav-pills nav-stacked" role="tablist">
+        <li role="presentation" {% if tab == 'raw' %}class="active"{% endif %}><a href="{{ url_for('frontend.announcement_raw') }}" aria-controls="info">公告原文</a></li>
+        <li role="presentation" {% if tab == 'collection' %}class="active"{% endif %}><a href="{{ url_for('frontend.announcement_collection') }}" aria-controls="collection" >交易品种</a></li>
+      </ul>
+    </div>
+    <div class="col-md-10">
+      {% if tab == "raw" %}
         <h2>
             公告信息聚合
         </h2> 
@@ -26,8 +33,8 @@
           <!-- 已选中 -->
           {% if type_ or exchange %}
           <div class="filter row">
-            <span class="name col-md-1">已选条件:</span>
-            <ul class="values col-md-11">
+            <span class="name col-md-2">已选条件:</span>
+            <ul class="values col-md-10">
               {% if type_ %}
                 <li class="selected">
                   <a href="#" data-type="type" data-value="">
@@ -44,7 +51,7 @@
                   </a>
                 </li>
               {% endif %}
-              <a class="pull-right" href="{{ url_for('frontend.announcement') }}">全部撤销</a>
+              <a class="pull-right" href="{{ url_for('frontend.announcement_raw') }}">全部撤销</a>
             </ul>
           </div>
           {% endif %}
@@ -55,8 +62,8 @@
                    ['交易所', 'exchange', exchange, exchanges],] %}
           {% if not fvalue %}
           <div class="filter row">
-            <span class="name col-md-1">{{ fname }}:</span>
-            <ul class="values col-md-11">
+            <span class="name col-md-2">{{ fname }}:</span>
+            <ul class="values col-md-10">
             {% for choice in fchoices %}
               <li><a href="#" 
                      data-type="{{ ftype }}" 
@@ -84,8 +91,8 @@
           <tbody>
           {% for a in announcements %}
             <tr>
-              <td><a href="{{ url_for('frontend.announcement', exchange=a.exchange) }}">{{ a.exchange }}</a></td>
-              <td><a href="{{ url_for('frontend.announcement', type=a.type_) }}">{{ a.typecn }}</a></td>
+              <td><a href="{{ url_for('frontend.announcement_raw', exchange=a.exchange) }}">{{ a.exchange }}</a></td>
+              <td><a href="{{ url_for('frontend.announcement_raw', type=a.type_) }}">{{ a.typecn }}</a></td>
               <td>
                 <a href="{{ a.url }}" target="_blank">
                   {{ a.title }}
@@ -125,8 +132,77 @@
             {% endif %}
           </ul>
         </nav>
-      </div>
+      {% elif tab == "collection" %}
+
+
+        <h2>交易品种</h2>
+        <table class="table table-condensed table-hover">
+          <thead>
+            <th class="">申购时间</th>
+            <th class="">交易所</th>
+            <th class="">藏品简称</th>
+            <th class="">藏品代码</th>
+            <th class="text-right">申购价格</th>
+            <th class="text-right">申购数量</th>
+            <th class="text-right">资金配比</th>
+            <th class="text-right">资金市值</th>
+            <th class="text-right">资金中签率</th>
+          </thead>
+          <tbody>
+          {% for c in collections %}
+            <tr>
+              <td>{{ c.offers_at | bjdate }}</td>
+              <td><a href="{{ url_for('frontend.announcement_collection', exchange=c.exchange) }}">{{ c.exchange }}</a></td>
+              <td>{{ c.name }}</td>
+              <td>{{ c.symbol }}</td>
+              <td class="text-right">{{ c.offer_price | strformat('{:4.2f}') }}</td>
+              <td class="text-right">{{ c.offer_quantity | strformat('{}') }}</td>
+              <td class="text-right">{{ c.offer_cash_ratio | percentage }}</td>
+              <td class="text-right">{{ c.offer_cash | strformat('{:4.1f}') }}</td>
+              <td class="text-right">{{ c.result_ratio_cash | percentage('4.2') }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+
+        {% if pagination %}
+        <nav style="margin-top:-30px;">
+          <ul class="pagination">
+            {% if pagination.has_prev %}
+            <li>
+              <a href="#" aria-label="上一页" data-page="{{pagination.page-1}}">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            {% endif %}
+            {%- for page in pagination.iter_pages() %}
+                {% if page %}
+                  {% if page != pagination.page %}
+                    <li><a href="#" data-page="{{page}}">{{ page }}</a></li>
+                  {% else %}
+                    <li class="active"><a>{{ page }}</a></li>
+                  {% endif %}
+                {% else %}
+                    <li><span class=ellipsis>…</span></li>
+                {% endif %}
+            {%- endfor %}
+            {% if pagination.has_next %}
+            <li>
+              <a href="#" aria-label="下一页" data-page="{{pagination.page+1}}">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </nav>
+        {% endif %} <!-- if pagination -->
+
+
+
+      {% endif %}
     </div>
+  </div>
 {% endblock %}
 
 {% block js %}
@@ -141,7 +217,11 @@
             if (params.exchange === undefined && "{{ exchange }}"){
               params.exchange = "{{ exchange }}";
             }
-            location.href = "{{ url_for('frontend.announcement') }}"+ '?' + $.param(params);
+            {% if tab == 'raw' %}
+            location.href = "{{ url_for('frontend.announcement_raw') }}"+ '?' + $.param(params);
+            {% elif tab == 'collection' %}
+            location.href = "{{ url_for('frontend.announcement_collection') }}"+ '?' + $.param(params);
+            {% endif %}
         }
         $('.filter .values li a').on('click', function(){
           var ftype = $(this).data('type');

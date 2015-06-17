@@ -1,7 +1,7 @@
-from flask import render_template, request
+from flask import render_template, request, redirect
 from werkzeug.contrib.atom import AtomFeed
 
-from ybk.models import Exchange, Announcement
+from ybk.models import Exchange, Announcement, Collection
 from ybk.utils import Pagination
 
 from .views import frontend
@@ -9,10 +9,16 @@ from .views import frontend
 
 @frontend.route('/announcement/')
 def announcement():
+    return redirect('/announcement/raw/')
+
+
+@frontend.route('/announcement/raw/')
+def announcement_raw():
     def type_to_cn(type_):
         return '申购' if type_ == 'offer' else '中签'
 
     nav = 'announcement'
+    tab = 'raw'
     type_ = request.args.get('type', '')
     typecn = '申购' if type_ == 'offer' else '中签'
     exchange = request.args.get('exchange', '')
@@ -46,6 +52,29 @@ def announcement():
         # 只有当数据库为空时才会这样
         updated_at = None
 
+    return render_template('frontend/announcement.html', **locals())
+
+
+@frontend.route('/announcement/collection/')
+def announcement_collection():
+    nav = 'announcement'
+    tab = 'collection'
+
+    exchange = request.args.get('exchange', '')
+    page = int(request.args.get('page', 1) or 1)
+
+    limit = 25
+    skip = limit * (page - 1)
+    cond = {}
+    if exchange:
+        cond['exchange'] = exchange
+    total = Collection.find(cond).count()
+    pagination = Pagination(page, limit, total)
+
+    collections = list(
+        Collection.find(cond)
+        .sort([('offers_at', -1)])
+        .skip(skip).limit(limit))
     return render_template('frontend/announcement.html', **locals())
 
 
