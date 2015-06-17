@@ -1,0 +1,26 @@
+url: http://www.cacecybk.com.cn
+name: 中国艺交所邮币卡交易中心
+abbr: 中艺邮币卡
+offer:
+    index: http://www.cacecybk.com.cn/web/news/news.jsp?parentid=44&classid=56
+    relative: http://www.cacecybk.com.cn
+    detail: a href="([^"]+)"[^>]*>([^>]+)</a></td>\s*<td[^>]*>(\d+-\d+)
+    fields: [url, title, published_at]
+    encoding: gb18030
+    page: http://www.cacecybk.com.cn/web/news/news.jsp?parentid=44&classid=56
+    maxpage: 1
+result:
+    index: http://www.cacecybk.com.cn/web/news/news.jsp?parentid=44&classid=56
+    relative: http://www.cacecybk.com.cn
+    detail: a href="([^"]+)"[^>]*>([^>]*中签[^>]*)</a></td>\s*<td[^>]*>(\d+-\d+)
+    fields: [url, title, published_at]
+    encoding: gb18030
+    page: http://www.cacecybk.com.cn/web/news/news.jsp?parentid=44&classid=56
+    maxpage: 1
+opening:
+    url: http://www.cacecybk.com.cn:16929/SelfOpenAccount/firmController.fir?funcflg=getBrokerList
+    guide: http://www.cacecybk.com.cn/web/news/news_detail.jsp?parentid=76&classid=84&infoid=60
+    bank: [农业银行]
+    code: [无]
+    name: []
+    download: http://www.cacecybk.com.cn/web/news/news_detail.jsp?parentid=79&classid=100&infoid=59
