@@ -23,6 +23,8 @@
     </style>
         <div class="col-md-8" style="overflow: hidden;">
             <h3>原始页面</h3>
+            <p> <a href="{{ announcement.url }}" target="_blank">{{ announcement.url }}</a> </p>
+            <p> <button class="btn btn-md btn-primary remove">删除本公告(不可撤销)</button> </p>
             <iframe id="frame" class="col-md-12" src="{{announcement.url}}"></iframe>
         </div>
         <div class="col-md-4">
@@ -52,7 +54,7 @@
                   <div class="form-group">
                     <div class="row">
                       <div class="col-sm-6 col-sm-offset-3">
-                        <button class="btn btn-primary form-control" name="add-result">添加</button>
+                        <button class="btn btn-primary form-control offer" name="add-result">添加</button>
                       </div>
                     </div>
                   </div>
@@ -88,7 +90,7 @@
                   </table>
                   <div class="col-sm-6 col-sm-offset-3">
                     <div class="save-result" style="color:red"></div>
-                    <button class="btn btn-primary form-control" name="save-result">保存</button>
+                    <button class="btn btn-primary form-control offer" name="save-result">保存</button>
                   </div>
                 </div>
                 {% elif announcement.type_ == 'result' %}
@@ -99,12 +101,22 @@
                     <input type="text" name="symbol" id="symbol" tabindex="1" class="form-control" placeholder="藏品代码" value="">
                   </div>
                   <div class="form-group">
-                    <input type="text" name="invest-cash" id="invest-cash" tabindex="2" class="form-control" placeholder="申购资金">
+                    <div class="row">
+                      <div class="col-sm-5">
+                        <input type="text" name="invest-cash" id="invest-cash" tabindex="2" class="form-control col-sm-6" placeholder="申购资金">
+                      </div>
+                      <div class="col-sm-2" style="margin-top:5px;">
+                        或者
+                      </div>
+                      <div class="col-sm-5">
+                        <input type="text" name="invest-cash-return-ratio" id="invest-cash-return-ratio" tabindex="2" class="form-control col-sm-6" placeholder="资金中签率(%)">
+                      </div>
+                    </div>
                   </div>
                   <div class="form-group">
                     <div class="row">
                       <div class="col-sm-6 col-sm-offset-3">
-                        <button class="btn btn-primary form-control" name="add-result">添加</button>
+                        <button class="btn btn-primary form-control result" name="add-result">添加</button>
                       </div>
 
                     </div>
@@ -115,14 +127,16 @@
                     <thead>
                       <th name="symbol">藏品代码</th>
                       <th name="">申购资金</th>
+                      <th name="">资金中签率</th>
                       <th>删除</th>
                     </thead>
                     <tbody name="tbody">
                         {% for c in colls %}
-                        {% if c.symbol and c.invest_cash %}
+                        {% if c.symbol and (c.invest_cash or c.invest_cash_return_ratio) %}
                         <tr>
                         <td>{{c.symbol}}</td>
                         <td>{{c.invest_cash}}</td>
+                        <td>{{c.invest_cash_return_ratio | percentage(fmt='5.3') }}</td>
                         <td><button type="row">删除</button></td>
                         </tr>
                         {% endif %}
@@ -131,7 +145,7 @@
                   </table>
                   <div class="col-sm-6 col-sm-offset-3">
                     <div class="save-result" style="color:red"></div>
-                    <button class="btn btn-primary form-control" name="save-result">保存</button>
+                    <button class="btn btn-primary form-control result" name="save-result">保存</button>
                   </div>
                 </div>
                 {% else %}
@@ -162,14 +176,43 @@ $(function() {
         $(this).val('');
     })
 
-    $('button[name=add-result]').on('click', function(e){
+    $('button.result[name=add-result]').on('click', function(e){
         e.preventDefault();
         var symbol = $('input[name=symbol]').val();
         var invest_cash = $('input[name=invest-cash]').val();
-        if (symbol && invest_cash) {
+        var invest_cash_return_ratio = $('input[name=invest-cash-return-ratio]').val();
+        if (symbol && (invest_cash || invest_cash_return_ratio)) {
             var tr = '<tr>';
             tr += '<td>' + symbol + '</td>';
             tr += '<td>' + invest_cash + '</td>';
+            tr += '<td>' + invest_cash_return_ratio + '</td>';
+            tr += '<td><button type="row">删除</button></td>';
+            tr += '</tr>';
+            var prev = $('[name=tbody]').html();
+            $('[name=tbody]').html(prev + tr);
+            $('.summary').show();
+        }
+    });
+
+    $('button.offer[name=add-result]').on('click', function(e){
+        e.preventDefault();
+        console.log('haha');
+        var symbol = $('input[name=symbol]').val();
+        var name = $('input[name=name]').val();
+        var offer_quantity = $('input[name=offer-quantity]').val();
+        var offer_price = $('input[name=offer-price]').val();
+        var offers_at = $('input[name=offers-at]').val();
+        var offer_cash_ratio = $('input[name=offer-cash-ratio]').val();
+        console.log(name, symbol, offer_quantity, offer_price, offers_at, offer_cash_ratio)
+        if (symbol && name && offer_quantity && offer_price
+          && offers_at && offer_cash_ratio) {
+            var tr = '<tr>';
+            tr += '<td>' + name + '</td>';
+            tr += '<td>' + symbol + '</td>';
+            tr += '<td>' + offer_quantity + '</td>';
+            tr += '<td>' + offer_price + '</td>';
+            tr += '<td>' + offers_at + '</td>';
+            tr += '<td>' + offer_cash_ratio + '</td>';
             tr += '<td><button type="row">删除</button></td>';
             tr += '</tr>';
             var prev = $('[name=tbody]').html();
@@ -184,7 +227,17 @@ $(function() {
     });
 
     {% if announcement %}
-    $('button[name=save-result').on('click', function(e){
+    $('button.remove').on('click', function(e){
+      e.preventDefault();
+      // 删除本公告
+      $.post("{{ url_for('admin.parse_remove') }}",
+             {_id: '{{announcement._id}}'},
+             function (data){
+                location.href=location.href;
+             });
+    });
+
+    $('button.result[name=save-result]').on('click', function(e){
         e.preventDefault();
         var result = []
         $('.summary tbody tr').each(function(i, tr){
@@ -192,6 +245,41 @@ $(function() {
             result.push({
                 symbol: $(tds[0]).text(),
                 invest_cash: $(tds[1]).text(),
+                invest_cash_return_ratio: $(tds[2]).text(),
+            })
+        });
+        data = {
+            from_url: "{{ announcement.url }}",
+            exchange: "{{ announcement.exchange }}",
+            type: "{{ announcement.type_ }}",
+            result: JSON.stringify(result),
+            status: "已上市",
+        }
+        $.post("{{ url_for('admin.parse_save') }}",
+                data,
+                function (data){
+                    var h = $('.save-result');
+                    if (data.status != 200){
+                        h.text('保存失败: ' + data.reason);
+                    } else{
+                        h.text('保存成功')
+                    }
+                    setTimeout(function(){h.text('')}, 1000);
+                });
+    })
+
+    $('button.offer[name=save-result]').on('click', function(e){
+        e.preventDefault();
+        var result = []
+        $('.summary tbody tr').each(function(i, tr){
+            var tds = $(tr).children('td');
+            result.push({
+                name: $(tds[0]).text(),
+                symbol: $(tds[1]).text(),
+                offer_quantity: $(tds[2]).text(),
+                offer_price: $(tds[3]).text(),
+                offers_at: $(tds[4]).text(),
+                offer_cash_ratio: $(tds[5]).text(),
             })
         });
         data = {

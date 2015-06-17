@@ -239,6 +239,7 @@ class Collection(Model):
 
     invest_mv = FloatField()       # 申购市值(Market Value)
     invest_cash = FloatField()     # 申购资金 *
+    invest_cash_return_ratio = FloatField()   # 资金中签率, 和上面那个二选一 *
 
     updated_at = DateTimeField(auto='modified')
 
@@ -259,6 +260,8 @@ class Collection(Model):
     @property
     def result_ratio_cash(self):
         """ 资金中签率 """
+        if self.invest_cash_return_ratio:
+            return self.invest_cash_return_ratio
         if self.status == "已上市" and self.invest_cash:
             return self.offer_mv * self.offer_cash_ratio / self.invest_cash
 
@@ -272,9 +275,11 @@ class Collection(Model):
     @property
     def offer_min_invest(self):
         """ 必中最低申购资金 """
-        if self.status == "已上市" and self.invest_cash:
-            magnitude = math.ceil(math.log10(1 / self.result_ratio_cash))
-            return self.offer_price * 10 ** magnitude * (1 + self.offer_fee)
+        if self.status == "已上市":
+            if self.invest_cash or self.invest_cash_return_ratio:
+                magnitude = math.ceil(math.log10(1 / self.result_ratio_cash))
+                return self.offer_price * 10 ** magnitude \
+                    * (1 + self.offer_fee)
 
 
 class Quote(object):
