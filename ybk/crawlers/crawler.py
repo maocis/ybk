@@ -10,7 +10,7 @@ from dateutil.parser import parse as parse_datetime
 
 from ybk.models import Exchange, Announcement
 from ybk.log import crawl_log as log
-from ybk.settings import SITES
+from ybk.settings import SITES, get_conf
 import ybk.config
 
 session = requests.Session()
@@ -37,8 +37,7 @@ def crawl(site, maxpage=None):
     if proxy:
         session.proxies = {'http': proxy}
 
-    cpath = pathlib.Path(__file__).parent.parent / 'conf.d' / (site + '.yaml')
-    conf = yaml.load(cpath.open())
+    conf = get_conf(site)
     ex = Exchange({
         'name': conf['name'],
         'url': conf['url'],

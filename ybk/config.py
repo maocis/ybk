@@ -38,9 +38,6 @@ def load_config():
         except:
             pass
 
-    # print('config.yaml文件未找到, '
-    #       '可以从config.yaml.default复制一份放在当前目录')
-    # exit(0)
     return {
         'loglevel': 'INFO',
         'port': 5100,
@@ -63,5 +60,5 @@ def setup_logging(conf):
 
 
 def setup_mongodb(conf):
-    from ybk.mangaa import setup
+    from ybk.models import setup
     setup(conf['mongodb_url'])

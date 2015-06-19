@@ -24,3 +24,10 @@ opening:
     code: [4300000175, 00001290, 999292]
     name: [中南邮票交易中心, 湖南省中南邮票交易中心, 湖南省中南邮票交易中心有限公司]
     download: http://www.znypjy.com/a/rushizhinan/xiangguanxiazai/2015/0212/361.html
+quote:
+    realtime:
+        url: http://180.97.2.111:15910/tradeweb/hq/getHqV_lbData.jsp
+        type: getHqV_lbData
+    history:
+        url: https://180.97.2.112:15914
+        type: http

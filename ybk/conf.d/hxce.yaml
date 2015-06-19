@@ -23,3 +23,12 @@ opening:
     bank: [农业银行]
     code: [235010100372E02]
     download: http://ybk.hxce.cn/upload/haixi_ybk_V5.1.169.1(20150128).exe
+
+quote:
+    realtime:
+        url: http://ta.hxce.cn/front/hq/delay_hq.htm
+        type: delay_hq
+    history:
+        url:
+        type:
+

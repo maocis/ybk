@@ -24,3 +24,10 @@ opening:
     code: [00001188, 1200000119]
     name: [华夏文化艺术品交易所有限公司, 华夏文化艺术品交易所有限公司]
     download: http://www.huaxiacae.com/download/price/d1.html
+quote:
+    realtime:
+        url: http://218.249.27.82:10205/tradeweb/hq/getHqV_lbData.jsp
+        type: getHqV_lbData
+    history:
+        url: http://218.249.27.82:20504
+        type: http

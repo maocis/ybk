@@ -24,3 +24,10 @@ opening:
     code: [00001162, "", 无]
     name: [南京文化艺术产权交易所有限公司, "", 南京文化艺术产权交易所有限公司]
     download: http://www.zgqbyp.com/html/2014-3/201431154.html
+quote:
+    realtime:
+        url: http://180.97.2.74:16929/tradeweb/hq/getHqV_lbData.jsp
+        type: getHqV_lbData
+    history:
+        url: http://180.97.2.67:19914
+        type: http

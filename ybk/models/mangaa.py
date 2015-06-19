@@ -507,6 +507,14 @@ class Model(Document, metaclass=ModelType):
     # provided.
     _id = Field(blank=True)
 
+    @classmethod
+    def _get_db(cls):
+        return db
+
+    @classmethod
+    def _get_collection(cls):
+        return db[cls._collection]
+
     def _get_document(self):
         if self._flexible:
             data = self._data.copy()
@@ -634,7 +642,7 @@ class Model(Document, metaclass=ModelType):
         r = db[self._collection].find_one_and_update(spec, op, upsert=True)
         if not r and not self._data.get('_id'):
             r = db[self._collection].find_one(spec)
-            self._data['_id'] = r['_id']
+            self._data['_id'] = r._id
 
     def update(self, update_dict):
         """ 更具Unique字段更新update_dict

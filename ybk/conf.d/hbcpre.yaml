@@ -24,3 +24,10 @@ opening:
     code: [4200000135, 00001207]
     name: [湖北华中文化产权交易有限公司, 湖北华中文化产权交易所]
     download: http://www.hbcpre.com/index.php/index-show-tid-40.html
+quote:
+    realtime:
+        url: http://trade.hbcpre.com:16906/tradeweb/hq/getHqV_lbData.jsp
+        type: getHqV_lbData
+    history:
+        url: http://61.183.138.62:19914
+        type: http

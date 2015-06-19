@@ -24,3 +24,10 @@ opening:
     code: [00001211, 无]
     name: [北京产权交易所有限公司, 北京产权交易所有限公司]
     download: http://dzp.wjybk.com/?action-category-catid-113
+quote:
+    realtime:
+        url: http://118.145.4.44:16907/tradeweb/hq/hqV_lbtc.jsp
+        type: hqV_lbtc
+    history:
+        url: http://tradeweb1.dzp.wjybk.com:16914
+        type: http

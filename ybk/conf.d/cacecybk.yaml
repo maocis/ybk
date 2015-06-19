@@ -24,3 +24,10 @@ opening:
     code: [无]
     name: []
     download: http://www.cacecybk.com.cn/web/news/news_detail.jsp?parentid=79&classid=100&infoid=59
+quote:
+    realtime:
+        url:
+        type:
+    history:
+        url: http://118.145.4.149:16934 
+        type: http

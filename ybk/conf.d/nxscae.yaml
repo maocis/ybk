@@ -24,3 +24,10 @@ opening:
     code: [SPMS000025]
     name: [宁夏文化艺术品产权交易中心有限公司]
     download: http://www.nxscae.com/zn/xz/
+quote:
+    realtime:
+        url: http://222.185.140.167:9004/tradeweb/hq/getHqV_lbData.jsp
+        type: getHqV_lbData
+    history:
+        url: http://218.249.27.82:20
+        type: http

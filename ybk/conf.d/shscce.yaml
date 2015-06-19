@@ -24,3 +24,10 @@ opening:
     code: [3100000155, 08100000, SPMS000024, 900214, 15601001]
     name: [上海邮币卡交易中心股份有限公司, 邮币卡中心, 上海邮币卡交易中心股份有限公司, 上海邮币卡交易中心, 上海邮币卡交易中心]
     download: http://www.shscce.com/html/shscce/rjxzJyzn/index_1.shtml
+quote:
+    realtime:
+        url: http://ta.shscce.com:8080/front/hq/delay_hq.htm
+        type: delay_hq
+    history:
+        url:
+        type:

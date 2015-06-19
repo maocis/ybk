@@ -24,3 +24,10 @@ opening:
     code: [1500000230]
     name: [内蒙古文化产权交易所]
     download: http://121.43.73.201:8080/nmgcaee/szcaee/download/nmgwjs_V5.1.160.6.exe
+quote:
+    realtime:
+        url: http://121.43.72.56:8081/hq/display_hq.htm
+        type: display_hq
+    history:
+        url:
+        type:

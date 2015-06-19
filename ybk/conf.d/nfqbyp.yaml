@@ -24,3 +24,10 @@ opening:
     code: [4400000157, "", 无, 无]
     name: [广东省南方文化产权交易所有限公司, "", 广东省南方文化产权交易所有限公司, 南方文化产权交易中心]
     download: http://www.nfqbyp.com/displaynews.html?newsID=255207
+quote:
+    realtime:
+        url: http://121.40.125.254:18080/tradeweb/refreshHQ
+        type: refreshHQ
+    history:
+        url: http://183.6.187.34:19914
+        type: http

@@ -23,4 +23,11 @@ opening:
     bank: [农业银行]
     code: [""]
     download: http://www.zrxtjs.com/downs/80.html
+quote:
+    realtime:
+        url: http://118.145.4.48:16966/tradeweb/hq/getHqV_lbData.jsp
+        type: getHqV_lbData
+    history:
+        url: http://115.182.221.15:16964
+        type: http
 

@@ -4,6 +4,7 @@ import logging
 serve_log = logging.getLogger("ybk.serve")
 crawl_log = logging.getLogger("ybk.crawl")
 parse_log = logging.getLogger("ybk.parse")
+quote_log = logging.getLogger("ybk.quote")
 
 
 try:

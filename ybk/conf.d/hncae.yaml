@@ -24,3 +24,10 @@ opening:
     code: [4420000180, 08160000]
     name: [湖南文化艺术品产权交易所有限责任公司, 湖南文交所]
     download: http://ybk.hncae.net/rjxzJyzn/index.htm
+quote:
+    realtime:
+        url: http://ta.hncae.net/front/hq/delay_hq.htm
+        type: delay_hq
+    history:
+        url: 
+        type:

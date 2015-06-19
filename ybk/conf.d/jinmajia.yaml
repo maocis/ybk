@@ -24,3 +24,10 @@ opening:
     code: [1100000061]
     name: [北京金马甲产权网络交易有限公司]
     download: http://www.jinmajia.com/lyzt/2014/02/coin/download.shtml
+quote:
+    realtime:
+        url: http://218.246.20.83:16929/tradeweb/hq/getHqV_lbData.jsp
+        type: getHqV_lbData
+    history:
+        url: http://jyqz.jinmajia.com:16914
+        type: http

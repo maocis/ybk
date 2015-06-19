@@ -17,3 +17,12 @@ CONFS = [
                / (site + '.yaml')).open())
     for site in SITES
 ]
+
+
+def get_conf(abbr_or_site):
+    if abbr_or_site in ABBRS:
+        site = ABBRS[abbr_or_site]
+    else:
+        site = abbr_or_site
+
+    return CONFS[SITES.index(site)]

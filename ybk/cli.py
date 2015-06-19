@@ -2,12 +2,14 @@
 # -*- coding: utf-8 -*-
 import pathlib
 import argparse
+from datetime import datetime, timedelta
 
 from ybk.settings import ABBRS
 from ybk.config import setup_config
 from ybk.crawlers import crawl, crawl_all
 from ybk.parsers import parse, parse_all
-from ybk.log import crawl_log
+from ybk.quotes import realtime, realtime_all, history, history_all
+from ybk.log import crawl_log, quote_log
 
 
 def _get_site_by_abbr(abbr):
@@ -29,6 +31,18 @@ def do_cron(parser, args):
             crawl_all()
         except:
             crawl_log.exception('出错啦')
+        finally:
+            path.unlink()
+
+        path.open('w').write('')
+        try:
+            now = datetime.utcnow() + timedelta(hours=8)
+            if 9 <= now.hour <= 20:
+                realtime_all()
+            if 19 <= now.hour <= 24:
+                history_all()
+        except:
+            quote_log.exception('出错啦')
         finally:
             path.unlink()
     else:
@@ -53,6 +67,30 @@ def do_parse(parser, args):
     elif args.sites:
         for site in args.sites:
             parse(_get_site_by_abbr(site))
+    else:
+        parser.print_help()
+
+
+def do_quote(parser, args):
+    setup_config(args)
+    if args.qsubparser == 'realtime':
+        parser = parser._actions[-1].choices['realtime']
+        if args.sites:
+            for site in args.sites:
+                realtime(site)
+        elif args.all:
+            realtime_all()
+        else:
+            parser.print_help()
+    elif args.qsubparser == 'history':
+        parser = parser._actions[-1].choices['history']
+        if args.sites:
+            for site in args.sites:
+                history(site)
+        elif args.all:
+            history_all()
+        else:
+            parser.print_help()
     else:
         parser.print_help()
 
@@ -104,8 +142,23 @@ def main():
                                    help='解析下载(尚未解析)的数据')
     pgroup = pparse.add_mutually_exclusive_group(required=False)
     pgroup.add_argument('--sites', nargs='+',
-                        help='解析的站点简称,  e.g. "江苏所", 默认全部解析')
+                        help='解析的站点简称,  e.g. "南京文交所", 默认全部解析')
     pgroup.add_argument('--all', action='store_true', help='解析全部站点')
+
+    # 行情相关
+    qparse = subparsers.add_parser('quote',
+                                   help='获取行情信息')
+    qsubparsers = qparse.add_subparsers(dest='qsubparser')
+    qrparse = qsubparsers.add_parser('realtime', help='实时行情')
+    qhparse = qsubparsers.add_parser('history', help='历史行情')
+    group = qrparse.add_mutually_exclusive_group(required=False)
+    group.add_argument('--sites', nargs='+',
+                       help='解析的站点简称,  e.g. "南京文交所", 默认全部解析')
+    group.add_argument('--all', action='store_true', help='解析全部站点')
+    group = qhparse.add_mutually_exclusive_group(required=False)
+    group.add_argument('--sites', nargs='+',
+                       help='解析的站点简称,  e.g. "南京文交所", 默认全部解析')
+    group.add_argument('--all', action='store_true', help='解析全部站点')
 
     # flask相关
     pserve = subparsers.add_parser('serve',
@@ -141,8 +194,8 @@ def main():
     # 子命令路由
     args = parser.parse_args()
     for p, sp in zip(
-            [None, pcron, pcrawl, pparse, pserve],
-            ['list', 'cron', 'crawl', 'parse', 'serve']):
+            [None, pcron, pcrawl, pparse, pserve, qparse],
+            ['list', 'cron', 'crawl', 'parse', 'serve', 'quote']):
         if sp == args.subparser:
             globals()['do_' + args.subparser](p, args)
             break

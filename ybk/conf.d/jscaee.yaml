@@ -24,3 +24,10 @@ opening:
     code: [00001163, 250008, SPMS000018]
     name: ["", "", ""]
     download: http://ybk.jscaee.com.cn/guide/downloads/2014-04/01/0401I2014.html
+quote:
+    realtime:
+        url: http://180.96.20.223/mnginfo/quotation/quotationAction_queryQuotations.do
+        type: quotationAction_queryQuotations
+    history:
+        url: http://180.96.20.219:16844
+        type: http
