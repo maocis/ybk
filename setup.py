@@ -20,6 +20,7 @@ setup(
         'bcrypt',
         'pyexecjs',
         'pyyaml',
+        'lxml',
         'pymongo>=3',
         'python-dateutil',
     ],
