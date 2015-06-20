@@ -10,12 +10,12 @@ offer:
     page: http://www.cacecybk.com.cn/web/news/news.jsp?parentid=44&classid=56
     maxpage: 1
 result:
-    index: http://www.cacecybk.com.cn/web/news/news.jsp?parentid=44&classid=56
+    index: http://www.cacecybk.com.cn/web/news/news.jsp?parentid=44&classid=59
     relative: http://www.cacecybk.com.cn
     detail: a href="([^"]+)"[^>]*>([^>]*中签[^>]*)</a></td>\s*<td[^>]*>(\d+-\d+)
     fields: [url, title, published_at]
     encoding: gb18030
-    page: http://www.cacecybk.com.cn/web/news/news.jsp?parentid=44&classid=56
+    page: http://www.cacecybk.com.cn/web/news/news.jsp?parentid=44&classid=59
     maxpage: 1
 opening:
     url: http://www.cacecybk.com.cn:16929/SelfOpenAccount/firmController.fir?funcflg=getBrokerList
