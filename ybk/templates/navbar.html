@@ -1,8 +1,9 @@
+
       <!-- Static navbar -->
       {% set navbars = [
         {'nav': 'index', 'name': '首页', 'url': url_for('frontend.index')},
         {'nav': 'walkthrough', 'name': '开户攻略', 'url': url_for('frontend.walkthrough')},
-        {'nav': 'announcement', 'name': '公告信息', 'url': url_for('frontend.announcement')},
+        {'nav': 'announcement', 'name': '公告信息', 'url': url_for('frontend.announcement'), 'submenu': [{'name': '公告原文', 'url': url_for('frontend.announcement_raw')}, {'name': '交易品种', 'url': url_for('frontend.announcement_collection')}]},
         {'nav': 'analysis', 'name': '中签分析', 'url': url_for('frontend.analysis')},
         {'nav': 'trade', 'name': '交易行情', 'url': url_for('frontend.trade')},
         {'nav': 'forum', 'name': '论坛交流', 'url': url_for('frontend.forum')},
@@ -24,9 +25,22 @@
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
             {% for nb in navbars %}
-              <li {% if nav == nb.nav %}class="active"{% endif %}>
-                <a href="{{ nb.url }}">{{ nb.name }}</a>
-              </li>
+              {% if nb.submenu %}
+                <li role="presentation" class="dropdown {% if nav == nb.nav %}active{% endif %}">
+                  <a class="dropdown-toggle" data-toggle="dropdown" href="{{ nb.url }}" role="button" aria-haspopup="true" aria-expanded="false">
+                    {{ nb.name }} <span class="caret"></span>
+                  </a>
+                  <ul class="dropdown-menu">
+                  {% for sub in nb.submenu %}
+                    <li><a href="{{ sub.url }}">{{ sub.name }}</a></li>
+                  {% endfor %}
+                  </ul>
+                </li>
+              {% else %}
+                <li {% if nav == nb.nav %}class="active"{% endif %}>
+                  <a href="{{ nb.url }}">{{ nb.name }}</a>
+                </li>
+              {% endif %}
             {% endfor %}
             </ul>
             {% include "user.html" %}

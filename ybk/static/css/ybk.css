@@ -3,6 +3,19 @@
 }
 
 
+/* navbar.html 
+
+在大屏幕上, 下拉菜单鼠标hover就显示
+*/
+
+
+@media (min-width: 979px) {
+  ul.nav li.dropdown:hover > ul.dropdown-menu {
+    display: block;
+  }
+}
+
+
 /* frontend/announcement.html */
 
 .filters {
