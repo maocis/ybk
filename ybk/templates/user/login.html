@@ -9,10 +9,10 @@
           <div class="panel-heading">
             <div class="row">
               <div class="col-xs-6">
-                <a href="#" class="active" id="login-form-link">登录</a>
+                <a href="#login" class="active" id="login-form-link">登录</a>
               </div>
               <div class="col-xs-6">
-                <a href="#" id="register-form-link">注册</a>
+                <a href="#register" id="register-form-link">注册</a>
               </div>
             </div>
             <hr>
@@ -51,23 +51,33 @@
                   </div>
                 </form>
                 <form id="register-form" action="#" method="post" role="form" style="display: none;">
-                  <h3 class="text-center">暂不开放</h3>
+                  <!-- <h3 class="text-center">暂不开放</h3> -->
                   <div class="form-group">
                     <input type="text" name="mobile" id="mobile" tabindex="1" class="form-control" placeholder="手机号码" value="">
                   </div>
-<!--                   <div class="form-group">
+                  <div class="form-group">
                     <input type="text" name="username" id="username" tabindex="2" class="form-control" placeholder="用户名" value="">
                   </div>
                   <div class="form-group">
                     <input type="password" name="password" id="password" tabindex="3" class="form-control" placeholder="密码">
-                  </div> -->
-<!--                   <div class="form-group">
-                    <input type="text" name="vcode" id="vcode" tabindex="4" class="form-control" placeholder="验证码">
-                  </div> -->
+                  </div>
+                  <div class="form-group">
+                    <input type="password" name="password2" id="password2" tabindex="4" class="form-control" placeholder="重复密码">
+                  </div>
                   <div class="form-group">
                     <div class="row">
-                      <div class="col-sm-6 col-sm-offset-3">
-                        <input type="submit" name="register-submit" id="register-submit" tabindex="5" class="form-control btn btn-register" value="点击发送验证码">
+                      <div class="col-sm-7">
+                        <input type="text" name="code" id="code" tabindex="5" class="form-control" placeholder="验证码">
+                      </div>
+                      <div class="col-sm-5">
+                        <button name="send-code" tabindex="6" class="btn btn-primary form-control">点击发送验证码</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="row">
+                      <div class="col-md-6 col-md-offset-3">
+                        <input type="submit" name="register-submit" id="register-submit" tabindex="7" class="btn btn-register form-control" value="注册" />
                       </div>
                     </div>
                   </div>
@@ -88,23 +98,29 @@ $(function() {
     $("#register-form").fadeOut(100);
     $('#register-form-link').removeClass('active');
     $(this).addClass('active');
-    e.preventDefault();
   });
   $('#register-form-link').click(function(e) {
     $("#register-form").delay(100).fadeIn(100);
     $("#login-form").fadeOut(100);
     $('#login-form-link').removeClass('active');
     $(this).addClass('active');
-    e.preventDefault();
   });
+
+  $(location.hash+'-form-link').trigger('click');
+  function clearError(){
+    setTimeout(
+      function() {
+        $('.error').text('');
+      },
+    1500);
+  }
   $('input[type=submit]').click(function(e){
     e.preventDefault();
-    console.log($(this).attr('name'));
     var name = $(this).attr('name');
     if (name == 'login-submit') {
-        var mobile = $('[name=mobile]').val();
-        var password = $('[name=password]').val();
-        var remember = $('[name=remember]').val();
+        var mobile = $('#login-form [name=mobile]').val();
+        var password = $('#login-form [name=password]').val();
+        var remember = $('#login-form [name=remember]').val();
         $.post(
             "{{ url_for('user.check_login') }}",
             {mobile: mobile, password: password, remember: remember},
@@ -115,10 +131,99 @@ $(function() {
                     $('.error').text('');
                     location.href = '{{ next_url }}'
                 }
+                clearError();
             }
             );
     } else if (name == 'register-submit') {
+      var mobile = $('#register-form [name=mobile]').val();
+      var username = $('#register-form [name=username]').val();
+      var password = $('#register-form [name=password]').val();
+      var password2 = $('#register-form [name=password2]').val();
+      var code = $('#register-form [name=code]').val();
+      if (!mobile.match(/^\d{11}/)) {
+        $('.error').text('手机号码必须为11位数字');
+        clearError();
+      } else if (!username) {
+        $('.error').text('用户名必须不为空');
+        clearError();
+      } else if (password != password2) {
+        $('.error').text('两次密码不匹配');
+        clearError();
+      } else if (password.length < 6) {
+        $('.error').text('密码长度不能小于6位');
+        clearError();
+      } else if (!code.match(/^\d{6}$/)) {
+        $('.error').text('验证码必须是6位数字');
+        clearError();
+      } else {
+        $.post(
+          "{{ url_for('api.verify_code') }}",
+          {mobile: mobile, code: code},
+          function(data) {
+            if (data.status != 200){
+              $('.error').text('验证失败: ' + data.reason);
+              clearError();
+            } else{
+              $.post(
+                "{{ url_for('user.register') }}",
+                {mobile: mobile, username: username, password: password,
+                  code:code},
+                  function (data) {
+                    if (data.status != 200){
+                      $('.error').text('注册失败: ' + data.reason);
+                    } else {
+                      location.href = "{{ url_for('user.register_success') }}";
+                    }
+                  }
+                )
+            }
+          }
+          )
+      }
+    }
+  })
+  function toggleCode(timeout) {
+    var input = $('#register-form [name=send-code]')
+    var text = input.text();
+    var t;
+    if (timeout) {
+      input.prop('disabled', !input.prop('disabled'));
+      function checkTimeout() {
+        input.text(text + '(' + (timeout / 1000) + '秒)');
+        timeout -= 1000;
 
+        if (timeout < 0) {
+          input.prop('disabled', !input.prop('disabled'));
+          input.text(text);
+        } else {
+          t = setTimeout(checkTimeout, 1000);
+        }
+        
+      }
+      checkTimeout();
+    } else {
+      input.prop('disabled', !input.prop('disabled'));
+    }
+  }
+  $("#register-form [name=send-code]").on('click', function(e) {
+    e.preventDefault();
+    var mobile = $('#register-form [name=mobile]').val();
+    if ( !mobile.match(/^\d{11}$/) ){
+      $('.error').text('发送失败: 请填写正确的手机号码');
+      clearError();
+    } else {
+      $('.error').text('');
+      $.post("{{ url_for('api.send_code') }}",
+        {mobile: mobile, type: 'register'},
+        function (data){
+          if (data.status != 200){
+            $('.error').text('发送失败: ' + data.reason);
+            clearError();
+          } else{
+            $('.error').text('');
+            toggleCode(90000);
+          }
+        })
     }
   })
 });

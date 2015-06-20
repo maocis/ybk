@@ -3,7 +3,7 @@ import functools
 from flask import render_template, request, jsonify, redirect, current_app
 from flask.ext.login import login_user, current_user, logout_user
 
-from ybk.models import User
+from ybk.models import User, Code
 
 from .views import user
 
@@ -22,6 +22,30 @@ def admin_required(func):
 def login():
     next_url = request.args.get('next', '/')
     return render_template('user/login.html', **locals())
+
+
+@user.route('/user/login/register.ajax', methods=['POST'])
+def register():
+    mobile = request.form.get('mobile', '')
+    username = request.form.get('username', '')
+    password = request.form.get('password', '')
+    code = request.form.get('code', '')
+    v, reason = Code.verify(mobile, code)
+    if v:
+        try:
+            u = User.create_user(mobile, username, password)
+        except Exception as e:
+            return jsonify(status=500, reason=str(e))
+        else:
+            u.activate()
+        return jsonify(status=200)
+    else:
+        return jsonify(status=400, reason=reason)
+
+
+@user.route('/user/register_success')
+def register_success():
+    return render_template('user/register_success.html', **locals())
 
 
 @user.route('/user/login/check.ajax', methods=['POST'])

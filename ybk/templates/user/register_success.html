@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block css %}
+    <link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet">
+{% endblock %}
+{% block main %}
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        <div class="panel panel-login">
+          <div class="panel-heading">
+            <div class="row">
+              <div class="col-xs-6">
+                <a href="{{ url_for('user.login') }}#login" class="active" id="login-form-link">登录</a>
+              </div>
+              <div class="col-xs-6">
+                <a href="{{ url_for('user.login') }}#register" id="register-form-link">注册</a>
+              </div>
+            </div>
+            <hr>
+            <div class="error" style="margin-top:10px; margin-bottom:-10px; color:blue">
+              注册成功！
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+<script>
+</script>
+{% endblock %}
