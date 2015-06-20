@@ -17,15 +17,15 @@
       </div>
     {% else %}
     <style>
-    #frame { height: 5000px; border: 0px solid black; }
-    #frame { zoom: 0.5; -moz-transform: scale(0.5); -moz-transform-origin: 0 0; }
+    #frame { height: 5000px; width:100%; border: 0px solid black; }
+    #frame { zoom: 0.5; }
     .affix { margin-top: -50px;}
     </style>
         <div class="col-md-8" style="overflow: hidden;">
             <h3>原始页面</h3>
             <p> <a href="{{ announcement.url }}" target="_blank">{{ announcement.url }}</a> </p>
             <p> <button class="btn btn-md btn-primary remove">删除本公告(不可撤销)</button> </p>
-            <iframe id="frame" class="col-md-12" src="{{announcement.url}}"></iframe>
+            <iframe id="frame" src="{{announcement.url}}"></iframe>
         </div>
         <div class="col-md-4">
           <nav class="sidebar-parse" data-spy="affix" data-offset-top="0">
