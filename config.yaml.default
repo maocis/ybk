@@ -6,3 +6,5 @@ num_processes: 2
 token: TOKEN
 wechat_appid: WECHAT_APPID
 wechat_appsecret: WECHAT_APPSECRET
+yunpian_apikey: YUNPIAN_APIKEY # 发验证短信
+proxy: HTTP_PROXY # 爬虫用
