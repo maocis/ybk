@@ -1,0 +1,42 @@
+url: http://ybk.nccaee.com
+    g
+name: 南昌文化产权邮币卡交易中心
+abbr: 南昌文交所
+stock:
+    index: http://ybk.nccaee.com/web/news/news.jsp?parentid=44&classid=44
+    relative: http://ybk.nccaee.com/
+    detail: <a href="([^"]+)"[^>]*>([^>]*入库申请[^>]*)</a></td>\s*<td[^>]*>\[(\d+-\d+-\d+)\]
+    fields: [url, title, published_at]
+    encoding: gb18030
+    page: http://ybk.nccaee.com/web/news/news.jsp?parentid=44&classid=44
+    maxpage: 1
+offer:
+    index: http://ybk.nccaee.com/web/news/news.jsp?parentid=44&classid=44
+    relative: http://ybk.nccaee.com/
+    detail: <a href="([^"]+)"[^>]*>([^>]*申购[^>]*)</a></td>\s*<td[^>]*>\[(\d+-\d+-\d+)\]
+    fields: [url, title, published_at]
+    encoding: gb18030 
+    page: http://ybk.nccaee.com/web/news/news.jsp?parentid=44&classid=44
+    maxpage: 1
+result:
+    index: http://ybk.nccaee.com/web/news/news.jsp?parentid=44&classid=44
+    relative: http://118.145.4.144/
+    detail: <a href="([^"]+)"[^>]*>([^>]*中签[^>]*)</a></td>\s*<td[^>]*>\[(\d+-\d+-\d+)\]
+    fields: [url, title, published_at]
+    encoding: gb18030
+    page: http://ybk.nccaee.com/web/news/news.jsp?parentid=44&classid=44
+    maxpage: 1
+opening:
+    url: 
+    guide: 
+    bank: [平安银行]
+    code: [无]
+    name: [成都文化产权交易所]
+    download: 
+quote:
+    realtime:
+        url: 
+        type: 
+    history:
+        url: 
+        type: 
