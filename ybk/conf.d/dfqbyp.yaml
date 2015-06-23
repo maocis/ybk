@@ -1,0 +1,41 @@
+url: http://118.145.4.144/
+name: 东方钱币邮票藏品
+abbr: 成都文交所
+stock:
+    index: http://118.145.4.144/web/news/news.jsp?parentid=46&classid=56
+    relative: http://118.145.4.144/
+    detail: <a href="([^"]+)">([^>]*托管[^>]*)</a></td>\s*<td[^>]*>\[(\d+-\d+-\d+)\]
+    fields: [url, title, published_at]
+    encoding: gb18030
+    page: http://118.145.4.144/web/news/news.jsp?parentid=46&classid=56
+    maxpage: 1
+offer:
+    index: http://118.145.4.144/web/news/news.jsp?parentid=46&classid=56
+    relative: http://118.145.4.144/
+    detail: <a href="([^"]+)">([^>]*申购[^>]*)</a></td>\s*<td[^>]*>\[(\d+-\d+-\d+)\]
+    fields: [url, title, published_at]
+    encoding: gb18030
+    page: http://118.145.4.144/web/news/news.jsp?parentid=46&classid=56
+    maxpage: 1
+result:
+    index: http://118.145.4.144/web/news/news.jsp?parentid=46&classid=56
+    relative: http://118.145.4.144/
+    detail: <a href="([^"]+)">([^>]*中签[^>]*)</a></td>\s*<td[^>]*>\[(\d+-\d+-\d+)\]
+    fields: [url, title, published_at]
+    encoding: gb18030
+    page: http://118.145.4.144/web/news/news.jsp?parentid=46&classid=56
+    maxpage: 1
+opening:
+    url: http://118.145.4.144:16929/SelfOpenAccount/firmController.fir?funcflg=getBrokerList
+    guide: http://118.145.4.144/web/news/news_detail.jsp?parentid=47&classid=58&infoid=145
+    bank: [平安银行]
+    code: [无]
+    name: [成都文化产权交易所]
+    download: http://118.145.4.144/web/news/news_down.jsp
+quote:
+    realtime:
+        url: 
+        type: 
+    history:
+        url: 
+        type: 

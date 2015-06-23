@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import re
-import pathlib
 from datetime import timedelta
 
-import yaml
 import requests
 from dateutil.parser import parse as parse_datetime
 
@@ -44,8 +42,10 @@ def crawl(site, maxpage=None):
         'abbr': conf['abbr'],
     })
     ex.upsert()
-    for type_ in ['offer', 'result']:
-        tconf = conf[type_]
+    for type_ in ['stock', 'offer', 'result']:
+        tconf = conf.get(type_)
+        if not tconf:
+            continue
         if maxpage is None:
             maxpage = tconf['maxpage']
         else:
