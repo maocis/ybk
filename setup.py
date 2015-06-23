@@ -21,6 +21,7 @@ setup(
         'pyexecjs',
         'pyyaml',
         'lxml',
+        'cssselect',
         'pymongo>=3',
         'python-dateutil',
     ],
