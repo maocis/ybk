@@ -1,0 +1,41 @@
+url: http://www.xjsybk.com
+name: 西交所邮币卡运营中心
+abbr: 西部文交所
+stock:
+    index: http://www.xjsybk.com/xinxipilu/
+    relative: http://www.xjsybk.com/
+    detail: <a href="([^"]+)"[^>]*>([^>]*托管[^>]*)</a><span>(\d+-\d+-\d+)
+    fields: [url, title, published_at]
+    encoding: utf-8
+    page: http://www.xjsybk.com/xinxipilu/
+    maxpage: 1
+offer:
+    index: http://www.xjsybk.com/xinxipilu/
+    relative: http://www.xjsybk.com/
+    detail: <a href="([^"]+)"[^>]*>([^>]*申购[^>]*)</a><span>(\d+-\d+-\d+)
+    fields: [url, title, published_at]
+    encoding: utf-8
+    page: http://www.xjsybk.com/xinxipilu/
+    maxpage: 1
+result:
+    index: http://www.xjsybk.com/xinxipilu/
+    relative: http://www.xjsybk.com/
+    detail: <a href="([^"]+)"[^>]*>([^>]*中签[^>]*)</a><span>(\d+-\d+-\d+)
+    fields: [url, title, published_at]
+    encoding: utf-8
+    page: http://www.xjsybk.com/xinxipilu/
+    maxpage: 1
+opening:
+    url: https://118.145.4.50:10006/common_front/checkneedless/firmapply/registerforwardAuto.action?brokerNo=518000
+    guide: http://www.xjsybk.com/rushizhinan/kaihuliucheng/
+    bank: [招商银行, 农业银行, 中国银行]
+    code: [999273, 无, 无]
+    name: [兰州西部商品交易中心有限公司, 无, 兰州西部商品交易中心有限公司（端口2）]
+    download: http://www.xjsybk.com/xiangguanxiazai/xiangguanxiazai/
+quote:
+    realtime:
+        url: 
+        type: 
+    history:
+        url: 
+        type: 
