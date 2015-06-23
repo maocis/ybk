@@ -178,6 +178,7 @@ $(function() {
 
     $('button.result[name=add-result]').on('click', function(e){
         e.preventDefault();
+        e.target.blur();
         var symbol = $('input[name=symbol]').val();
         var invest_cash = $('input[name=invest-cash]').val();
         var invest_cash_return_ratio = $('input[name=invest-cash-return-ratio]').val();
@@ -196,7 +197,7 @@ $(function() {
 
     $('button.offer[name=add-result]').on('click', function(e){
         e.preventDefault();
-        console.log('haha');
+        e.target.blur();
         var symbol = $('input[name=symbol]').val();
         var name = $('input[name=name]').val();
         var offer_quantity = $('input[name=offer-quantity]').val();
@@ -229,6 +230,7 @@ $(function() {
     {% if announcement %}
     $('button.remove').on('click', function(e){
       e.preventDefault();
+      e.target.blur();
       // 删除本公告
       $.post("{{ url_for('admin.parse_remove') }}",
              {_id: '{{announcement._id}}'},
@@ -239,6 +241,7 @@ $(function() {
 
     $('button.result[name=save-result]').on('click', function(e){
         e.preventDefault();
+        e.target.blur();
         var result = []
         $('.summary tbody tr').each(function(i, tr){
             var tds = $(tr).children('td');
@@ -270,6 +273,7 @@ $(function() {
 
     $('button.offer[name=save-result]').on('click', function(e){
         e.preventDefault();
+        e.target.blur();
         var result = []
         $('.summary tbody tr').each(function(i, tr){
             var tds = $(tr).children('td');

@@ -1,0 +1,170 @@
+{% extends "layout.html" %}
+{% block css %}
+    <link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/selectize.bootstrap3.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap-datepicker3.min.css') }}" rel="stylesheet">
+{% endblock %}
+{% block main %}
+    <div class="row">
+      <div class="col-md-8">
+        <h3>持仓概况</h3>
+        <div class="col-md-4">
+         <b>参与的交易所:</b> {{ num_exchanges or 0 }}家
+        </div>
+        <div class="col-md-4">
+         <b>持有藏品:</b> {{ num_collections or 0 }}种
+        </div>
+        <div class="col-md-4">
+         <b>已卖出藏品:</b> {{ num_sold or 0 }}种
+        </div>
+        <div class="col-md-4">
+         <b>平均涨幅:</b> {{ average_increase or 0 | percentage }}
+        </div>
+        <div class="col-md-4">
+         <b>未实现收益(浮盈):</b> {{ unrealized_profit or 0 }}元
+        </div>
+        <div class="col-md-4">
+         <b>已实现收益:</b> {{ realized_profit or 0 }}元
+        </div>
+        <table class="table">
+          <thead>
+            <th>交易所</th>
+            <th>藏品名称</th>
+            <th>藏品代码</th>
+            <th>买入均价</th>
+            <th>买入数量</th>
+            <th>现价</th>
+            <th>涨跌幅</th>
+            <th>浮盈</th>
+            <th>操作</th>
+          </thead>
+          <tbody>
+          {% for p in position %}
+            <tr>
+              <td>{{ p.exchange }}</td>
+              <td>{{ p.name }}</td>
+              <td>{{ p.symbol }}</td>
+              <td>{{ p.avg_buy_price | strformat('{:4.2f}') }}</td>
+              <td>{{ p.quantity }}</td>
+              <td>{{ p.latest_price | strformat('{:4.2f}') }}</td>
+              <td>{{ p.increase | percentage }}</td>
+              <td>{{ p.unrealized_profit | strformat('{:4.2f}') }}</td>
+              <td>
+                <button class="btn btn-sm" name="buy" data-exchange="{{ p.exchange }}" data-symbol="{{ p.symbol }}">买入</button>
+                <button class="btn btn-sm" name="sell" data-exchange="{{ p.exchange }}" data-symbol="{{ p.symbol }}">卖出</button>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="col-md-4">
+        <br />
+        <br />
+        <h4>交易操作</h4>
+        <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="active"><a href="#buy" aria-controls="buy" role="tab" data-toggle="tab">买入</a></li>
+          <li role="presentation"><a href="#sell" aria-controls="sell" role="tab" data-toggle="tab">卖出</a></li>
+          <li role="presentation"><a href="#record" aria-controls="record" role="tab" data-toggle="tab">交易记录</a></li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+          <div role="tabpanel" class="tab-pane active" id="buy">
+            <br />
+            <form class="form-horizontal">
+              <div class="form-group">
+                <label for="operated-at" class="col-sm-4 control-label">买入日期</label>
+                <div class="col-sm-8">
+                  <input type="text" class="form-control" id="operated-at" placeholder="买入日期">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="exchange" class="col-sm-4 control-label">交易所</label>
+                <div class="col-sm-8">
+                  <select class="form-control" id="exchange" placeholder="交易所"></select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="symbol" class="col-sm-4 control-label">藏品代码</label>
+                <div class="col-sm-8">
+                  <select class="form-control" id="symbol" placeholder="藏品代码"></select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="buy-price" class="col-sm-4 control-label">买入价</label>
+                <div class="col-sm-8">
+                  <input type="text" class="form-control" id="buy-price" placeholder="买入价">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="buy-quantity" class="col-sm-4 control-label">买入数量</label>
+                <div class="col-sm-8">
+                  <input type="text" class="form-control" id="buy-quantity" placeholder="买入数量">
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-sm-offset-4 col-sm-8">
+                  <button type="submit" name="add-buy" class="btn btn-default">+ 添加</button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div role="tabpanel" class="tab-pane" id="sell">
+            <br />
+            卖出操作施工中...
+          </div>
+          <div role="tabpanel" class="tab-pane" id="record">
+            <br />
+            交易记录施工中...
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/sifter.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/microplugin.js') }}"></script>
+<script src="{{ url_for('static', filename='js/selectize.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-datepicker.zh-CN.min.js') }}"></script>
+<script>
+$(function() {
+  $('#operated-at').datepicker({
+    format: "yyyymmdd",
+    language: "zh-CN",
+    autoclose: true
+  });
+  $('#exchange').selectize({
+    options: {{ exchanges | safe }},
+  })
+  $('#symbol').selectize({
+    options: [],
+    create: false,
+    persist: false,
+    load: function(query, callback) {
+      var self = this;
+      if (!query.length) return callback();
+      $.ajax({
+        url: "{{ url_for('api.load_symbols') }}",
+        data: {query: query, exchange: $('#exchange').val()},
+        type: 'GET',
+        error: function() {
+          callback();
+        },
+        success: function(data) {
+          self.clearOptions();
+          callback(data.result);
+        }
+      })
+    }
+  })
+
+  $('button[name=add-buy]').on('click', function(e) {
+    e.preventDefault();
+    e.target.blur();
+  })
+});
+</script>
+{% endblock %}

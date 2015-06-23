@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from .mangaa import (
     Model,
     IntField,
@@ -40,9 +42,19 @@ class Quote(Model):
 
         从日线数据中取就可以了, 实时交易价格也会保存在日线中
         """
-        q = cls.find_one({'exchange': exchange,
-                          'symbol': symbol,
-                          'quote_type': '1d'},
-                         sort=[('quote_at', -1)])
-        if q:
-            return q.close
+        if not hasattr(cls, 'cache'):
+            setattr(cls, 'cache', {})
+        cache = getattr(cls, 'cache')
+        pair = (exchange, symbol)
+        if pair not in cache:
+            cache = {(q['exchange'], q['symbol']): q['close']
+                     for q in cls.find({'exchange': exchange,
+                                        'symbol': symbol,
+                                        'quote_type': '1d',
+                                        'quote_at': {'$gte': ndays_ago(10)}},
+                                       sort=[('quote_at', 1)])}
+        return cache.get(pair)
+
+
+def ndays_ago(n):
+    return datetime.utcnow() - timedelta(days=n)

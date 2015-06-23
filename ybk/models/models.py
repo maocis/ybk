@@ -98,6 +98,20 @@ class Collection(Model):
 
     updated_at = DateTimeField(auto='modified')
 
+    @classmethod
+    def get_name(cls, exchange, symbol):
+        if not hasattr(cls, 'cache'):
+            setattr(cls, 'cache', {})
+        cache = getattr(cls, 'cache')
+        pair = (exchange, symbol)
+        if pair not in cache:
+            cache = {(c['exchange'], c['symbol']): c['name']
+                     for c in cls.find({},
+                                       {'exchange': 1,
+                                        'symbol': 1,
+                                        'name': 1})}
+        return cache.get(pair)
+
     @property
     def offer_mv(self):
         """ 申购市值配额 """

@@ -35,7 +35,7 @@ def announcement_raw():
 
     total = Announcement.find(cond).count()
     pagination = Pagination(page, limit, total)
-    exchanges = list(e.abbr for e in Exchange.find())
+    exchanges = list(sorted(list(e.abbr for e in Exchange.find())))
     types = ['offer', 'result']
     announcements = list(
         Announcement.find(cond)

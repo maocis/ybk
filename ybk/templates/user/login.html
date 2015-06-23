@@ -116,6 +116,7 @@ $(function() {
   }
   $('input[type=submit]').click(function(e){
     e.preventDefault();
+    e.target.blur();
     var name = $(this).attr('name');
     if (name == 'login-submit') {
         var mobile = $('#login-form [name=mobile]').val();
@@ -207,6 +208,7 @@ $(function() {
   }
   $("#register-form [name=send-code]").on('click', function(e) {
     e.preventDefault();
+    e.target.blur();
     var mobile = $('#register-form [name=mobile]').val();
     if ( !mobile.match(/^\d{11}$/) ){
       $('.error').text('发送失败: 请填写正确的手机号码');
