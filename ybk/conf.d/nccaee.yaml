@@ -26,12 +26,12 @@ result:
     page: http://ybk.nccaee.com/web/news/news.jsp?parentid=44&classid=44
     maxpage: 1
 opening:
-    url: 
-    guide: 
-    bank: [平安银行]
-    code: [无]
-    name: [成都文化产权交易所]
-    download: 
+    url: http://ybk.nccaee.com/web/news/SelfOpenAccount.jsp?parentid=46&classid=61
+    guide: http://ybk.nccaee.com/web/news/news.jsp?parentid=46&classid=61
+    bank: [建设银行]
+    code: [3600000193]
+    name: [南昌文化产权交易中心]
+    download: http://ybk.nccaee.com/web/news/news_down.jsp?parentid=48&classid=66
 quote:
     realtime:
         url: 
