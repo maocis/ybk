@@ -36,9 +36,9 @@
                 data-show-export="true"
                 data-url="{{ url_for('user.position_list') }}"
                 data-side-pagination="server"
-                data-page-size="30"
                 data-search="true">
           <thead>
+            <tr>
             <th data-field="exchange">交易所</th>
             <th data-field="name">藏品名称</th>
             <th data-field="symbol" data-align="right">藏品代码</th>
@@ -49,6 +49,7 @@
             <th data-field="total_increase" data-align="right" data-sortable="true">总涨</th>
             <th data-field="unrealized_profit" data-align="right" data-sortable="true">浮盈</th>
             <th data-field="name" data-formatter="buySellFormatter">操作</th>
+            </tr>
           </thead>
           <tbody>
           </tbody>
@@ -153,9 +154,10 @@
                   data-sort-name="date"
                   data-sort-order="desc"
                   data-pagination="true"
-                  data-page-size="30"
+                  data-page-size="25"
                   data-show-export="true">
               <thead>
+                <tr>
                 <th data-field="date" data-sortable="true">日期</th>
                 <th data-sortable="true" data-searchable="true">操作</th>
                 <th data-sortable="true" data-searchable="true">交易所</th>
@@ -163,6 +165,7 @@
                 <th data-align="right">价</th>
                 <th data-align="right">量</th>
                 <th></th>
+                </tr>
               </thead>
               <tbody>
                 {% for t in transactions %}
