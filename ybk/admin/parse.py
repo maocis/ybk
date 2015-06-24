@@ -15,7 +15,9 @@ from .views import admin
 def parse():
     nav = 'parse'
     url = request.args.get('url')
-    num_parsed = Announcement.find({'parsed': True}).count()
+    num_parsed = Announcement.find({'parsed': True,
+                                    'type_': {'$in':
+                                              ['offer', 'result']}}).count()
     num_total = Announcement.find(
         {'type_': {'$in': ['offer', 'result']}}).count()
     if url:
