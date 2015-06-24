@@ -1,9 +1,10 @@
+from datetime import datetime
+
 from .mangaa import (
     Model,
     IntField,
     FloatField,
     StringField,
-    BooleanField,
     DateTimeField,
 )
 
@@ -90,36 +91,46 @@ class Position(Model):
             collections.setdefault(pair, 0)
             collections[pair] += p.quantity
         buy_info = {}
-        for t in Transaction.find({'user': user, 'type_': 'buy'}):
+        for t in Transaction.find({'user': user, 'type_': 'buy'},
+                                  sort=[('operated_at', 1)]):
             pair = (t.exchange, t.symbol)
             if pair in collections:
-                buy_info.setdefault(pair, [0, 0])
+                buy_info.setdefault(pair, [0, 0, None])
                 buy_info[pair][0] += t.quantity
                 buy_info[pair][1] += t.quantity * t.price
+                if not buy_info[pair][2]:
+                    buy_info[pair][2] = t.operated_at
         sell_info = {}
-        for t in Transaction.find({'user': user, 'type_': 'sell'}):
+        for t in Transaction.find({'user': user, 'type_': 'sell'},
+                                  sort=[('operated_at', -1)]):
             pair = (t.exchange, t.symbol)
             if pair in collections:
-                sell_info.setdefault(pair, [0, 0])
+                sell_info.setdefault(pair, [0, 0, None])
                 sell_info[pair][0] += t.quantity
                 sell_info[pair][1] += t.quantity * t.price
+                if not sell_info[pair][2]:
+                    sell_info[pair][2] = t.operated_at
         position = []
         for pair, quantity_amount in buy_info.items():
             exchange, symbol = pair
-            quantity, amount = quantity_amount
+            quantity, amount, first_buy_at = quantity_amount
             if quantity:
                 avg_buy_price = amount / quantity
                 realized_profit = 0
+                last_sell_at = datetime.utcnow()
                 if pair in sell_info:
-                    quantity2, amount2 = sell_info[pair]
+                    quantity2, amount2, last_sell_at = sell_info[pair]
                     quantity -= quantity2
                     realized_profit = amount2 - avg_buy_price * quantity2
+
                 assert quantity == collections[pair], '交易和库存对不上'
                 latest_price = Quote.latest_price(exchange, symbol)
                 increase = Quote.increase(exchange, symbol)
                 if not latest_price:
                     latest_price = avg_buy_price
                 unrealized_profit = (latest_price - avg_buy_price) * quantity
+                annual_profit = (365 / (last_sell_at - first_buy_at).days) * \
+                    (unrealized_profit + realized_profit)
                 if quantity > 0:
                     position.append({
                         'exchange': exchange,
@@ -132,6 +143,7 @@ class Position(Model):
                         'total_increase': latest_price / avg_buy_price - 1,
                         'realized_profit': realized_profit,
                         'unrealized_profit': unrealized_profit,
+                        'annual_profit': annual_profit,
                     })
         return position
 
@@ -152,6 +164,12 @@ class Position(Model):
     def realized_profit(cls, user):
         """ 已实现收益 """
         return sum(p['realized_profit'] for p in
+                   cls.user_position(user))
+
+    @classmethod
+    def annual_profit(cls, user):
+        """ 年化收益 """
+        return sum(p['annual_profit'] for p in
                    cls.user_position(user))
 
     @classmethod

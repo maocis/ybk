@@ -17,10 +17,10 @@ def position():
     user = current_user._id
     num_exchanges = Position.num_exchanges(user)
     num_collections = Position.num_collections(user)
-    num_sold = Position.num_sold(user)
     average_increase = Position.average_increase(user)
     realized_profit = Position.realized_profit(user)
     unrealized_profit = Position.unrealized_profit(user)
+    annual_profit = Position.annual_profit(user)
     position = Position.user_position(user)
 
     exchanges = [{'value': n, 'text': n}
