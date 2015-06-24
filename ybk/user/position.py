@@ -34,6 +34,30 @@ def position():
     return render_template('user/position.html', **locals())
 
 
+@user.route('/user/position/list/', methods=['GET'])
+@login_required
+def position_list():
+    search = request.args.get('search', '')
+    sort = request.args.get('sort', 'total_increase')
+    order = request.args.get('order', 'desc')
+
+    user = current_user._id
+    position = Position.user_position(user)
+    if search:
+        position = list(filter(
+            lambda x: search in x['exchange'] or
+            search in x['name'] or
+            search in x['symbol'],
+            position))
+    position = sorted(position,
+                      key=lambda x: x[sort],
+                      reverse=order == 'desc')
+    for p in position:
+        p['increase'] = '{:.1f}%'.format(p['increase'] * 100)
+        p['total_increase'] = '{:.1f}%'.format(p['total_increase'] * 100)
+    return jsonify(total=len(position), rows=position)
+
+
 @user.route('/user/position/buy', methods=['POST'])
 @login_required
 def position_buy():

@@ -15,6 +15,13 @@
   }
 }
 
+/* user/position.html */
+table#position-list > tbody > tr > td,
+table#transaction-list > tbody > tr > td {
+    padding: 3px !important;
+} {
+    padding: 3px !important;
+}
 
 /* frontend/announcement.html */
 

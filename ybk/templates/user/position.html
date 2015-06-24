@@ -3,6 +3,7 @@
     <link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/selectize.bootstrap3.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/bootstrap-datepicker3.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap-table.min.css') }}" rel="stylesheet">
 {% endblock %}
 {% block main %}
     <div class="row">
@@ -26,37 +27,30 @@
         <div class="col-md-4">
          <b>年化收益:</b> {{ (annual_profit or 0) | strformat('{:.1f}') }}元
         </div>
-        <table class="table">
+        <table id="position-list"
+                data-toggle="table"
+                data-classes="table table-condensed"
+                data-locale="zh-CN"
+                data-sort-name="total_increase"
+                data-sort-order="desc"
+                data-show-export="true"
+                data-url="{{ url_for('user.position_list') }}"
+                data-side-pagination="server"
+                data-page-size="30"
+                data-search="true">
           <thead>
-            <th>交易所</th>
-            <th>藏品名称</th>
-            <th>藏品代码</th>
-            <th class="text-right">买价</th>
-            <th class="text-right">买量</th>
-            <th class="text-right">现价</th>
-            <th class="text-right">今涨</th>
-            <th class="text-right">总涨</th>
-            <th class="text-right">浮盈</th>
-            <th>操作</th>
+            <th data-field="exchange">交易所</th>
+            <th data-field="name">藏品名称</th>
+            <th data-field="symbol" data-align="right">藏品代码</th>
+            <th data-field="avg_buy_price" data-align="right" data-sortable="true">买价</th>
+            <th data-field="quantity" data-align="right" data-sortable="true">买量</th>
+            <th data-field="latest_price" data-align="right" data-sortable="true">现价</th>
+            <th data-field="increase" data-align="right" data-sortable="true">今涨</th>
+            <th data-field="total_increase" data-align="right" data-sortable="true">总涨</th>
+            <th data-field="unrealized_profit" data-align="right" data-sortable="true">浮盈</th>
+            <th data-field="name" data-formatter="buySellFormatter">操作</th>
           </thead>
           <tbody>
-          {% for p in position %}
-            <tr>
-              <td>{{ p.exchange }}</td>
-              <td>{{ p.name[:5] }}</td>
-              <td>{{ p.symbol }}</td>
-              <td class="text-right">{{ p.avg_buy_price | strformat('{:4.2f}') }}</td>
-              <td class="text-right">{{ p.quantity }}</td>
-              <td class="text-right">{{ p.latest_price | strformat('{:4.2f}') }}</td>
-              <td class="text-right">{{ (p.increase or 0) | percentage('.1') }}</td>
-              <td class="text-right">{{ p.total_increase | percentage('.1') }}</td>
-              <td class="text-right">{{ p.unrealized_profit | strformat('{:4.1f}') }}</td>
-              <td>
-                <button class="btn btn-xs btn-default" name="buy" data-exchange="{{ p.exchange }}" data-symbol="{{ p.symbol }}" data-price="{{ p.latest_price }}">买</button>
-                <button class="btn btn-xs btn-default" name="sell" data-exchange="{{ p.exchange }}" data-symbol="{{ p.symbol }}" data-price="{{ p.latest_price }}" data-quantity="{{ p.quantity }}">卖</button>
-              </td>
-            </tr>
-          {% endfor %}
           </tbody>
         </table>
       </div>
@@ -153,15 +147,21 @@
             </form>
           </div>
           <div role="tabpanel" class="tab-pane" id="record">
-            <h4>共有记录{{ total_transactions }}条</h4>
-            <table class="table table-condensed" style="zoom: 0.8;">
+            <table id="transaction-list" class="table table-condensed" style="zoom: 0.8;"
+                  data-toggle="table"
+                  data-search="true"
+                  data-sort-name="date"
+                  data-sort-order="desc"
+                  data-pagination="true"
+                  data-page-size="30"
+                  data-show-export="true">
               <thead>
-                <th>日期</th>
-                <th>操作</th>
-                <th>交易所</th>
-                <th>代码</th>
-                <th>价</th>
-                <th>量</th>
+                <th data-field="date" data-sortable="true">日期</th>
+                <th data-sortable="true" data-searchable="true">操作</th>
+                <th data-sortable="true" data-searchable="true">交易所</th>
+                <th data-searchable="true" data-align="right">代码</th>
+                <th data-align="right">价</th>
+                <th data-align="right">量</th>
                 <th></th>
               </thead>
               <tbody>
@@ -193,8 +193,29 @@
 <script src="{{ url_for('static', filename='js/selectize.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap-datepicker.zh-CN.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-table.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-table-zh-CN.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-table-export.js') }}"></script>
+<script src="{{ url_for('static', filename='js/tableExport.min.js') }}"></script>
+
+
+
 <script>
 $(function() {
+  // table
+  function buySellFormatter(value, row, index) {
+    return '<button class="btn btn-xs btn-default" name="buy" ' +
+      'data-exchange="' + row.exchange + '" ' +
+      'data-symbol="' + row.symbol + '" '+
+      'data-price="' + row.latest_price + '">买</button>' +
+      '<button class="btn btn-xs btn-default" name="sell" ' +
+      'data-exchange="' + row.exchange + '" ' +
+      'data-symbol="' + row.symbol + '" ' +
+      'data-price="' + row.latest_price + '" ' +
+      'data-quantity="' + row.quantity + '">卖</button>'
+  }
+  window.buySellFormatter = buySellFormatter;
+
   // forms
   $('#buy-at').datepicker({
     format: "yyyymmdd",
