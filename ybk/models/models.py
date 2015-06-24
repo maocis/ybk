@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import time
 import math
 
 from .mangaa import (
@@ -102,15 +103,16 @@ class Collection(Model):
     def get_name(cls, exchange, symbol):
         if not hasattr(cls, 'cache'):
             setattr(cls, 'cache', {})
-        cache = getattr(cls, 'cache')
         pair = (exchange, symbol)
-        if pair not in cache:
-            cache = {(c['exchange'], c['symbol']): c['name']
-                     for c in cls.find({},
-                                       {'exchange': 1,
-                                        'symbol': 1,
-                                        'name': 1})}
-        return cache.get(pair)
+        if not cls.cache or cls.cache.get('time', time.time()) < 3600:
+            cls.cache = {(c.exchange, c.symbol): c.name
+                         for c in cls.find({},
+                                           {'exchange': 1,
+                                            'symbol': 1,
+                                            'name': 1,
+                                            '_id': 0})}
+            cls.cache['time'] = time.time()
+        return cls.cache.get(pair)
 
     @property
     def offer_mv(self):

@@ -8,7 +8,6 @@ from .views import api
 def load_symbols():
     exchange = request.args.get('exchange', '')
     query = request.args.get('query', '')
-    limit = 10
     cond = {'$or': [{'name': {'$regex': query}},
                     {'symbol': {'$regex': query}}]}
     if exchange:
@@ -18,5 +17,5 @@ def load_symbols():
          'value': c.symbol}  # '{}-{}'.format(c.symbol, c.name)}
         for c in Collection.find(
             cond,
-            {'name': 1, 'symbol': 1}).limit(limit)]
+            {'name': 1, 'symbol': 1})]
     return jsonify(result=result)

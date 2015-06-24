@@ -5,13 +5,14 @@ import yaml
 SITES = [p.parts[-1].split('.')[0]
          for p in filter(lambda x: x.match('*.yaml'),
                          (pathlib.Path(__file__).parent / 'conf.d').iterdir())]
-SITES = list(sorted(SITES))
 
 ABBRS = {
     yaml.load((pathlib.Path(__file__).parent / 'conf.d'
                / (site + '.yaml')).open())['abbr']: site
     for site in SITES
 }
+SITES = [p[1] for p in sorted(ABBRS.items())]
+
 
 CONFS = [
     yaml.load((pathlib.Path(__file__).parent / 'conf.d'
@@ -27,5 +28,4 @@ def get_conf(abbr_or_site):
         site = ABBRS[abbr_or_site]
     else:
         site = abbr_or_site
-
     return CONFS[SITES.index(site)]

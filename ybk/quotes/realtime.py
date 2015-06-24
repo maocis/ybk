@@ -58,7 +58,7 @@ def realtime(site):
         q['exchange'] = exchange
         q['quote_type'] = '1d'
         q['quote_at'] = today
-        if q['open_'] in ['—', '-', None]:
+        if q['open_'] in ['—', '-', None, '']:
             continue
         else:
             Quote(q).upsert()
@@ -73,6 +73,7 @@ def parse_quotes(type_, text):
             {
                 'symbol': r['code'],
                 'name': r['fullname'],
+                'lclose': to_float(r['YesterBalancePrice']),
                 'close': to_float(r['CurPrice']),
                 'open_': to_float(r['OpenPrice']),
                 'low': to_float(r['LowPrice']),
@@ -90,6 +91,7 @@ def parse_quotes(type_, text):
             quotes.append({
                 'symbol': tds[1].text.strip(),
                 'name': tds[2].text.strip(),
+                'lclose': to_float(tds[3].text),
                 'open_': to_float(tds[4].text),
                 'close': to_float(tds[5].text),
                 'volume': to_int(tds[7].text),
@@ -104,6 +106,7 @@ def parse_quotes(type_, text):
             {
                 'symbol': r['goodsId'],
                 'name': r['goodsName'],
+                'lclose': to_float(r['yclosePrice']),
                 'close': to_float(r['newestPrice']),
                 'open_': to_float(r['openPrice']),
                 'low': to_float(r['minPrice']),
@@ -118,6 +121,7 @@ def parse_quotes(type_, text):
             {
                 'symbol': r['c'],
                 'name': r['fn'],
+                'lclose': to_float(r['ybp']),
                 'close': to_float(r['cp']),
                 'open_': to_float(r['op']),
                 'low': to_float(r['lp']),
@@ -135,6 +139,7 @@ def parse_quotes(type_, text):
             quotes.append({
                 'symbol': tds[1].text_content().strip(),
                 'name': tds[2].text_content().strip(),
+                'lclose': to_float(tds[3].text_content()),
                 'open_': to_float(tds[4].text_content()),
                 'close': to_float(tds[5].text_content()),
                 'volume': to_int(tds[7].text_content()),

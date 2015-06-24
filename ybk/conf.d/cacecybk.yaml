@@ -26,8 +26,8 @@ opening:
     download: http://www.cacecybk.com.cn/web/news/news_detail.jsp?parentid=79&classid=100&infoid=59
 quote:
     realtime:
-        url:
-        type:
+        url: http://115.182.221.27:16929/tradeweb/hq/getHqV_lbData.jsp
+        type: getHqV_lbData
     history:
         url: http://118.145.4.149:16934 
         type: http

@@ -77,9 +77,9 @@ def configure_template_filters(app):
             return v
 
     @app.template_filter()
-    def percentage(f, fmt='4.4'):
+    def percentage(f, fmt='4.1'):
         try:
-            return ('{:' + fmt + '}%').format(float(f) * 100)
+            return ('{:' + fmt + 'f}%').format(float(f) * 100)
         except:
             return f
 

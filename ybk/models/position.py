@@ -36,9 +36,14 @@ class Transaction(Model):
         return cls.find({'user': user}).count()
 
     @classmethod
-    def user_recent_transactions(cls, user, offset=0, limit=10):
+    def user_recent_transactions(cls, user, offset=0, limit=None):
         """ 用户最近的操作 """
-        return list(cls.find({'user': user}).skip(offset).limit(limit))
+        qs = cls.find({'user': user}, sort=[('operated_at', -1)])
+        if offset:
+            qs.skip(offset)
+        if limit:
+            qs.limit(limit)
+        return list(qs)
 
 
 class Position(Model):
@@ -56,12 +61,12 @@ class Position(Model):
     symbol = StringField(blank=False)           # 交易代码
 
     user = StringField(blank=False)
-    quantity = FloatField(blank=False)
+    quantity = FloatField(blank=False, default=0)
 
     @classmethod
     def num_exchanges(cls, user):
         """ 用户持有多少个交易所的持仓 """
-        return len(set(p['exchange'] for p in
+        return len(set(p.exchange for p in
                        cls.find({'user': user}, {'exchange': 1})))
 
     @classmethod
@@ -72,7 +77,7 @@ class Position(Model):
     @classmethod
     def num_sold(cls, user):
         """ 用户已卖出过多少个藏品 """
-        return len(set('{exchange}_{symbol}'.format(**t) for t in
+        return len(set('{exchange}_{symbol}'.format(**t._data) for t in
                        Transaction.find({'user': user, 'type_': 'sell'},
                                         {'exchange': 1, 'symbol': 1})))
 
@@ -81,23 +86,23 @@ class Position(Model):
         """ 目前持仓概况 """
         collections = {}
         for p in cls.find({'user': user}):
-            pair = (p['exchange'], p['symbol'])
+            pair = (p.exchange, p.symbol)
             collections.setdefault(pair, 0)
-            collections[pair] += p['quantity']
+            collections[pair] += p.quantity
         buy_info = {}
         for t in Transaction.find({'user': user, 'type_': 'buy'}):
-            pair = (t['exchange'], t['symbol'])
+            pair = (t.exchange, t.symbol)
             if pair in collections:
-                buy_info.setdefault(pair, (0, 0))
-                buy_info[pair][0] += t['quantity']
-                buy_info[pair][1] += t['quantity'] * t['price']
+                buy_info.setdefault(pair, [0, 0])
+                buy_info[pair][0] += t.quantity
+                buy_info[pair][1] += t.quantity * t.price
         sell_info = {}
         for t in Transaction.find({'user': user, 'type_': 'sell'}):
-            pair = (t['exchange'], t['symbol'])
+            pair = (t.exchange, t.symbol)
             if pair in collections:
-                sell_info.setdefault(pair, (0, 0))
-                sell_info[pair][0] += t['quantity']
-                sell_info[pair][1] += t['quantity'] * t['price']
+                sell_info.setdefault(pair, [0, 0])
+                sell_info[pair][0] += t.quantity
+                sell_info[pair][1] += t.quantity * t.price
         position = []
         for pair, quantity_amount in buy_info.items():
             exchange, symbol = pair
@@ -111,18 +116,23 @@ class Position(Model):
                     realized_profit = amount2 - avg_buy_price * quantity2
                 assert quantity == collections[pair], '交易和库存对不上'
                 latest_price = Quote.latest_price(exchange, symbol)
+                increase = Quote.increase(exchange, symbol)
+                if not latest_price:
+                    latest_price = avg_buy_price
                 unrealized_profit = (latest_price - avg_buy_price) * quantity
-                position.append({
-                    'exchange': exchange,
-                    'symbol': symbol,
-                    'name': Collection.get_name(exchange, symbol),
-                    'avg_buy_price': avg_buy_price,
-                    'quantity': quantity,
-                    'latest_price': latest_price,
-                    'increase': latest_price / avg_buy_price - 1,
-                    'realized_profit': realized_profit,
-                    'unrealized_profit': unrealized_profit,
-                })
+                if quantity > 0:
+                    position.append({
+                        'exchange': exchange,
+                        'symbol': symbol,
+                        'name': Collection.get_name(exchange, symbol),
+                        'avg_buy_price': avg_buy_price,
+                        'quantity': quantity,
+                        'latest_price': latest_price,
+                        'increase': increase,
+                        'total_increase': latest_price / avg_buy_price - 1,
+                        'realized_profit': realized_profit,
+                        'unrealized_profit': unrealized_profit,
+                    })
         return position
 
     @classmethod
@@ -130,7 +140,7 @@ class Position(Model):
         """ 平均涨幅 """
         position = cls.user_position(user)
         if len(position):
-            return sum(p['increase'] for p in position) / len(position)
+            return sum(p['total_increase'] for p in position) / len(position)
 
     @classmethod
     def unrealized_profit(cls, user):
@@ -143,3 +153,29 @@ class Position(Model):
         """ 已实现收益 """
         return sum(p['realized_profit'] for p in
                    cls.user_position(user))
+
+    @classmethod
+    def do_op(cls, t, reverse=False):
+        c = cls.find_one({'user': t.user,
+                          'exchange': t.exchange,
+                          'symbol': t.symbol})
+        if not c:
+            if reverse:
+                return False
+            elif t.type_ == 'buy':
+                c = cls({'user': t.user,
+                         'exchange': t.exchange,
+                         'symbol': t.symbol,
+                         'quantity': t.quantity})
+            else:
+                return False
+        elif t.type_ == 'buy':
+            c.quantity += t.quantity
+        elif t.type_ == 'sell':
+            c.quantity -= t.quantity
+
+        if c.quantity >= 0:
+            c.save()
+            return True
+        else:
+            return False
