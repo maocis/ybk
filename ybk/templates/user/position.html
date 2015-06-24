@@ -199,12 +199,16 @@ $(function() {
   $('#buy-at').datepicker({
     format: "yyyymmdd",
     language: "zh-CN",
-    autoclose: true
+    autoclose: true,
+    endDate: "{{ today }}",
+    todayBtn: "linked",
   });
   $('#sell-at').datepicker({
     format: "yyyymmdd",
     language: "zh-CN",
-    autoclose: true
+    autoclose: true,
+    endDate: "{{ today }}",
+    todayBtn: "linked",
   });
 
   var select_exchange_buy, select_exchange_sell;

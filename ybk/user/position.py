@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from bson import ObjectId
 
@@ -14,6 +14,7 @@ from .views import user
 @user.route('/user/position/')
 @login_required
 def position():
+    today = (datetime.utcnow() + timedelta(hours=8)).strftime('%Y-%m-%d')
     user = current_user._id
     num_exchanges = Position.num_exchanges(user)
     num_collections = Position.num_collections(user)
