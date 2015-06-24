@@ -129,7 +129,8 @@ class Position(Model):
                 if not latest_price:
                     latest_price = avg_buy_price
                 unrealized_profit = (latest_price - avg_buy_price) * quantity
-                annual_profit = (365 / (last_sell_at - first_buy_at).days) * \
+                past_days = max(1, (last_sell_at - first_buy_at).days)
+                annual_profit = (365 / past_days) * \
                     (unrealized_profit + realized_profit)
                 if quantity > 0:
                     position.append({
