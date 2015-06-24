@@ -43,7 +43,7 @@
           {% for p in position %}
             <tr>
               <td>{{ p.exchange }}</td>
-              <td>{{ p.name }}</td>
+              <td>{{ p.name[:5] }}</td>
               <td>{{ p.symbol }}</td>
               <td class="text-right">{{ p.avg_buy_price | strformat('{:4.2f}') }}</td>
               <td class="text-right">{{ p.quantity }}</td>
@@ -52,8 +52,8 @@
               <td class="text-right">{{ p.total_increase | percentage('.1') }}</td>
               <td class="text-right">{{ p.unrealized_profit | strformat('{:4.1f}') }}</td>
               <td>
-                <button class="btn btn-xs btn-default" name="buy" data-exchange="{{ p.exchange }}" data-symbol="{{ p.symbol }}" data-price="{{ p.latest_price }}">买入</button>
-                <button class="btn btn-xs btn-default" name="sell" data-exchange="{{ p.exchange }}" data-symbol="{{ p.symbol }}" data-price="{{ p.latest_price }}" data-quantity="{{ p.quantity }}">卖出</button>
+                <button class="btn btn-xs btn-default" name="buy" data-exchange="{{ p.exchange }}" data-symbol="{{ p.symbol }}" data-price="{{ p.latest_price }}">买</button>
+                <button class="btn btn-xs btn-default" name="sell" data-exchange="{{ p.exchange }}" data-symbol="{{ p.symbol }}" data-price="{{ p.latest_price }}" data-quantity="{{ p.quantity }}">卖</button>
               </td>
             </tr>
           {% endfor %}
