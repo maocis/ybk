@@ -16,7 +16,8 @@ def parse():
     nav = 'parse'
     url = request.args.get('url')
     num_parsed = Announcement.find({'parsed': True}).count()
-    num_total = Announcement.find().count()
+    num_total = Announcement.find(
+        {'type_': {'$in': ['offer', 'result']}}).count()
     if url:
         announcement = Announcement.find_one({'url': url})
         colls = list(Collection.find({'from_url': url}))
@@ -37,7 +38,9 @@ def parse():
 @admin.route('/admin/parse/findone')
 @admin_required
 def parse_findone():
-    announcement = Announcement.find_one({'parsed': False},
+    announcement = Announcement.find_one({'parsed': False,
+                                          'type_': {'$in':
+                                                    ['offer', 'result']}},
                                          sort=[('published_at', -1)])
     if announcement:
         return redirect(url_for('admin.parse', url=announcement.url))
