@@ -146,7 +146,7 @@ class Position(Model):
                         'unrealized_profit': unrealized_profit,
                         'annual_profit': annual_profit,
                     })
-        return position
+        return sorted(position, key=lambda x: x['exchange'])
 
     @classmethod
     def average_increase(cls, user):
