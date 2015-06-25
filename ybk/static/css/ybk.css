@@ -21,7 +21,8 @@ table#transaction-list > tbody > tr > td {
     padding: 3px !important;
 } 
 
-#record .bootstrap-table .fixed-table-pagination {
+#record .bootstrap-table .fixed-table-pagination,
+#record .bootstrap-table .fixed-table-toolbar {
     zoom: 0.7;    
 }
 
