@@ -14,5 +14,9 @@ def index():
                      .sort([('published_at', -1)])
                      .limit(len(exchanges))]
     for a in announcements:
-        a.type_ = '申购' if a.type_ == 'offer' else '中签'
+        a.type_ = {
+            'offer': '申购',
+            'result': '中签',
+            'stock': '托管',
+        }.get(a.type_, '托管')
     return render_template('frontend/index.html', **locals())

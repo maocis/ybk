@@ -7,6 +7,14 @@ from ybk.utils import Pagination
 from .views import frontend
 
 
+def type_to_cn(type_):
+    return {
+        'offer': '申购',
+        'result': '中签',
+        'stock': '托管',
+    }.get(type_, '托管')
+
+
 @frontend.route('/announcement/')
 def announcement():
     return redirect('/announcement/raw/')
@@ -14,13 +22,11 @@ def announcement():
 
 @frontend.route('/announcement/raw/')
 def announcement_raw():
-    def type_to_cn(type_):
-        return '申购' if type_ == 'offer' else '中签'
-
+    locals()['type_to_cn'] = type_to_cn
     nav = 'announcement'
     tab = 'raw'
     type_ = request.args.get('type', '')
-    typecn = '申购' if type_ == 'offer' else '中签'
+    typecn = type_to_cn(type_)
     exchange = request.args.get('exchange', '')
     page = int(request.args.get('page', 1) or 1)
 
@@ -36,7 +42,7 @@ def announcement_raw():
     total = Announcement.find(cond).count()
     pagination = Pagination(page, limit, total)
     exchanges = list(sorted(list(e.abbr for e in Exchange.find())))
-    types = ['offer', 'result']
+    types = ['offer', 'result', 'stock']
     announcements = list(
         Announcement.find(cond)
         .sort([('published_at', -1)])
@@ -89,7 +95,7 @@ def announcement_feed():
         return (d + timedelta(hours=8)).strftime('%Y年%m月%d日')
 
     type_ = request.args.get('type', '')
-    typecn = '申购' if type_ == 'offer' else '中签'
+    typecn = type_to_cn(type_)
     exchange = request.args.get('exchange', '')
     cond = {}
     feedtitle = '邮币卡公告聚合'
