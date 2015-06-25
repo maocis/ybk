@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from flask import Flask, render_template
 from flask.ext.login import LoginManager
+from flask.ext.assets import Environment
 
 from ybk.frontend import frontend
 from ybk.user import user
@@ -62,6 +63,9 @@ def configure_extensions(app):
         return User.find_one({'_id': user_id})
 
     login_manager.setup_app(app)
+
+    assets = Environment()
+    assets.init_app(app)
 
 
 def configure_logging(app):

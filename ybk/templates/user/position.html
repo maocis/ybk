@@ -1,9 +1,20 @@
 {% extends "layout.html" %}
 {% block css %}
-    <link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/selectize.bootstrap3.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/bootstrap-datepicker3.min.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/bootstrap-table.min.css') }}" rel="stylesheet">
+      {% if config.DEBUG %}
+        <link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='css/selectize.bootstrap3.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='css/bootstrap-datepicker3.min.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='css/bootstrap-table.min.css') }}" rel="stylesheet">
+      {% else %}
+       {% assets filters="cssmin", output="assets/position.css",
+                  "css/login.css",
+                  "css/selectize.bootstrap3.css",
+                  "css/bootstrap-datepicker3.min.css",
+                  "css/bootstrap-table.min.css" %}
+            <link href="{{ ASSET_URL }}" rel="stylesheet">
+        {% endassets %}
+      {% endif %}
+
 {% endblock %}
 {% block main %}
     <div class="row">
@@ -191,17 +202,31 @@
 {% endblock %}
 
 {% block js %}
-<script src="{{ url_for('static', filename='js/sifter.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/microplugin.js') }}"></script>
-<script src="{{ url_for('static', filename='js/selectize.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/bootstrap-datepicker.zh-CN.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/bootstrap-table.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/bootstrap-table-zh-CN.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/bootstrap-table-export.js') }}"></script>
-<script src="{{ url_for('static', filename='js/tableExport.min.js') }}"></script>
 
-
+  {% if config.DEBUG %}
+    <script src="{{ url_for('static', filename='js/sifter.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/microplugin.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/selectize.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap-datepicker.zh-CN.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap-table.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap-table-zh-CN.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap-table-export.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/tableExport.min.js') }}"></script>
+  {% else %}
+    {% assets filters="jsmin", output="assets/position.js",
+              "js/sifter.min.js",
+              "js/microplugin.js",
+              "js/selectize.min.js",
+              "js/bootstrap-datepicker.min.js",
+              "js/bootstrap-datepicker.zh-CN.min.js",
+              "js/bootstrap-table.min.js",
+              "js/bootstrap-table-zh-CN.min.js",
+              "js/bootstrap-table-export.js",
+              "js/tableExport.min.js" %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+  {% endif %}
 
 <script>
 $(function() {
