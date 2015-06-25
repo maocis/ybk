@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect
 from werkzeug.contrib.atom import AtomFeed
 
-from ybk.models import Exchange, Announcement, Collection
+from ybk.models import Exchange, Announcement, Collection, Quote
 from ybk.utils import Pagination
 
 from .views import frontend
@@ -75,6 +75,10 @@ def announcement_collection():
         Collection.find(cond)
         .sort([('offers_at', -1)])
         .skip(skip).limit(limit))
+    for c in collections:
+        lp = Quote.latest_price(c.exchange, c.symbol)
+        if lp and c.offer_price:
+            c.total_increase = lp / c.offer_price - 1
     return render_template('frontend/announcement.html', **locals())
 
 

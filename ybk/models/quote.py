@@ -6,7 +6,6 @@ from .mangaa import (
     IntField,
     FloatField,
     StringField,
-    BooleanField,
     DateTimeField,
 )
 
@@ -47,7 +46,8 @@ class Quote(Model):
         if not hasattr(cls, 'lp_cache'):
             setattr(cls, 'lp_cache', {})
         pair = (exchange, symbol)
-        if not cls.lp_cache or cls.lp_cache.get('time', time.time()) < time.time() - 3600:
+        if not cls.lp_cache or \
+                cls.lp_cache.get('time', time.time()) < time.time() - 3600:
             cls.lp_cache = {(q.exchange, q.symbol): q.close
                             for q in cls.find({
                                 'quote_type': '1d',
@@ -66,7 +66,8 @@ class Quote(Model):
         if now.hour < 9 and now.minute < 30:
             now -= timedelta(days=1)
         date = now.replace(hour=0, minute=0, second=0, microsecond=0)
-        if not cls.i_cache or cls.i_cache.get('time', time.time()) < time.time() - 3600:
+        if not cls.i_cache or \
+                cls.i_cache.get('time', time.time()) < time.time() - 3600:
             cls.i_cache = {(q.exchange, q.symbol): q.close / q.lclose - 1
                            for q in cls.find({
                                'quote_type': '1d',

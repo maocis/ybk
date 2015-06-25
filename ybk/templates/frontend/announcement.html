@@ -147,6 +147,7 @@
             <th class="text-right">资金配比</th>
             <th class="text-right">资金市值</th>
             <th class="text-right">资金中签率</th>
+            <th class="text-right">现涨幅</th>
           </thead>
           <tbody>
           {% for c in collections %}
@@ -159,7 +160,8 @@
               <td class="text-right">{{ c.offer_quantity | strformat('{}') }}</td>
               <td class="text-right">{{ c.offer_cash_ratio | percentage }}</td>
               <td class="text-right">{{ c.offer_cash | strformat('{:4.1f}') }}</td>
-              <td class="text-right">{{ c.result_ratio_cash | percentage('4.2') }}</td>
+              <td class="text-right">{{ c.result_ratio_cash | percentage('.1') }}</td>
+              <td class="text-right">{{ c.total_increase | percentage('.1') }}</td>
             </tr>
             {% endfor %}
           </tbody>
