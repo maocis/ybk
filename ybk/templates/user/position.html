@@ -215,6 +215,7 @@
     <script src="{{ url_for('static', filename='js/tableExport.min.js') }}"></script>
   {% else %}
     {% assets filters="jsmin", output="assets/position.js",
+              "js/tableExport.min.js",
               "js/sifter.min.js",
               "js/microplugin.js",
               "js/selectize.min.js",
@@ -222,8 +223,7 @@
               "js/bootstrap-datepicker.zh-CN.min.js",
               "js/bootstrap-table.min.js",
               "js/bootstrap-table-zh-CN.min.js",
-              "js/bootstrap-table-export.js",
-              "js/tableExport.min.js" %}
+              "js/bootstrap-table-export.js" %}
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
     {% endassets %}
   {% endif %}

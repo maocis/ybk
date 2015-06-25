@@ -50,7 +50,7 @@ def position_list():
             search in x['symbol'],
             position))
     position = sorted(position,
-                      key=lambda x: x[sort],
+                      key=lambda x: x[sort] or 0,
                       reverse=order == 'desc')
     for p in position:
         p['name'] = (p['name'] or '')[:5]

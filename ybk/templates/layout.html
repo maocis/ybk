@@ -71,7 +71,7 @@
         <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/ie10-viewport-bug-workaround.js') }}"></script>
     {% else %}
-        {% assets filters="cssmin", output="assets/layout.js",
+        {% assets filters="jsmin", output="assets/layout.js",
                   "js/jquery.min.js",
                   "js/bootstrap.min.js",
                   "js/ie10-viewport-bug-workaround.js" %}
