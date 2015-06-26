@@ -8,7 +8,7 @@ offer:
     fields: [url, published_at, title]
     encoding: utf-8
     page: http://ybk.jscaee.com.cn/announcement/listing/index_p{page}.html
-    maxpage: 3
+    maxpage: 1
 result:
     index: http://ybk.jscaee.com.cn/announcement/lottery-winnings/
     relative: http://ybk.jscaee.com.cn
@@ -16,7 +16,7 @@ result:
     fields: [url, published_at, title]
     encoding: utf-8
     page: http://ybk.jscaee.com.cn/announcement/lottery-winnings/index_p{page}.html
-    maxpage: 3
+    maxpage: 1
 opening:
     url: http://180.96.20.223/mnginfo/investor/personApply.jsp
     guide: http://ybk.jscaee.com.cn/guide/accounting-process/2014-03/21/03214R014.html

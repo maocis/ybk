@@ -95,6 +95,8 @@ def parse_index(ex, type_, content, conf):
              for key, value in zip(conf['fields'], values)}
         if 'relative' in conf and not d['url'].startswith('http'):
             d['url'] = conf['relative'] + d['url']
+        if Announcement.find_one({'url': d['url']}):
+            continue
         d['published_at'] = parse_datetime(d['published_at']) \
             - timedelta(hours=8)
         d['exchange'] = ex._id

@@ -7,10 +7,7 @@
     {% if config.DEBUG %}
       <link href="{{ url_for('static', filename='css/bootstrap-table.min.css') }}" rel="stylesheet">
     {% else %}
-     {% assets filters="cssmin", output="assets/announcement.css"
-                "css/bootstrap-table.min.css" %}
-          <link href="{{ ASSET_URL }}" rel="stylesheet">
-      {% endassets %}
+      <link href="{{ url_for('static', filename='css/bootstrap-table.min.css') }}" rel="stylesheet">
     {% endif %}
 {% endblock %}
 
@@ -185,7 +182,7 @@
     <script src="{{ url_for('static', filename='js/bootstrap-table-export.js') }}"></script>
     <script src="{{ url_for('static', filename='js/tableExport.min.js') }}"></script>
   {% else %}
-    {% assets filters="jsmin", output="assets/position.js",
+    {% assets filters="jsmin", output="assets/announcement.js",
               "js/tableExport.min.js",
               "js/bootstrap-table.min.js",
               "js/bootstrap-table-zh-CN.min.js",
