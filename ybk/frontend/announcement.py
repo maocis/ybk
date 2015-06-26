@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect
+from flask import render_template, request, redirect, jsonify
 from werkzeug.contrib.atom import AtomFeed
 
 from ybk.models import Exchange, Announcement, Collection, Quote
@@ -86,6 +86,78 @@ def announcement_collection():
         if lp and c.offer_price:
             c.total_increase = lp / c.offer_price - 1
     return render_template('frontend/announcement.html', **locals())
+
+
+@frontend.route('/announcement/collection/list')
+def collection_list():
+    exchange = request.args.get('exchange', '')
+    search = request.args.get('search', '')
+    sort = request.args.get('sort', 'offers_at')
+    order = request.args.get('order', 'desc')
+
+    limit = int(request.args.get('limit', 25))
+    offset = int(request.args.get('offset', 0))
+    if sort in ['offers_at', 'exchange', 'name', 'symbol',
+                'offer_price', 'offer_quantity']:
+        dbsort = [(sort, 1 if order == 'asc' else -1)]
+    else:
+        dbsort = None
+
+    cond = {}
+    if exchange:
+        cond['exchange'] = exchange
+    if search:
+        cond['$or'] = [
+            {'exchange': {'$regex': search}},
+            {'name': {'$regex': search}},
+            {'symbol': {'$regex': search}},
+        ]
+    total = Collection.find(cond).count()
+    qs = Collection.find(cond)
+    if dbsort:
+        qs = qs.sort(dbsort).skip(offset).limit(limit)
+    rows = [{
+            'offers_at': c.offers_at,
+            'exchange': c.exchange,
+            'name': c.name,
+            'symbol': c.symbol,
+            'offer_price': c.offer_price,
+            'offer_quantity': c.offer_quantity,
+            'offer_cash_ratio': c.offer_cash_ratio,
+            'offer_cash': c.offer_cash,
+            'result_ratio_cash': c.result_ratio_cash,
+            }
+            for c in qs]
+
+    for d in rows:
+        d['total_increase'] = None
+        lp = Quote.latest_price(d['exchange'], d['symbol'])
+        if lp and d['offer_price']:
+            d['total_increase'] = lp / d['offer_price'] - 1
+
+    if not dbsort:
+        rows = sorted(rows,
+                      key=lambda x: x.get(sort) or 0,
+                      reverse=order == 'desc')
+        rows = rows[offset:limit]
+
+    for d in rows:
+        d['offers_at'] = d['offers_at'].strftime(
+            '%Y-%m-%d') if d['offers_at'] else None
+        if d['offer_cash_ratio']:
+            d['offer_cash_ratio'] = '{:.0f}%'.format(
+                d['offer_cash_ratio'] * 100)
+
+        d['offer_cash'] = '{:.1f}'.format(d['offer_cash'] or 0)
+        if d['result_ratio_cash']:
+            d['result_ratio_cash'] = '{:.3f}%'.format(
+                d['result_ratio_cash'] * 100)
+
+        if d['total_increase']:
+            d['total_increase'] = '{:.1f}%'.format(
+                100 * (d['total_increase']))
+
+    return jsonify(total=total, rows=rows)
 
 
 @frontend.route('/announcement/feed.atom')
