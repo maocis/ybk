@@ -59,6 +59,8 @@ def position_list():
                                                * 100)
         p['unrealized_profit'] = '{:.1f}'.format(p['unrealized_profit'] or 0)
         p['avg_buy_price'] = '{:.2f}'.format(p['avg_buy_price'])
+        if p['latest_price']:
+            p['latest_price'] = '{:.2f}'.format(p['latest_price'])
     return jsonify(total=len(position), rows=position)
 
 
