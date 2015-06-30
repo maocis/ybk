@@ -1,3 +1,5 @@
+import time
+import copy
 from datetime import datetime
 
 from .mangaa import (
@@ -84,6 +86,19 @@ class Position(Model):
 
     @classmethod
     def user_position(cls, user):
+        """ 目前持仓概况, cached """
+        if not hasattr(cls, 'pcache'):
+            setattr(cls, 'pcache', {})
+
+        now = time.time()
+        if 'position' not in cls.pcache or cls.pcache.get('time', now) < now - 5:
+            cls.pcache['position'] = cls._user_position(user)
+            cls.pcache['time'] = time.time()
+        return copy.deepcopy(cls.pcache['position'])
+
+
+    @classmethod
+    def _user_position(cls, user):
         """ 目前持仓概况 """
         collections = {}
         for p in cls.find({'user': user}):
@@ -154,6 +169,12 @@ class Position(Model):
         position = cls.user_position(user)
         if len(position):
             return sum(p['total_increase'] for p in position) / len(position)
+
+    @classmethod
+    def market_value(cls, user):
+        """ 持仓总市值 """
+        position = cls.user_position(user)
+        return sum(p['latest_price'] * p['quantity'] for p in position)
 
     @classmethod
     def unrealized_profit(cls, user):
