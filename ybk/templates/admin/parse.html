@@ -135,8 +135,8 @@
                         {% if c.symbol and (c.invest_cash or c.invest_cash_return_ratio) %}
                         <tr>
                         <td>{{c.symbol}}</td>
-                        <td>{{c.invest_cash}}</td>
-                        <td>{{c.invest_cash_return_ratio | percentage(fmt='5.3') }}</td>
+                        <td>{{c.invest_cash or ''}}</td>
+                        <td>{{(c.invest_cash_return_ratio or '') | percentage(fmt='5.3') }}</td>
                         <td><button type="row">删除</button></td>
                         </tr>
                         {% endif %}
