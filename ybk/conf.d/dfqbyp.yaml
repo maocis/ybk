@@ -12,7 +12,7 @@ stock:
 offer:
     index: http://118.145.4.144/web/news/news.jsp?parentid=46&classid=56
     relative: http://118.145.4.144/
-    detail: <a href="([^"]+)">([^>]*申购[^>]*)</a></td>\s*<td[^>]*>\[(\d+-\d+-\d+)\]
+    detail: <a href="([^"]+)">([^>]*申购公告[^>]*)</a></td>\s*<td[^>]*>\[(\d+-\d+-\d+)\]
     fields: [url, title, published_at]
     encoding: gb18030
     page: http://118.145.4.144/web/news/news.jsp?parentid=46&classid=56
