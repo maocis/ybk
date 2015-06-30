@@ -63,8 +63,6 @@ def parse_save():
         return jsonify(status=500, reason="字段不全")
 
     from_url = html.unescape(from_url)
-    if from_url:
-        Collection.remove({'from_url': from_url})
 
     if type_ == 'offer':
         for coll in result:
