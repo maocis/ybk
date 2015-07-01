@@ -30,4 +30,4 @@ quote:
         type: getHqV_lbData
     history:
         url: http://jyqz.jinmajia.com:16914
-        type: http
+        type: sysframe

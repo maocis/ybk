@@ -139,11 +139,15 @@ def collection_list():
         rows = sorted(rows,
                       key=lambda x: x.get(sort) or 0,
                       reverse=order == 'desc')
-        rows = rows[offset:offset+limit]
+        rows = rows[offset:offset + limit]
 
     for d in rows:
         d['offers_at'] = d['offers_at'].strftime(
             '%Y-%m-%d') if d['offers_at'] else None
+
+        if d['offer_price']:
+            d['offer_price'] = '{:.2f}'.format(d['offer_price'])
+
         if d['offer_cash_ratio']:
             d['offer_cash_ratio'] = '{:.0f}%'.format(
                 d['offer_cash_ratio'] * 100)

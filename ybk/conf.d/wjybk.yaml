@@ -30,4 +30,4 @@ quote:
         type: hqV_lbtc
     history:
         url: http://tradeweb1.dzp.wjybk.com:16914
-        type: http
+        type: sysframe

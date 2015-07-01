@@ -29,5 +29,5 @@ quote:
         type: getHqV_lbData
     history:
         url: http://115.182.221.15:16964
-        type: http
+        type: sysframe
 

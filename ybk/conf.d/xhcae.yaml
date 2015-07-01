@@ -30,4 +30,4 @@ quote:
         type: getHqV_lbData
     history:
         url: http://218.249.27.82:20504
-        type: http
+        type: sysframe

@@ -30,4 +30,4 @@ quote:
         type: quotationAction_queryQuotations
     history:
         url: http://180.96.20.219:16844
-        type: http
+        type: sysframe

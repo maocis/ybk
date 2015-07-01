@@ -29,5 +29,5 @@ quote:
         url: http://ta.shscce.com:8080/front/hq/delay_hq.htm
         type: delay_hq
     history:
-        url:
-        type:
+        url: tcp://101.226.171.220:7002
+        type: winner

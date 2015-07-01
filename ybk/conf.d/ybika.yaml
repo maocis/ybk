@@ -29,5 +29,5 @@ quote:
         url: http://121.43.72.56:8081/hq/display_hq.htm
         type: display_hq
     history:
-        url:
-        type:
+        url: tcp://121.43.71.118:7002
+        type: winner

@@ -35,7 +35,8 @@ opening:
 quote:
     realtime:
         url: 
-        type: 
+        url_bad: http://220.177.253.215:16933/tradeweb/hq/getHqV_lbData.jsp
+        type: getHqV_lbData
     history:
-        url: 
-        type: 
+        url: http://220.177.253.215:16924 
+        type: sysframe

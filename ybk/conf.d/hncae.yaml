@@ -29,5 +29,5 @@ quote:
         url: http://ta.hncae.net/front/hq/delay_hq.htm
         type: delay_hq
     history:
-        url: 
-        type:
+        url: tcp://113.106.95.85:7002
+        type: winner

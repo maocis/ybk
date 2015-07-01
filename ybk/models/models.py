@@ -62,7 +62,7 @@ class Collection(Model):
         ]
     }
 
-    from_url = StringField(blank=False)        # 来自哪个公告
+    from_url = StringField(blank=True)        # 来自哪个公告
 
     exchange = StringField(blank=False)        # 交易所ID(简称)
     symbol = StringField(blank=False)          # 交易代码

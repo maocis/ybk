@@ -13,7 +13,8 @@ from ybk.settings import SITES, get_conf
 
 session = requests.Session()
 session.headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.81 Safari/537.36',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) ' +
+    'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.81 Safari/537.36',
     'Accept-Encoding': 'gzip, deflate, sdch',
 }
 
@@ -52,7 +53,7 @@ def realtime(site):
     for q in quotes:
         coll = Collection._get_collection()
         coll.update({'exchange': exchange,
-                     'symbol': q['symbol']},
+                     'symbol': q['symbol'].strip()},
                     {'$set': {'name': q['name']}},
                     upsert=True)
         q['exchange'] = exchange

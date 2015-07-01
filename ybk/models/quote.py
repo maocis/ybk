@@ -34,6 +34,7 @@ class Quote(Model):
     high = FloatField(blank=False)              # 周期最高价
     low = FloatField(blank=False)               # 周期最低价
     close = FloatField(blank=False)             # 周期收盘价
+    mean = FloatField(blank=True)               # 周期均价
     volume = IntField(blank=False)              # 周期成交量
     amount = FloatField(blank=False)            # 周期成交额
 
