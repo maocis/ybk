@@ -90,8 +90,14 @@
           <thead>
             <th class="col-md-2">交易所</th>
             <th class="col-md-1">类别</th>
+            {% if current_user.is_authenticated() and current_user.is_admin() %}
+            <th class="col-md-6">标题</th>
+            <th class="col-md-2 text-right">时间</th>
+            <th class="col-md-1"></th>
+            {% else %}
             <th class="col-md-7">标题</th>
             <th class="col-md-2">时间</th>
+            {% endif %}
           </thead>
           <tbody>
           {% for a in announcements %}
@@ -103,7 +109,13 @@
                   {{ a.title }}
                 </a>
               </td>
+              
+              {% if current_user.is_authenticated() and current_user.is_admin() %}
+              <td class="text-right">{{ a.published_at | bjdate }}</td>
+              <td class="text-right"><a target="_blank" href="{{ url_for('admin.parse', url=a.url) }}">解析</a></td>
+              {% else %}
               <td>{{ a.published_at | bjdate }}</td>
+              {% endif %}
             </tr>
             {% endfor %}
           </tbody>
