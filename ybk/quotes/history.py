@@ -105,7 +105,7 @@ def history_sysframe(exchange, url):
                 if kline_days:
                     q['lclose'] = kline_days[-1]['close']
                 else:
-                    if not c.offers_at:
+                    if not c.offers_at and not c.name.endswith('指数'):
                         c.offers_at = q['quote_at'] - timedelta(days=2)
                         c.offer_price = q['high'] / 1.3
                         c.offer_quantity = quantity // 10
