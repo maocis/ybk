@@ -39,8 +39,8 @@ def do_cron(parser, args):
             now = datetime.utcnow() + timedelta(hours=8)
             if 9 <= now.hour <= 20:
                 realtime_all()
-            if 19 <= now.hour <= 24:
-                history_all()
+            # if 19 <= now.hour <= 24:
+            #     history_all()
         except:
             quote_log.exception('出错啦')
         finally:
