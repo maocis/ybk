@@ -34,9 +34,8 @@ opening:
     download: http://ybk.nccaee.com/web/news/news_down.jsp?parentid=48&classid=66
 quote:
     realtime:
-        url: 
-        url_bad: http://220.177.253.215:16933/tradeweb/hq/getHqV_lbData.jsp
+        url: http://220.177.253.216:16916/tradeweb/hq/getHqV_lbData.jsp
         type: getHqV_lbData
     history:
-        url: http://220.177.253.215:16924 
+        url: http://220.177.253.215:16914 
         type: sysframe

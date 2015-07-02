@@ -107,8 +107,29 @@ b'03 0133795 d000165d 00000000d'
 
 下载日线/分时数据
 
-[待填写] [参考scripts/gethq_history.py]
+- 日线
 
+```py
+url = 'http://HOST1:PORT1/hqApplet/data/day/00{}.day.zip'.format(symbol)
+content = gzip.decompress(requests.get(url).content)
+```
+
+内容的格式
+
+```bash
+04 00 00 00 # 日线/分钟线个数
+
+	XX XX XX XX  数字日期, 180626[1450]
+	XX XX XX XX  高 >f 
+	XX XX XX XX  开
+	XX XX XX XX  低
+	XX XX XX XX  收
+	XX XX XX XX  平均
+	XX XX XX XX  ？
+	XX XX XX XX  成交量
+	XX XX XX XX  成交额
+	XX XX XX XX  藏品总库存
+```
 
 ## <a id="trade">行情协议</a>
 
