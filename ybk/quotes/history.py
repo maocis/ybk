@@ -65,9 +65,13 @@ def history_sysframe(exchange, url):
             theurl = '{}/hqApplet/data/day/00{}.day.zip'.format(
                 url, c.symbol)
             log.info('fetching exchange {} url {}'.format(exchange, theurl))
-            content = session.get(
-                theurl, timeout=(5, 10), verify=False).content
-            content = gzip.decompress(content)
+            r = session.get(
+                theurl, timeout=(5, 10), verify=False)
+            if r.status_code != 200:
+                log.warning('{}_{}下载失败, 错误码: {}'
+                            ''.format(exchange, c.symbol, r.status_code))
+                continue
+            content = gzip.decompress(r.content)
 
             # 解析之
             num_rows = struct.unpack('>i', content[0:4])[0]
@@ -215,11 +219,10 @@ def history_exists(c):
         count = Quote.find({'exchange': c.exchange,
                             'symbol': c.symbol,
                             'quote_type': '1d'}).count()
-        if count > 3:
-            trades_ratio = 1. * count / \
-                (datetime.utcnow() - c.offers_at).days
-        else:
-            trades_ratio = 1.
+
+        trades_ratio = 1. * count / \
+            (datetime.utcnow() - c.offers_at).days
+
         # print(trades_ratio, c.exchange, c.symbol)
         if q and trades_ratio > 3 / 7.:
             return True

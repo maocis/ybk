@@ -29,5 +29,5 @@ quote:
         url: http://115.182.221.27:16929/tradeweb/hq/getHqV_lbData.jsp
         type: getHqV_lbData
     history:
-        url: http://118.145.4.149:16934 
+        url: http://118.145.4.149:16914 
         type: sysframe

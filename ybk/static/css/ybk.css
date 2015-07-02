@@ -15,6 +15,20 @@
   }
 }
 
+
+/* frontend/trade.html */
+
+#chart1 {
+    border: 1px solid #333;
+    height: 230px;
+}
+
+#chart2 {
+    border: 1px solid #333;
+    height: 145px;
+}
+
+
 /* user/position.html */
 table#position-list > tbody > tr > td,
 table#transaction-list > tbody > tr > td {
