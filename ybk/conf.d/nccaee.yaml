@@ -12,7 +12,7 @@ stock:
 offer:
     index: http://ybk.nccaee.com/web/news/news.jsp?parentid=44&classid=44
     relative: http://ybk.nccaee.com
-    detail: <a href="([^"]+)"[^>]*>([^>]*申购[^>]*)</a></td>\s*<td[^>]*>\[(\d+-\d+-\d+)\]
+    detail: <a href="([^"]+)"[^>]*>([^>]*申购挂牌[^>]*)</a></td>\s*<td[^>]*>\[(\d+-\d+-\d+)\]
     fields: [url, title, published_at]
     encoding: gb18030 
     page: http://ybk.nccaee.com/web/news/news.jsp?parentid=44&classid=44
