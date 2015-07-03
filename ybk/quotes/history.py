@@ -220,10 +220,12 @@ def history_exists(c):
                             'symbol': c.symbol,
                             'quote_type': '1d'}).count()
 
-        trades_ratio = 1. * count / \
-            (datetime.utcnow() - c.offers_at).days
+        past_days = (datetime.utcnow() - c.offers_at).days
+        if past_days <= 2:
+            return True
 
-        # print(trades_ratio, c.exchange, c.symbol)
+        trades_ratio = 1. * count / past_days
+
         if q and trades_ratio > 3 / 7.:
             return True
     return False
