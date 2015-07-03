@@ -33,9 +33,11 @@ def trade_quote_history():
     symbol = request.args.get('symbol', '')
     c = Collection.find_one({'exchange': exchange, 'symbol': symbol})
     period = request.args.get('period', '1d')
-    qs = list(Quote.find({'exchange': exchange,
-                          'symbol': symbol,
-                          'quote_type': period}))
+
+    # chart1
+    qs = list(Quote.cached(3600).find({'exchange': exchange,
+                                       'symbol': symbol,
+                                       'quote_type': period}))
     xAxis = [{
         'type': 'category',
         'boundaryGap': True,
@@ -52,9 +54,20 @@ def trade_quote_history():
                 for q in qs
             ]
         }]
+    name = '{}({}_{})'.format(Collection.get_name(exchange, symbol),
+                              exchange, symbol)
+    title = {
+        'text': name
+    }
+    legend = {
+        'data': [name]
+    }
     return jsonify(status=200,
                    series=series,
-                   xAxis=xAxis)
+                   xAxis=xAxis,
+                   title=title,
+                   legend=legend
+                   )
 
 
 def trade_quote_realtime():
@@ -64,13 +77,13 @@ def trade_quote_realtime():
     # 持仓 -> position
     # 自选 -> diy
     category = request.args.get('category')
-    today = Quote.find_one({'quote_type': '1d'},
-                           sort=[('quote_at', -1)]).quote_at
+    today = Quote.cached(3600).find_one({'quote_type': '1d'},
+                                        sort=[('quote_at', -1)]).quote_at
     if category == 'all':
         qs = list(Quote.find({'quote_type': '1d',
                               'quote_at': today}))
     elif category == 'index':
-        cs = list(Collection.find({'name': {'$regex': '指数$'}}))
+        cs = list(Collection.cached(3600).find({'name': {'$regex': '指数$'}}))
         colls = set((c.exchange, c.symbol) for c in cs)
         symbols = [c.symbol for c in cs]
         qs = [q for q in Quote.find({'quote_type': '1d',

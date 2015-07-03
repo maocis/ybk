@@ -17,6 +17,43 @@
 {% block js %}
 <script src="//cdn.bootcss.com/echarts/2.2.5/echarts.js"></script>
 <script type="text/javascript">
+    var option = {
+        tooltip : {
+            trigger: 'axis',
+            showDelay: 0,             // 显示延迟，添加显示延迟可以避免频繁切换，单位ms
+            formatter: function (params) {
+                var res = params[0].name;
+                res += '<br/>' + params[0].seriesName;
+                res += '<br/>  开盘 : ' + params[0].value[0] + '  最高 : ' + params[0].value[3];
+                res += '<br/>  收盘 : ' + params[0].value[1] + '  最低 : ' + params[0].value[2];
+                return res;
+            }
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                mark : {show: true},
+                dataZoom : {show: true},
+                magicType : {show: true, type: ['line', 'bar']},
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        grid: {
+            x: 80,
+            y: 40,
+            x2:20,
+            y2:25
+        },
+        yAxis : [
+            {
+                type : 'value',
+                scale:true,
+                boundaryGap: [0.05, 0.05],
+                splitArea : {show : true}
+            }
+        ],
+    };
     require.config({
         paths: {
             echarts: '//cdn.bootcss.com/echarts/2.2.5/'
@@ -29,51 +66,24 @@
         ],
         function (ec) {
             // 通用选项
-            option = {
-                tooltip : {
-                    trigger: 'axis',
-                    showDelay: 0,             // 显示延迟，添加显示延迟可以避免频繁切换，单位ms
-                    formatter: function (params) {
-                        var res = params[0].name;
-                        res += '<br/>' + params[0].seriesName;
-                        res += '<br/>  开盘 : ' + params[0].value[0] + '  最高 : ' + params[0].value[3];
-                        res += '<br/>  收盘 : ' + params[0].value[1] + '  最低 : ' + params[0].value[2];
-                        return res;
-                    }
-                },
-                toolbox: {
-                    show : true,
-                    feature : {
-                        mark : {show: true},
-                        dataZoom : {show: true},
-                        magicType : {show: true, type: ['line', 'bar']},
-                        restore : {show: true},
-                        saveAsImage : {show: true}
-                    }
-                },
-                grid: {
-                    x: 80,
-                    y: 40,
-                    x2:20,
-                    y2:25
-                },
-                yAxis : [
-                    {
-                        type : 'value',
-                        scale:true,
-                        boundaryGap: [0.05, 0.05],
-                        splitArea : {show : true}
-                    }
-                ],
-            }
+            
             // title, legend, series, xAxis from ajax
             var chart1 = ec.init(document.getElementById('chart1'));
-            chart1.setOption(option);
             var chart2 = ec.init(document.getElementById('chart2'));
-            chart2.setOption(option);
+            
+        $.get("{{ url_for('frontend.trade_quote') }}",
+             {type: 'history',
+              exchange: '上海文交所',
+              symbol: '600001'},
+             function(data){
+                if (data.status == 200){
+                    $.extend(option, data);
+                    console.log(option);
+                    chart1.setOption(option);
+                }
+             })
         }
     );
-    var chart1 = ec.init(document.getElementById('chart1'));
-    var chart2 = ec.init(document.getElementById('chart2'));
+
 </script>
 {% endblock %}
