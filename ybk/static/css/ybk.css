@@ -18,18 +18,29 @@
 
 /* frontend/trade.html */
 
+#realtime, #history {
+    min-height: 460px;
+}
+
 #chart1 {
-    border: 1px solid #333;
-    height: 230px;
+    height: 360px;
 }
 
 #chart2 {
-    border: 1px solid #333;
-    height: 145px;
+    height: 100px;
+}
+
+#bar {
+    min-height: 80px;
+}
+
+#realtime table td {
+    cursor: pointer;
 }
 
 
 /* user/position.html */
+
 table#position-list > tbody > tr > td,
 table#transaction-list > tbody > tr > td {
     padding: 3px !important;

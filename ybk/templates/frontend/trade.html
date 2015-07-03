@@ -1,31 +1,93 @@
 {% extends "layout.html" %}
 
+{% block css %}
+<link href="{{ url_for('static', filename='css/bootstrap-table.min.css') }}" rel="stylesheet">
+{% endblock %}
+
 
 {% block main %}
     <div class="col-md-12">
-        <div id="chart1"></div>
-            <!-- k线 -->
-        <div id="chart2"></div>
-            <!-- 成交量 -->
-        <div id="bar">
+        
+        <div id="realtime" {% if history_only %}style="display:none"{% endif %}>
+            <!-- 实时列表 -->
+            <table id="rtable" class="table"
+                data-toggle="table"
+                data-height="460"
+                data-classes="table table-condensed table-hover"
+                data-locale="zh-CN"
+                data-sort-name="increase"
+                data-sort-order="desc"
+                data-url="{{ url_for('frontend.trade_quote', type='realtime', category='index') }}"
+                data-side-pagination="server"
+                data-search="true">
+              <thead>
+                <tr>
+                  <th data-field="exchange" data-align="right" data-sortable="true">交易所</th>
+                  <th data-field="symbol" data-align="right" data-sortable="true">藏品代码</th>
+                  <th data-field="name" data-align="right" data-sortable="true">藏品名称</th>
+                  <th data-field="lclose" data-align="right" data-sortable="true">昨收价</th>
+                  <th data-field="close" data-align="right" data-sortable="true">最新价</th>
+                  <th data-field="increase" data-align="right" data-sortable="true">涨跌幅</th>
+                  <th data-field="volume" data-align="right" data-sortable="true">成交量</th>
+                  <th data-field="amount" data-align="right" data-sortable="true">成交额(万)</th>
+                  <th data-field="high" data-align="right" data-sortable="true">最高价</th>
+                  <th data-field="low" data-align="right" data-sortable="true">最低价</th>
+                </tr>
+              </thead>
+            </table>
+        </div>
+        <div id="history" style="display:none;">
+            <!-- K线图 -->
+            <div id="chart1"></div>
+                <!-- k线 -->
+            <div id="chart2"></div>
+                <!-- 成交量 -->
+        </div>
+        <hr>
+        <div id="bar" style="display:none">
             <!-- 全部/指数/自选/当前 -->
+            <ul class="nav nav-pills">
+              <li role="presentation" class="active" data-category="index"><a href="#">全部指数</a></li>
+              <li role="presentation" data-category="all"><a href="#">全部藏品</a></li>
+              <li role="presentation" data-category="position"><a href="#">持仓</a></li>
+              <li role="presentation" data-type="history"><a href="#">K线</a></li>
+            </ul>
         </div>
     </div>
 {% endblock %}
 
 
 {% block js %}
+
+<script src="{{ url_for('static', filename='js/bootstrap-table.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-table-zh-CN.min.js') }}"></script>
 <script src="//cdn.bootcss.com/echarts/2.2.5/echarts.js"></script>
 <script type="text/javascript">
+    function getUrlParameter(sParam)
+    {
+        var sPageURL = window.location.search.substring(1);
+        var sURLVariables = sPageURL.split('&');
+        for (var i = 0; i < sURLVariables.length; i++) 
+        {
+            var sParameterName = sURLVariables[i].split('=');
+            if (sParameterName[0] == sParam) 
+            {
+                return sParameterName[1];
+            }
+        }
+    }    
     var option = {
         tooltip : {
             trigger: 'axis',
             showDelay: 0,             // 显示延迟，添加显示延迟可以避免频繁切换，单位ms
             formatter: function (params) {
+                if (params[0].value.length == 0) {
+                    return '无数据';
+                }
                 var res = params[0].name;
                 res += '<br/>' + params[0].seriesName;
-                res += '<br/>  开盘 : ' + params[0].value[0] + '  最高 : ' + params[0].value[3];
-                res += '<br/>  收盘 : ' + params[0].value[1] + '  最低 : ' + params[0].value[2];
+                res += '<br/>  开盘 : ' + Math.round(params[0].value[0]*100)/100 + '  最高 : ' + Math.round(params[0].value[3]*100/100);
+                res += '<br/>  收盘 : ' + Math.round(params[0].value[1]*100/100) + '  最低 : ' + Math.round(params[0].value[2]*100/100);
                 return res;
             }
         },
@@ -54,6 +116,74 @@
             }
         ],
     };
+    function show_history(exchange, symbol) {
+        $('#bar li').removeClass('active');
+        $('#bar li[data-type=history]').addClass('active');
+        $('#realtime').hide();
+        $('#history').show();
+        var chart1 = require('echarts').init(document.getElementById('chart1'));
+        var chart2 = require('echarts').init(document.getElementById('chart2'));
+        $.get("{{ url_for('frontend.trade_quote') }}",
+             {type: 'history',
+              exchange: exchange,
+              symbol: symbol},
+             function(data){
+                if (data.status == 200){
+                    var o;
+                    o = $.extend({}, option);
+                    $.extend(o, data.option1);
+                    chart1.setOption(o);
+                    o = $.extend({}, option);
+                    $.extend(o, data.option2);
+                    chart2.setOption(o);
+                    chart1.connect([chart2]);
+                    chart2.connect([chart1]);
+                }
+             })
+    }
+    $('#rtable').on('click-row.bs.table', function(e, row) {
+        show_history(row.exchange, row.symbol);
+    });
+
+    $('#rtable').on('search.bs.table', function(e, text) {
+        if (text) {
+            $('#bar li').removeClass('active');
+            $('#bar li[data-category=all]').addClass('active');
+            $('#history').hide();
+            $('#realtime').show();
+            var url = "{{ url_for('frontend.trade_quote', 
+                                      type='realtime',
+                                      sort='increase',
+                                      order='desc') | safe }}" 
+                            + '&category=all';
+            $('#rtable').bootstrapTable('refresh', {url: url});
+        }
+    });
+
+    $('#bar li').on('click', function(e) {
+        e.preventDefault();
+        e.target.blur();
+        var category = $(this).data('category');
+
+        if (category) {
+            location.hash = '#' + category;
+            var url = "{{ url_for('frontend.trade_quote', 
+                                  type='realtime',
+                                  sort='increase',
+                                  order='desc') | safe }}" 
+                        + '&category=' + category;
+            $('#bar li').removeClass('active');
+            $('#bar li[data-category=' + category + ']').addClass('active');
+            $('#history').hide();
+            $('#realtime').show();
+            $('.search input').val('');
+            $('.search input').trigger('keyup');
+            $('#rtable').bootstrapTable('refresh', {url: url});
+        }
+    });
+
+
+
     require.config({
         paths: {
             echarts: '//cdn.bootcss.com/echarts/2.2.5/'
@@ -63,25 +193,20 @@
         [
             'echarts',
             'echarts/chart/k',
+            'echarts/chart/bar',
+            'echarts/chart/line',
         ],
         function (ec) {
-            // 通用选项
-            
-            // title, legend, series, xAxis from ajax
-            var chart1 = ec.init(document.getElementById('chart1'));
-            var chart2 = ec.init(document.getElementById('chart2'));
-            
-        $.get("{{ url_for('frontend.trade_quote') }}",
-             {type: 'history',
-              exchange: '上海文交所',
-              symbol: '600001'},
-             function(data){
-                if (data.status == 200){
-                    $.extend(option, data);
-                    console.log(option);
-                    chart1.setOption(option);
+            if ( location.hash ) {
+                $('#bar li[data-category=' + location.hash.slice(1) + ']').trigger('click');
+            } else {
+                var exchange = getUrlParameter('exchange');
+                var symbol = getUrlParameter('symbol');
+                if (exchange && symbol) {
+                    show_history(decodeURIComponent(exchange), symbol);
                 }
-             })
+            }
+            $('#bar').show();
         }
     );
 

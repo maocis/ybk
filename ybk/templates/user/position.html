@@ -40,7 +40,7 @@
         </div>
         <table id="position-list" class="table"
                 data-toggle="table"
-                data-classes="table table-condensed"
+                data-classes="table table-condensed table-hover"
                 data-locale="zh-CN"
                 data-sort-name="total_increase"
                 data-sort-order="desc"
@@ -240,7 +240,10 @@ $(function() {
       'data-exchange="' + row.exchange + '" ' +
       'data-symbol="' + row.symbol + '" ' +
       'data-price="' + row.latest_price + '" ' +
-      'data-quantity="' + row.quantity + '">卖</button>'
+      'data-quantity="' + row.quantity + '">卖</button>' +
+      '<button class="btn btn-xs btn-default" name="history" ' +
+      'data-exchange="' + row.exchange + '" ' +
+      'data-symbol="' + row.symbol + '">K</button>'
   }
   window.buySellFormatter = buySellFormatter;
 
@@ -412,6 +415,12 @@ $(function() {
       })
   })
 
+  $('table').on('click', '[name=history]', function(e) {
+    e.preventDefault();
+    var self = $(e.target);
+    self.blur();
+    location.href="{{ url_for('frontend.trade') }}" + '?exchange=' + self.data('exchange') + '&symbol=' + self.data('symbol');
+    });
 });
 </script>
 {% endblock %}

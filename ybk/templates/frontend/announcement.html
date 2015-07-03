@@ -239,10 +239,8 @@
         }
         $('table').on('click', 'a[name=exchange]', function(e) {
           e.preventDefault();
-          // $('#collection-list').bootstrapTable('refresh', {query: {search: $(this).data('exchange')} })
           $('.search input').val($(this).data('exchange'));
           $('.search input').trigger('keyup');
-          // console.log($(this).data('exchange'));
         });
     </script>
 {% endblock %}
