@@ -86,8 +86,8 @@
                 }
                 var res = params[0].name;
                 res += '<br/>' + params[0].seriesName;
-                res += '<br/>  开盘 : ' + Math.round(params[0].value[0]*100)/100 + '  最高 : ' + Math.round(params[0].value[3]*100/100);
-                res += '<br/>  收盘 : ' + Math.round(params[0].value[1]*100/100) + '  最低 : ' + Math.round(params[0].value[2]*100/100);
+                res += '<br/>  开盘 : ' + Math.round(params[0].value[0]*100)/100 + '  最高 : ' + Math.round(params[0].value[1]*100/100);
+                res += '<br/>  最低 : ' + Math.round(params[0].value[2]*100/100) + '  收盘 : ' + Math.round(params[0].value[3]*100/100);
                 return res;
             }
         },
