@@ -152,9 +152,7 @@
             $('#history').hide();
             $('#realtime').show();
             var url = "{{ url_for('frontend.trade_quote', 
-                                      type='realtime',
-                                      sort='increase',
-                                      order='desc') | safe }}" 
+                                      type='realtime') | safe }}" 
                             + '&category=all';
             $('#rtable').bootstrapTable('refresh', {url: url});
         }
@@ -168,9 +166,7 @@
         if (category) {
             location.hash = '#' + category;
             var url = "{{ url_for('frontend.trade_quote', 
-                                  type='realtime',
-                                  sort='increase',
-                                  order='desc') | safe }}" 
+                                  type='realtime') | safe }}" 
                         + '&category=' + category;
             $('#bar li').removeClass('active');
             $('#bar li[data-category=' + category + ']').addClass('active');
