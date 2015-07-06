@@ -230,6 +230,23 @@ def trade_quote_realtime():
         q['amount'] = '{:.1f}万'.format(q['amount'] / 10000)
         q['increase'] = '{:.1f}%'.format(q['increase'] * 100)
 
+    # add no result symbols
+    exist_pairs = set((q['exchange'], q['symbol']) for q in qs)
+    for exchange, symbol in (colls - exist_pairs):
+        qs.append({
+            'open_': '-',
+            'high': '-',
+            'low': '-',
+            'close': '-',
+            'lclose': '-',
+            'volume': '-',
+            'amount': '-',
+            'increase': '-',
+            'exchange': exchange,
+            'symbol': symbol,
+            'name': Collection.get_name(exchange, symbol),
+        })
+
     return jsonify(status=200,
                    total=len(qs),
                    rows=qs)

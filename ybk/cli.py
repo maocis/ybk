@@ -37,10 +37,10 @@ def do_cron(parser, args):
         path.open('w').write('')
         try:
             now = datetime.utcnow() + timedelta(hours=8)
-            if 9 <= now.hour <= 20:
+            if 9 <= now.hour <= 20 and now.weekday() != 6:
                 realtime_all()
-            # if 19 <= now.hour <= 24:
-            #     history_all()
+            if now.hour == 6 and now.minute < 5:
+                history_all()
         except:
             quote_log.exception('出错啦')
         finally:
