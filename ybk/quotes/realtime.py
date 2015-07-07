@@ -54,7 +54,7 @@ def realtime(site):
     for q in quotes:
         coll = Collection._get_collection()
         coll.update({'exchange': exchange,
-                     'symbol': q['symbol'].strip()},
+                     'symbol': q['symbol'].strip()[-6:]},
                     {'$set': {'name': q['name']}},
                     upsert=True)
         q['exchange'] = exchange
