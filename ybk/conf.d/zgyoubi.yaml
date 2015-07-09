@@ -31,11 +31,11 @@ opening:
     bank: [农业银行]
     code: [无]
     name: [沈阳中港商品交易所]
-    download: http://zgbce.com/news.php?classid=62
+    download: http://zgbce.com/news_look.php?id=198
 quote:
     realtime:
-        url: 
+        url: http://112.65.240.204:10205/tradeweb/hq/getHqV_lbData.jsp
         type: getHqV_lbData
     history:
-        url: 
+        url: http://180.235.68.101:20104
         type: sysframe
