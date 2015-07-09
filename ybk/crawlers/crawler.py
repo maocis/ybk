@@ -97,6 +97,9 @@ def parse_index(ex, type_, content, conf):
             d['url'] = conf['relative'] + d['url']
         if Announcement.find_one({'url': d['url']}):
             continue
+
+        if ex.abbr == '中港邮币卡':
+            d['published_at'] = re.sub('<[^>]*>', '-', d['published_at'])
         d['published_at'] = parse_datetime(d['published_at']) \
             - timedelta(hours=8)
         d['exchange'] = ex._id

@@ -1,0 +1,41 @@
+url: http://www.zgyoubi.com/
+name: 沈阳中港大宗商品交易市场邮币卡交易中心
+abbr: 中港邮币卡
+stock:
+    index: http://www.zgyoubi.com/news.php?classid=79&class1id=194
+    relative: http://www.zgyoubi.com/
+    detail: (\d+-\d+<[^>]*><[^>]*>\d+)<[^>]*>(<[^>]*>\s*)+<a href="([^"]*)"[^>]*><font[^>]*>([^<]*)
+    fields: [published_at, _, url, title]
+    encoding: utf-8
+    page: 
+    maxpage: 1
+offer:
+    index: http://www.zgyoubi.com/news.php?classid=79&class1id=197
+    relative: http://www.zgyoubi.com/
+    detail: (\d+-\d+<[^>]*><[^>]*>\d+)<[^>]*>(<[^>]*>\s*)+<a href="([^"]*)"[^>]*><font[^>]*>([^<]*)
+    fields: [published_at, _, url, title]
+    encoding: utf-8
+    page: 
+    maxpage: 1
+result:
+    index: http://www.zgyoubi.com/news.php?classid=79&class1id=198
+    relative: http://www.zgyoubi.com/
+    detail: (\d+-\d+<[^>]*><[^>]*>\d+)<[^>]*>(<[^>]*>\s*)+<a href="([^"]*)"[^>]*><font[^>]*>([^<]*)
+    fields: [published_at, _, url, title]
+    encoding: utf-8
+    page: 
+    maxpage: 1
+opening:
+    url: http://www.zgbce.com/zhuanqu.php?classid=55&class1id=148
+    guide: http://www.zgbce.com/zhuanqu.php?classid=55&class1id=165
+    bank: [农业银行]
+    code: [无]
+    name: [沈阳中港商品交易所]
+    download: http://zgbce.com/news.php?classid=62
+quote:
+    realtime:
+        url: 
+        type: getHqV_lbData
+    history:
+        url: 
+        type: sysframe
