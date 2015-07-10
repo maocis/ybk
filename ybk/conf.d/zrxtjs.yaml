@@ -1,6 +1,14 @@
 url: http://www.zrxtjs.com
 name: 中融文化邮票钱币交易中心
 abbr: 中融邮币卡
+stock:
+    index: http://www.zrxtjs.com/news/48.html
+    relative: http://www.zrxtjs.com
+    detail: (\d+/\d+/\d+)</span><a href="([^"]+)">([^<]*)</a>
+    fields: [published_at, url, title]
+    encoding: gb2312
+    page: http://www.zrxtjs.com/news/46-p-{page}.html
+    maxpage: 1
 offer:
     index: http://www.zrxtjs.com/news/46.html
     relative: http://www.zrxtjs.com
