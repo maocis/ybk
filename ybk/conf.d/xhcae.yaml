@@ -1,6 +1,14 @@
 url: http://www.xhcae.com
 name: 华夏文交所
 abbr: 华夏文交所
+stock:
+    index: http://www.xhcae.com/notice/tggg/
+    relative: http://www.xhcae.com
+    detail: <a href="([^"]+)"[^>]*>([^<]+)</a>\s*<span>(\d+-\d+-\d+)
+    fields: [url, title, published_at]
+    encoding: gb2312
+    page: http://www.xhcae.com/notice/sggg/index_{page}.html
+    maxpage: 1
 offer:
     index: http://www.xhcae.com/notice/sggg/
     relative: http://www.xhcae.com
