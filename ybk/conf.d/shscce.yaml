@@ -1,6 +1,14 @@
 url: http://www.shscce.com
 name: 上海邮币卡交易中心
 abbr: 上海邮币卡
+stock:
+    index: http://www.shscce.com/html/shscce/zxgg/index_1.shtml
+    relative: http://www.shscce.com
+    detail: <span>(\d+-\d+-\d+)</span><a[^>]*"(/html/shscce/zxgg/\d+_\d+.shtml)" title="([^"]+托管入库[^"]+)"
+    fields: [published_at, url, title]
+    encoding: utf-8
+    page: http://www.shscce.com/html/shscce/zxgg/index_{page}.shtml
+    maxpage: 3
 offer:
     index: http://www.shscce.com/html/shscce/zxgg/index_1.shtml
     relative: http://www.shscce.com

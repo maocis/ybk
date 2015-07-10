@@ -1,10 +1,18 @@
 url: http://www.ybika.com
 name: 上海文化产权交易所/内蒙古文化产权交易所
 abbr: 上海文交所
+stock:
+    index: http://www.ybika.com/notice/index_1.htm
+    relative: http://www.ybika.com
+    detail: (\d+-\d+-\d+)</span>\s*<a href="([^"]+)"[^>]*>([^<]*托管入库[^<]*)
+    fields: [published_at, url, title]
+    encoding: utf-8
+    page: http://www.ybika.com/notice/index_{page}.htm
+    maxpage: 5
 offer:
     index: http://www.ybika.com/notice/index_1.htm
     relative: http://www.ybika.com
-    detail: <span>(\d+-\d+-\d+)</span><a href="([^"]+)" title="([^"]*申购公告[^"]*)"
+    detail: (\d+-\d+-\d+)</span>\s*<a href="([^"]+)"[^>]*>([^<]*申购公告[^<]*)
     fields: [published_at, url, title]
     encoding: utf-8
     page: http://www.ybika.com/notice/index_{page}.htm
@@ -12,7 +20,7 @@ offer:
 result:
     index: http://www.ybika.com/notice/index_1.htm
     relative: http://www.ybika.com
-    detail: <span>(\d+-\d+-\d+)</span><a href="([^"]+)" title="([^"]*中签[^"]*)"
+    detail: (\d+-\d+-\d+)</span>\s*<a href="([^"]+)"[^>]*>([^<]*中签[^<]*)
     fields: [published_at, url, title]
     encoding: utf-8
     page: http://www.ybika.com/notice/index_{page}.htm
