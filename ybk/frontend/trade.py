@@ -223,6 +223,8 @@ def trade_quote_realtime():
 
     # format
     for q in qs:
+        if q['lclose']:
+            q['lclose'] = '{:.2f}'.format(q['lclose'])
         q['open_'] = '{:.2f}'.format(q['open_'])
         q['high'] = '{:.2f}'.format(q['high'])
         q['low'] = '{:.2f}'.format(q['low'])
