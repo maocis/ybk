@@ -1,6 +1,14 @@
 url: http://www.cacecybk.com.cn
 name: 中国艺交所邮币卡交易中心
 abbr: 中艺邮币卡
+stock:
+    index: http://www.cacecybk.com.cn/web/news/news.jsp?parentid=44&classid=55 
+    relative: http://www.cacecybk.com.cn
+    detail: a href="([^"]+)"[^>]*>([^>]+)</a></td>\s*<td[^>]*>(\d+-\d+)
+    fields: [url, title, published_at]
+    encoding: gb18030
+    page: http://www.cacecybk.com.cn/web/news/news.jsp?parentid=44&classid=56
+    maxpage: 1
 offer:
     index: http://www.cacecybk.com.cn/web/news/news.jsp?parentid=44&classid=56
     relative: http://www.cacecybk.com.cn
