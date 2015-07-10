@@ -1,6 +1,14 @@
 url: http://ybk.hncae.net
 name: 湖南文化艺术品产权交易所
 abbr: 湖南文交所
+stock:
+    index: http://ybk.hncae.net/wjs/index.htm
+    relative: http://ybk.hncae.net
+    detail: <span>(\d+-\d+-\d+)</span><a href="([^"]+)">([^>]*(公开征集|入库)[^>]*)</a>
+    fields: [published_at, url, title]
+    encoding: utf-8
+    page: http://ybk.hncae.net/wjs/index_{page}.htm
+    maxpage: 9
 offer:
     index: http://ybk.hncae.net/wjs/index.htm
     relative: http://ybk.hncae.net
