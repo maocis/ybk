@@ -1,6 +1,14 @@
 url: http://www.zghqwh.com
 name: 华强文化艺术品交易中心
 abbr: 华强文交所
+stock:
+    index: http://www.zghqwh.com/web/tggg/
+    relative: http://www.zghqwh.com/
+    detail: (\d+-\d+-\d+)</span>\s*<a href=../../([^>]+html)[^>]*>([^<]*)</a>
+    fields: [published_at, url, title]
+    encoding: gb2312
+    page: http://www.zghqwh.com/web/sggg/
+    maxpage: 1
 offer:
     index: http://www.zghqwh.com/web/sggg/
     relative: http://www.zghqwh.com/
