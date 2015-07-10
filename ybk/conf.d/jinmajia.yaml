@@ -1,6 +1,14 @@
 url: http://qbyp.jinmajia.com
 name: 金马甲
 abbr: 金马甲
+stock:
+    index: http://qbyp.jinmajia.com/article/mtbd/qbyp/gggs/rksq/
+    relative: http://qbyp.jinmajia.com
+    detail: href="([^"]+)" class="artitlelist">([^>]*)</a><span class="timedefault">(\d+-\d+-\d+)</span>
+    fields: [url, title, published_at]
+    encoding: utf-8
+    page: http://qbyp.jinmajia.com/article/mtbd/qbyp/gggs/rksq/index.shtml?{page}
+    maxpage: 3
 offer:
     index: http://qbyp.jinmajia.com/article/mtbd/qbyp/gggs/sggp/
     relative: http://qbyp.jinmajia.com
