@@ -1,6 +1,14 @@
 url: http://www.zgqbyp.com
 name: 南京文交所钱币邮票交易中心
 abbr: 南京文交所
+stock:
+    index: http://www.zgqbyp.com/web/news/109.html
+    relative: http://www.zgqbyp.com/
+    detail: <span>(\d+-\d+-\d+)</span><a href[^>]+(html/\d+-\d+/\d+.html)[^>]*>([^>]+)</a>
+    fields: [published_at, url, title]
+    encoding: gb2312
+    page: http://www.zgqbyp.com/web/news/108_{page}.html
+    maxpage: 20
 offer:
     index: http://www.zgqbyp.com/web/news/108.html
     relative: http://www.zgqbyp.com/
