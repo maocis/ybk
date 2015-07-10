@@ -37,5 +37,5 @@ quote:
         url: http://220.177.253.216:16916/tradeweb/hq/getHqV_lbData.jsp
         type: getHqV_lbData
     history:
-        url: http://220.177.253.215:16914 
+        url: http://220.177.253.215:16924 
         type: sysframe

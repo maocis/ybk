@@ -62,8 +62,7 @@ def history_sysframe(exchange, url):
                 continue
 
             # 拿到数据文件
-            l = 8 if len(c.symbol) >= 6 else 6
-            theurl = ('{}/hqApplet/data/day/{:0>' + str(l) +'}.day.zip').format(
+            theurl = ('{}/hqApplet/data/day/00{}.day.zip').format(
                 url, c.symbol)
             log.info('fetching exchange {} url {}'.format(exchange, theurl))
             r = session.get(
