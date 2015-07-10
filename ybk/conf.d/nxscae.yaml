@@ -1,6 +1,14 @@
 url: http://www.nxscae.com
 name: 宁夏文化艺术品产权交易中心
 abbr: 宁夏文交所
+stock:
+    index: http://www.nxscae.com/pl/tz/
+    relative: http://nxscae.com
+    detail: href="(/pl/tz/(\d+-\d+-\d+)/\d+.html)" title="([^"]*托管[^"]*)"
+    fields: [url, published_at, title]
+    encoding: utf-8
+    page: http://www.nxscae.com/pl/tz/index_{page}.html
+    maxpage: 3
 offer:
     index: http://www.nxscae.com/pl/tz/
     relative: http://nxscae.com
