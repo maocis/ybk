@@ -1,6 +1,8 @@
 url: http://www.zrxtjs.com
 name: 中融文化邮票钱币交易中心
 abbr: 中融邮币卡
+notrade: 6
+cashout: 2
 stock:
     index: http://www.zrxtjs.com/news/48.html
     relative: http://www.zrxtjs.com

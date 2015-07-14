@@ -1,6 +1,8 @@
 url: http://www.xjsybk.com
 name: 西交所邮币卡运营中心
 abbr: 西部文交所
+notrade: 6
+cashout: 2
 stock:
     index: http://www.xjsybk.com/xinxipilu/
     relative: http://www.xjsybk.com/
@@ -37,5 +39,5 @@ quote:
         url: 
         type: 
     history:
-        url: 
-        type: 
+        url: http://118.145.4.50:10004
+        type: sysframe

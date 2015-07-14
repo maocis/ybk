@@ -1,6 +1,8 @@
 url: http://www.zgyoubi.com/
 name: 沈阳中港大宗商品交易市场邮币卡交易中心
 abbr: 中港邮币卡
+notrade: 
+cashout: 2
 stock:
     index: http://www.zgyoubi.com/news.php?classid=79&class1id=194
     relative: http://www.zgyoubi.com/

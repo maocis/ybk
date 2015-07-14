@@ -1,6 +1,8 @@
 url: http://www.zgqbyp.com
 name: 南京文交所钱币邮票交易中心
 abbr: 南京文交所
+notrade: 6
+cashout: 2
 stock:
     index: http://www.zgqbyp.com/web/news/109.html
     relative: http://www.zgqbyp.com/

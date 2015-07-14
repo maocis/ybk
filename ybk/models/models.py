@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 import time
 import math
+from datetime import timedelta
+
+from ybk.settings import get_conf
 
 from .mangaa import (
     Model,
@@ -164,3 +167,21 @@ class Collection(Model):
                 magnitude = math.ceil(math.log10(1 / self.result_ratio_cash))
                 return self.offer_price * 10 ** magnitude \
                     * (1 + self.offer_fee)
+
+    @property
+    def cashout_at(self):
+        c = get_conf(self.exchange)
+        print(c)
+        return self.offset(c['cashout'])
+
+    def offset(self, incr):
+        c = get_conf(self.exchange)
+        notrade = [int(x) for x in str(c['notrade'] or '').split(',') if x]
+        delta = 1 if incr > 0 else -1
+        odate = self.offers_at
+        while incr != 0:
+            incr -= delta
+            odate += timedelta(days=delta)
+            while odate.weekday() in notrade:
+                odate += timedelta(days=delta)
+        return odate

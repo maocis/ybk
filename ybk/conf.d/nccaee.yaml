@@ -1,6 +1,8 @@
 url: http://ybk.nccaee.com
 name: 南昌文化产权邮币卡交易中心
 abbr: 南昌文交所
+notrade: 6
+cashout: 2
 stock:
     index: http://ybk.nccaee.com/web/news/news.jsp?parentid=44&classid=44
     relative: http://ybk.nccaee.com

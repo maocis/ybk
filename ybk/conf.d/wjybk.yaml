@@ -1,6 +1,8 @@
 url: http://dzp.wjybk.com
 name: 北交所福丽特邮币交易平台
 abbr: 福丽特
+notrade: 6
+cashout: 1
 stock:
     index: http://dzp.wjybk.com/?action-category-catid-126
     relative: http://dzp.wjybk.com

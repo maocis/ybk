@@ -1,6 +1,8 @@
 url: http://www.znypjy.com
 name: 中南邮票交易中心
 abbr: 中南文交所
+notrade: 6
+cashout: 2
 stock:
     index: http://www.znypjy.com/a/xinxipilu/tuoguangonggao/
     relative: http://www.znypjy.com

@@ -1,6 +1,8 @@
 url: http://ybk.hncae.net
 name: 湖南文化艺术品产权交易所
 abbr: 湖南文交所
+notrade: 6
+cashout: 2
 stock:
     index: http://ybk.hncae.net/wjs/index.htm
     relative: http://ybk.hncae.net

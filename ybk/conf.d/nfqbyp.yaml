@@ -1,6 +1,8 @@
 url: http://www.nfqbyp.com
 name: 广东省南方文化产权交易所钱币邮票交易中心
 abbr: 南方文交所
+notrade: 6
+cashout: 2
 stock:
     index: http://www.nfqbyp.com/infomation.html?newsTypeID=17558&newsType=%E6%89%98%E7%AE%A1%E5%85%AC%E5%91%8A
     relative: http://www.nfqbyp.com

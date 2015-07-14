@@ -1,6 +1,8 @@
 url: http://ybk.hxce.cn
 name: 海西商品交易所邮币卡交易中心
 abbr: 海西文交所
+notrade: 
+cashout: 1
 stock:
     index: http://ybk.hxce.cn/html/xxpl/tggg/
     relative: http://ybk.hxce.cn

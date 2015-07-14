@@ -17,6 +17,7 @@
       <ul class="nav nav-pills nav-stacked" role="tablist">
         <li role="presentation" {% if tab == 'raw' %}class="active"{% endif %}><a href="{{ url_for('frontend.announcement_raw') }}" aria-controls="info">公告原文</a></li>
         <li role="presentation" {% if tab == 'collection' %}class="active"{% endif %}><a href="{{ url_for('frontend.announcement_collection') }}" aria-controls="collection" >交易品种</a></li>
+        <li role="presentation" {% if tab == 'calendar' %}class="active"{% endif %}><a href="{{ url_for('frontend.announcement_calendar') }}" aria-controls="collection" >申购日历</a></li>
       </ul>
     </div>
     <div class="col-md-10">
@@ -181,6 +182,43 @@
           <tbody>
           </tbody>
         </table>
+
+      {% elif tab == "calendar" %}
+
+
+        <h2>申购日历</h2>
+
+        <table class="table">
+          <thead>
+            <tr style="font-size: 0.9em;">
+              <th class="col-md-2">交易所</th>
+              {% for weekday, date in heads %}
+              <th> {{date}} <br> {{weekday}} </th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for ex in exs %}
+            <tr>
+              <td>{{ ex }}</td>
+              {% for c in rowdict[ex] %}
+              <td colspan="{{c.colspan}}" style="text-align: center;
+                {% if c.cs %}background-color: #bef;{% endif %}">
+                {% if c.cs %}
+                  申购({{c.cs | length}})
+                {% endif %}
+              </td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <div>
+          <a href="{{ url_for('frontend.announcement_calendar', starts_at=prev_starts_at) }}">&laquo;前10天</a> &nbsp;
+          <a href="{{ url_for('frontend.announcement_calendar', starts_at=next_starts_at) }}">后10天&raquo;</a>
+        </div>
+
       {% endif %}
     </div>
   </div>

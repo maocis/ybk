@@ -1,8 +1,12 @@
+from datetime import datetime, timedelta
+from collections import defaultdict
+
 from flask import render_template, request, redirect, jsonify
 from werkzeug.contrib.atom import AtomFeed
 
 from ybk.models import Exchange, Announcement, Collection, Quote
 from ybk.utils import Pagination
+from ybk.settings import CONFS
 
 from .views import frontend
 
@@ -164,6 +168,64 @@ def collection_list():
                 100 * (d['total_increase']))
 
     return jsonify(total=total, rows=rows)
+
+
+@frontend.route('/announcement/calendar/')
+def announcement_calendar():
+    nav = 'announcement'
+    tab = 'calendar'
+
+    starts_at = request.args.get('starts_at')
+    ends_at = request.args.get('ends_at')
+    if starts_at:
+        starts_at = datetime.strptime(starts_at, '%Y%m%d')
+
+    today = datetime.utcnow() + timedelta(hours=8)
+    today = today.replace(hour=0, minute=0, microsecond=0)
+    if not starts_at:
+        starts_at = today - timedelta(days=3)
+    ends_at = starts_at + timedelta(days=10)
+
+    # 表头
+    heads = []
+    d = starts_at
+    while d <= ends_at:
+        heads.append(('星期' + '一二三四五六日'[d.weekday()],
+                      d.strftime('%m月%d日')))
+        d += timedelta(days=1)
+
+    # 表身
+    exs = []  # 交易所所在行
+    rowdict = defaultdict(list)  # 交易所 -> 每天有/没有
+    seen = set()
+    for c in Collection.find({'offers_at': {'$gte': starts_at,
+                                            '$lte': ends_at}}):
+        if (c.exchange, c.offers_at) in seen:
+            continue
+        seen.add((c.exchange, c.offers_at))
+        if c.exchange not in exs:
+            exs.append(c.exchange)
+        d = starts_at
+        while d <= ends_at:
+            if d >= c.offers_at and d < c.cashout_at:
+                cs = list(Collection.find({'offers_at': c.offers_at,
+                                           'exchange': c.exchange}))
+                ndays = (c.cashout_at - c.offers_at).days
+                rowdict[c.exchange].append({'colspan': ndays, 'cs': cs})
+                d = c.cashout_at
+            else:
+                rowdict[c.exchange].append({'colspan': 1})
+                d += timedelta(days=1)
+    for ex in rowdict:
+        rowdict[ex] = rowdict[ex][:len(heads)]
+
+    if not exs:
+        exs = ['无申购']
+
+    prev_starts_at = (starts_at - timedelta(days=10)).strftime('%Y%m%d')
+    next_starts_at = (starts_at + timedelta(days=10)).strftime('%Y%m%d')
+
+    return render_template('frontend/announcement.html', **locals())
 
 
 @frontend.route('/announcement/feed.atom')

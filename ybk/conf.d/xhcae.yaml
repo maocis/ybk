@@ -1,6 +1,8 @@
 url: http://www.xhcae.com
 name: 华夏文交所
 abbr: 华夏文交所
+notrade: 6
+cashout: 2
 stock:
     index: http://www.xhcae.com/notice/tggg/
     relative: http://www.xhcae.com

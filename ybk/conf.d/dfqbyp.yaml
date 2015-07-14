@@ -1,6 +1,8 @@
 url: http://118.145.4.144/
 name: 东方钱币邮票藏品
 abbr: 成都文交所
+notrade: 6
+cashout: 2
 stock:
     index: http://118.145.4.144/web/news/news.jsp?parentid=46&classid=56
     relative: http://118.145.4.144/

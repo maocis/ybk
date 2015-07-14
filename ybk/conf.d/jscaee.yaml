@@ -1,6 +1,8 @@
 url: http://ybk.jscaee.com.cn
 name: 江苏省文化产权交易所邮币卡交易中心
 abbr: 江苏文交所
+notrade: 6
+cashout: 2
 stock:
     index: http://ybk.jscaee.com.cn/announcement/trusteeship/
     relative: http://ybk.jscaee.com.cn

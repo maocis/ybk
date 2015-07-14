@@ -1,6 +1,8 @@
 url: http://qbyp.jinmajia.com
 name: 金马甲
 abbr: 金马甲
+notrade: 6
+cashout: 2
 stock:
     index: http://qbyp.jinmajia.com/article/mtbd/qbyp/gggs/rksq/
     relative: http://qbyp.jinmajia.com
