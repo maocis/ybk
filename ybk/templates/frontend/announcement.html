@@ -240,7 +240,11 @@
         function increaseFormatter(value, row, index) {
           var url = "{{ url_for('frontend.trade') }}" + '?'
               + $.param({exchange: row.exchange, symbol: row.symbol});
-          return '<a href="' + url + '" target="_blank">' + value + '</a>'
+          if (value) {
+            return '<a href="' + url + '" target="_blank">' + value + '</a>'
+          } else {
+            return '-';
+          }
         }
         $('table').on('click', 'a[name=exchange]', function(e) {
           e.preventDefault();
