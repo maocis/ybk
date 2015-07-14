@@ -1,10 +1,5 @@
 {% extends "layout.html" %}
 {% block main %}
-    <div class="row" style="margin-bottom: 20px;">
-      <div class="text-center" style="border: 1px solid #ccc; margin: 30px; padding-bottom: 10px;">
-        <h1>施工中... 20%</h1>
-      </div>
-    </div>
     <div class="row">
       <div class="col-md-3">
         <nav class="steps">
@@ -21,21 +16,21 @@
               <li><a href="#oa-url">开户申请地址一览</a></li>
             </ul>
             <li><a href="#bind-bank-card">2. 银商绑定</a></li>
-            <ul class="nav">
+<!--             <ul class="nav">
               <li><a href="#login-ebank">登陆网银</a></li>
               <li><a href="#bind-merchant">绑定商户</a></li>
-            </ul>
+            </ul> -->
             <li><a href="#deposit-withdraw-trade">3. 出入金与交易</a></li>
             <ul class="nav">
               <li><a href="#download">下载客户端</a></li>
               <li><a href="#trade">出入金与交易</a></li>
             </ul>
             <li><a href="#help">4. 开户帮助</a></li>
-            <ul class="nav">
+<!--             <ul class="nav">
               <li><a href="#list-exchange">交易所一览</a></li>
               <li><a href="#list-bank">银商绑定一览</a></li>
               <li><a href="#faq">常见问题</a></li>
-            </ul>
+            </ul> -->
           </ul>
         </nav>
       </div>
@@ -49,12 +44,29 @@
 
           <h3 id="id-card">身份证</h3>
           <p>大部分交易所都支持身份证以及等效证件，用手机给身份证正反面各拍一张照, 上传到电脑，并且用画图软件打开另存为900x500(或者竖着的500x900)像素的jpg格式文件。</p>
-          <!-- 此处应有画图工具截图 -->
+
+
+          <div class="col-md-12">
+            <img src="{{ url_for('static', filename='img/painter2.png') }}" class="col-md-offset-2 col-md-8">
+          </div>
+
           <p>存成统一格式可以省去多个交易所对图片需求不一致的问题</p>
 
           <h3 id="bank-card">银行卡</h3>
-          <p>去"工商银行", "建设银行", "农业银行"等银行开一张普通的借记卡, 并且开通网上银行和U盾, 另外也可以开通"中国银行", "交通银行", "招商银行", "浦发银行"等银行的网银和U盾。</p>
+          <p>去"工商银行", "建设银行", "农业银行", "交通银行"等银行开一张普通的借记卡, 并且开通网上银行和U盾, 如果资金量大(>100万)则需要在开通同时提升转账额度。
+
+          另外也可以开通"中国银行", 招商银行", "浦发银行", "平安银行"等银行的网银和U盾。</p>
+
+
           <p>和身份证类似, 用手机拍正反面照片并保存为统一格式的文件</p>
+          <p>四个推荐银行的特点是</p>
+          <ul>
+            <li>农业银行: 转账限额最高, 但手续费也高, 周末可申购的所基本都是农行</li>
+            <li>建设银行: 出入金容易故障, 但转账手续费最低, 且支持的交易所最多</li>
+            <li>交通银行: 网银日转账限额100万</li>
+            <li>工商银行: 中规中矩</li>
+          </ul>
+          <p>从打新角度来看, 推荐的绑定优先级为 <b> 农业银行 > 工商银行 > 建设银行 > 交通银行</b></p>
         </div>
 
         <div class="step">
@@ -64,7 +76,7 @@
           <h3 id="oa-workflow">开户流程</h3>
           <p>注: 交易所开户审核一般都在工作日的9:00-17:00。</p>
           <ul class="oa-workflow">
-            <li>1. 打开交易所开户申请链接(具体交易所的链接列表见<a href="oa-url">这里</a>)</li>
+            <li>1. 打开交易所开户申请链接(具体交易所的链接列表见<a href="#oa-url">这里</a>)</li>
             <li>2. 填写个人资料</li>
             <li>3. 上传身份证和银行卡的(正反面)照片</li>
             <li>4. 绑定手机(交易所会发验证码)并提交申请</li>
@@ -74,23 +86,84 @@
           <h3 id="oa-url">开户申请地址一览</h3>
           <!-- 申请链接列表 -->
           <ul class="oa-url">
-            {% for exchange, url in oas %}
-              <li><a href="{{ url }}">{{ exchange }}开户申请</a></li>
+            {% for exchange, url, open_at, guide_url in oas %}
+              <li>
+              {{ open_at }}首次交易的
+
+              <a href="{{ url }}" target="_blank">{{ exchange }}</a>
+
+              {% if exchange in ['海西文交所', '中港邮币卡'] %}
+                ①
+              {% endif %}
+              {% if exchange in ['上海文交所', '宁夏文交所', '华强文交所'] %}
+                ②
+              {% endif %}
+              {% if exchange in ['中艺邮币卡', '南昌文交所', '成都文交所', '西部文交所'] %}
+                ③
+              {% endif %}
+              &nbsp; 
+              <a href="{{ guide_url }}" target="_blank">官方指南</a>
+              </li>
             {% endfor %}
           </ul>
+
+          ①. 海西和中港都是周末也有申购并且周日也有交易的交易所，对提升资金效率非常有帮助，推荐一定要申请。<br>
+          ②. 上海、宁夏和华强都是中签率又高，涨势又好的交易所，推荐优先要开通。<br>
+          ③. 这些新所和次新所，中签率也较高。<br>
         </div>
 
         <div class="step">
           <h2 id="bind-bank-card">2. 银商绑定</h2>
-          <p class="lead">每个银行的银商绑定流程也大同小异，总结如下。</p>
-
-          <h3 id="login-ebank">登陆网银</h3>
-          <p>不同银行的网银登陆各有不同, 见下表的汇总方式</p>
-          <!-- 此处应有汇总 -->
-
-          <h3 id="bind-merchant">绑定商户</h3>
-          <p>各个银行的详细攻略，可绑商户如下表所示</p>
+          <p class="lead">每个银行的银商绑定流程也大同小异</p>
           <!-- 此处应有列表，指向各自的攻略 -->
+          {% set bankwebs = {
+            '农业银行': 'http://www.abchina.com/cn/',
+            '兴业银行': 'http://www.cib.com.cn/cn/index.html',
+            '交通银行': 'http://www.bankcomm.com/BankCommSite/default.shtml',
+            '中国银行': 'http://www.boc.cn/',
+            '平安银行': 'http://bank.pingan.com/',
+            '招商银行': 'http://www.cmbchina.com/',
+            '浦发银行': 'http://www.spdb.com.cn/chpage/c1/',
+            '稠州银行': 'http://www.czcb.com.cn/',
+            '华夏银行': 'http://www.hxb.com.cn/home/cn/',
+            '建设银行': 'http://www.ccb.com/cn/home/index.html',
+            '工商银行': 'http://www.icbc.com.cn/icbc/',
+          }
+          %}
+          {% set bankguides = {
+            '农业银行': 'http://www.cacecybk.com.cn/web/news/news_detail.jsp?parentid=76&classid=108&infoid=88',
+            '兴业银行': 'http://www.shscce.com/custom.htm?tplName=xyyh',
+            '建设银行': 'http://www.shscce.com/custom.htm?tplName=jsyh',
+            '浦发银行': 'http://www.shscce.com/custom.htm?tplName=pfyh',
+            '交通银行': 'http://www.shscce.com/custom.htm?tplName=jtyh',
+            '稠州银行': 'http://www.shscce.com/custom.htm?tplName=czyh',
+            '平安银行': 'http://118.145.4.144/web/news/news_detail.jsp?parentid=47&classid=58&infoid=218',
+            '招商银行': 'http://www.zghqwh.com/html/2015-6/201563213.html',
+            '华夏银行': 'http://ybk.jscaee.com.cn/about-us/news-and-events/2014-05/26/05261312014.html',
+            '工商银行': 'http://ybk.jscaee.com.cn/about-us/news-and-events/2014-05/26/05261312014.html',
+            '中国银行': 'http://www.nfqbyp.com/displaynews.html?newsID=242335',
+          }
+          %}
+          <table class="table">
+            <thead>
+              <tr>
+                <th class="col-md-2">银行</th>
+                <th>可绑定交易所</th>
+                <th class="col-md-2">网银地址</th>
+                <th class="col-md-2">绑定攻略</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for bank, exchanges in bes.items() %}
+              <tr>
+                <td> {{ bank }} </td>
+                <td> {{ ', '.join(exchanges) }} </td>
+                <td> <a href="{{ bankwebs.get(bank) or 'javascript:void(0)' }}" target="_blank">网银首页</a> </td>
+                <td> <a href="{{ bankguides.get(bank) or 'javascript:void(0)' }}" target="_blank">银商绑定</a> </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
 
         <div class="step">
@@ -102,32 +175,33 @@
           <!-- 下载客户端列表 -->
           <ul class="download">
             {% for exchange, url in downloads %}
-              <li><a href="{{ url }}">{{ exchange }}客户端下载</a></li>
+              <li><a href="{{ url }}" target="_blank">{{ exchange }}</a></li>
             {% endfor %}
           </ul>
 
           <h3 id="trade">出入金与交易</h3>
-          <p>各软件的出入金与交易攻略地址如下</p>
-          <ul class="trade">
-            {% for exchange, url in trades %}
-              <li><a href="{{ url }}">{{ exchange }}客户端下载</a></li>
-            {% endfor %}
-          </ul>
+          <p>各软件的出入金可以在银行端或者交易端操作, 出入金之前要设定资金密码, 请参见各交易客户端自身的帮助说明。</p>
         </div>
 
         <div class="step">
           <h2 id="help">4. 开户帮助</h2>
           <p class="lead">开户过程中的问题解答</p>
 
-          <h3 id="list-exchange">交易所一览</h3>
+          <!-- <h3 id="list-exchange">交易所一览</h3> -->
           <!-- 此处应有交易所完整属性表格 -->
 
-          <h3 id="list-bank">银行一览</h3>
+          <!-- <h3 id="list-bank">银行一览</h3> -->
           <!-- 此处应有银行完整属性表格 -->
 
-          <h3 id="faq">常见问题</h3>
+          <!-- <h3 id="faq">常见问题</h3> -->
           <!-- 此处应有常见问题列表, 可从其他交易所抄 -->
         </div>
       </div>
     </div>
+{% endblock %}
+
+{% block js %}
+<script>
+  $('.steps').affix({offset: 60})
+</script>
 {% endblock %}

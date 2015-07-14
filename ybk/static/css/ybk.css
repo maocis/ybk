@@ -3,6 +3,27 @@
 }
 
 
+/* walkthrough.html */
+.sidenav {
+    font-size: 16px;
+}
+
+.sidenav > ul {
+    margin-left: 10px;
+}
+
+.sidenav > li {
+    margin-top: 10px;
+}
+
+.sidenav > ul > li, .sidenav > ul > li > a {
+    font-size: 0.9em;
+    height: 20px;
+    padding: 2px;
+    margin: 2px;
+}
+
+
 /* navbar.html 
 
 在大屏幕上, 下拉菜单鼠标hover就显示

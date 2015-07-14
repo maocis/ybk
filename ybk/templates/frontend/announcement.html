@@ -176,7 +176,7 @@
             <th data-field="offer_cash_ratio" data-sortable="true" class="text-right">资金</th>
             <th data-field="offer_cash" data-sortable="true" class="text-right">市值</th>
             <th data-field="result_ratio_cash" data-sortable="true" class="text-right">中签率</th>
-            <th data-field="total_increase" data-sortable="true" class="text-right">现涨幅</th>
+            <th data-field="total_increase" data-sortable="true" class="text-right" data-formatter="increaseFormatter">现涨幅</th>
           </thead>
           <tbody>
           </tbody>
@@ -236,6 +236,11 @@
         function exchangeFormatter(value, row, index) {
           return '<a href="#" name="exchange" ' +
             'data-exchange="' + value + '">' + value + '</a>'
+        }
+        function increaseFormatter(value, row, index) {
+          var url = "{{ url_for('frontend.trade') }}" + '?'
+              + $.param({exchange: row.exchange, symbol: row.symbol});
+          return '<a href="' + url + '" target="_blank">' + value + '</a>'
         }
         $('table').on('click', 'a[name=exchange]', function(e) {
           e.preventDefault();
