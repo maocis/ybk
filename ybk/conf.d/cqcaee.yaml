@@ -11,6 +11,14 @@ offer:
     encoding: utf-8
     page: 
     maxpage: 1
+result:
+    index: http://www.cqcaee.com/jygg.jhtml
+    relative: http://www.cqcaee.com
+    detail: href="([^"]*)"[^>]*>([^<]*发售结果[^<]*).*?\[(\d+-\d+-\d+)\]
+    fields: [url, title, published_at]
+    encoding: utf-8
+    page: 
+    maxpage: 1
 opening:
     url: http://portal.cqcaee.com:8022/yykhii/
     guide: http://www.cqcaee.com/khzn.jhtml
