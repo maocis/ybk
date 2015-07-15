@@ -287,7 +287,7 @@ def announcement_feed():
 
     announcements = list(
         Announcement.find(cond)
-        .sort([('published_at', -1)])
+        .sort([('updated_at', -1)])
         .limit(20))
 
     for a in announcements:
@@ -296,6 +296,6 @@ def announcement_feed():
                  content_type='text',
                  author=a.exchange,
                  url=a.url,
-                 updated=a.published_at,
+                 updated=a.updated_at,
                  published=a.published_at)
     return feed.get_response()
