@@ -59,10 +59,10 @@
                       <td><a href="{{ e.url }}" target="_blank">
                         {{ e.abbr }}
                       </a></td>
-                      <td><a href="{{ e.offer.index }}" target="_blank">
+                      <td><a href="{% if e.offer %}{{ e.offer.index }}{% else %}#{% endif %}" target="_blank">
                         申购公告地址
                       </a></td>
-                      <td><a href="{{ e.result.index }}" target="_blank">
+                      <td><a href="{% if e.offer %}{{ e.result.index }}{% else %}#{% endif %}" target="_blank">
                         中签公告地址
                       </a></td>
                     </tr>
