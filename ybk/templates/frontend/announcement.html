@@ -188,24 +188,27 @@
 
         <h2>申购日历</h2>
 
-        <table class="table">
+        <table id="calendar" class="table table-bordered">
           <thead>
             <tr style="font-size: 0.9em;">
-              <th class="col-md-2">交易所</th>
+              <th style="text-align: center;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日期<br>交易所&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
               {% for weekday, date in heads %}
-              <th> {{date}} <br> {{weekday}} </th>
+              <th style="text-align: center; width: 8%"> {{date}} <br> {{weekday}} </th>
               {% endfor %}
             </tr>
           </thead>
           <tbody>
             {% for ex in exs %}
             <tr>
-              <td>{{ ex }}</td>
+              <td style="text-align: center;">{{ ex }}</td>
               {% for c in rowdict[ex] %}
-              <td colspan="{{c.colspan}}" style="text-align: center;
-                {% if c.cs %}background-color: #bef;{% endif %}">
-                {% if c.cs %}
-                  申购({{c.cs | length}})
+              <td colspan="{{c.colspan}}" style="text-align: center; {% if c.symbols %}background-color: #bef;{% endif %}"
+                data-exchange="{{ c.exchange }}"
+                data-symbols="{{ c.symbols }}"
+                data-placement="{% if loop.index < 5 %}right{% else %}left{% endif %}"
+                {% if c.symbols %}class="offer"{% endif %}>
+                {% if c.symbols %}
+                  <div>申购&times;{{c.count}}</div>
                 {% endif %}
               </td>
               {% endfor %}
@@ -242,6 +245,7 @@
   {% endif %}
 
     <script>
+      {% if tab == "raw" %}
         function reselect(params){
             if (!params.page){
               params.page = 1;
@@ -270,7 +274,9 @@
         $('.pagination').on('click', 'a', function(){
             reselect({page: $(this).data('page')});
         });
+      {% endif %}
 
+      {% if tab == 'collection' %}
         function exchangeFormatter(value, row, index) {
           return '<a href="#" name="exchange" ' +
             'data-exchange="' + value + '">' + value + '</a>'
@@ -289,5 +295,65 @@
           $('.search input').val($(this).data('exchange'));
           $('.search input').trigger('keyup');
         });
+      {% endif %}
+
+
+
+      {% if tab == "calendar" %}
+        // ex -> bankstr
+        var banks = {{ banks | safe }};
+        // ex -> sym -> {offer_cash, expected_ratio, expected_revenue}
+        var details = {{ details | safe }}; 
+        $('td.offer div').each(function(i, e) {
+          var $div = $(e);
+          var $td = $div.parent();
+          // console.log($td.parent().html());
+          var exchange = $td.data('exchange');
+          var symbols = $td.data('symbols') + '';
+          var placement = $td.data('placement');
+          if (symbols.indexOf(',') == -1) {
+            symbols = [symbols];
+          } else {
+            symbols = symbols.split(',');
+          }
+          var bank = '<div>所属银行: ' + banks[exchange] + '</div>';
+          var cash_total = 0;
+          var detail = '<table class="table table-condensed text-right">' + 
+            '<thead><tr>' + 
+            '<th class="text-right">简称</th>' + 
+            '<th class="text-right">代码</th>' + 
+            '<th class="text-right">申购市值</th>' + 
+            '<th class="text-right">(预期)中签率</th>' + 
+            '<th class="text-right">(预期)年化收益</th>' + 
+            '</tr></thead>' + 
+            '<tbody>';
+          var d;
+          for (var i = 0; i < symbols.length; i++) {
+            d = details[exchange][symbols[i]];
+            detail += '<tr><td>' + d.name + '</td>' + 
+              '<td>' + symbols[i] + '</td>' + 
+              '<td>' + ((Math.round(d.offer_cash / 100) / 100) || '-') + '万</td>' + 
+              '<td>' + ((Math.round(d.expected_ratio * 10000) / 100) || '-') + '%</td>' + 
+              '<td>' + ((Math.round(d.expected_revenue / 100) / 100) || '-') + '万</td></tr>';
+            cash_total += d.offer_cash;
+          }
+          detail += '</tbody></table>';
+          var cash = '<div>资金总市值: ' + ((Math.round(cash_total / 100) / 100) || '-') + '万</div>'
+          $div.tooltip({
+            placement: placement,
+            template: '<div class="popover" role="tooltip" style="min-width: 400px; font-size: 0.8em;">' + 
+                '<div class="arrow"></div>' + 
+                '<h3 class="popover-title">申购详情</h3>' + 
+                '<div class="popover-content">' + 
+                  bank + 
+                  cash + 
+                  detail + 
+                '</div>' + 
+              '</div>', 
+            html: true, 
+            title: 'x'
+          });
+        });
+      {% endif %}
     </script>
 {% endblock %}

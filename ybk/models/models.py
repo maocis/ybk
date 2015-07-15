@@ -170,6 +170,7 @@ class Collection(Model):
 
     @property
     def cashout_at(self):
+        """ 出金日期 """
         c = get_conf(self.exchange)
         print(c)
         return self.offset(c['cashout'])
@@ -185,3 +186,13 @@ class Collection(Model):
             while odate.weekday() in notrade:
                 odate += timedelta(days=delta)
         return odate
+
+    @property
+    def expected_annual_profit(self):
+        """ 预期年化收益 """
+        return None
+
+    @property
+    def expected_result_cash_ratio(self):
+        """ 预期资金中签率 """
+        return None

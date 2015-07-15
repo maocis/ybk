@@ -1,6 +1,9 @@
 .footer {
     margin-top: 30px;
 }
+.table .text-right {text-align: right}
+.table .text-left {text-align: left}
+.table .text-center {text-align: center}
 
 
 /* walkthrough.html */
@@ -144,4 +147,8 @@ table#transaction-list > tbody > tr > td {
 .filters .filter li.selected a:hover {
     cursor: pointer;
     border: 1px solid #ccc;
+}
+
+#calendar td.offer:hover {
+    cursor: pointer;
 }

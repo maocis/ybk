@@ -6,7 +6,7 @@ from werkzeug.contrib.atom import AtomFeed
 
 from ybk.models import Exchange, Announcement, Collection, Quote
 from ybk.utils import Pagination
-from ybk.settings import CONFS
+from ybk.settings import get_conf
 
 from .views import frontend
 
@@ -190,34 +190,61 @@ def announcement_calendar():
     heads = []
     d = starts_at
     while d <= ends_at:
-        heads.append(('星期' + '一二三四五六日'[d.weekday()],
-                      d.strftime('%m月%d日')))
+        heads.append(('周' + '一二三四五六日'[d.weekday()],
+                      '{}/{}'.format(d.month, d.day)))
         d += timedelta(days=1)
 
     # 表身
     exs = []  # 交易所所在行
     rowdict = defaultdict(list)  # 交易所 -> 每天有/没有
     seen = set()
+    ddict = {}
     for c in Collection.find({'offers_at': {'$gte': starts_at,
-                                            '$lte': ends_at}}):
+                                            '$lte': ends_at}},
+                             sort=[('offers_at', 1)]):
         if (c.exchange, c.offers_at) in seen:
             continue
         seen.add((c.exchange, c.offers_at))
         if c.exchange not in exs:
             exs.append(c.exchange)
-        d = starts_at
-        while d <= ends_at:
+        d = ddict.get(c.exchange, starts_at)
+        while d < c.cashout_at:
             if d >= c.offers_at and d < c.cashout_at:
                 cs = list(Collection.find({'offers_at': c.offers_at,
                                            'exchange': c.exchange}))
                 ndays = (c.cashout_at - c.offers_at).days
-                rowdict[c.exchange].append({'colspan': ndays, 'cs': cs})
-                d = c.cashout_at
+                rowdict[c.exchange].append({'colspan': ndays,
+                                            'exchange': c.exchange,
+                                            'count': len(cs),
+                                            'cs': cs,
+                                            'symbols':
+                                            ','.join([c.symbol for c in cs])})
+                ddict[c.exchange] = c.cashout_at
+                break
             else:
                 rowdict[c.exchange].append({'colspan': 1})
                 d += timedelta(days=1)
-    for ex in rowdict:
-        rowdict[ex] = rowdict[ex][:len(heads)]
+
+    banks = {}
+    details = {}
+    for ex in ddict:
+        d = ddict[ex]
+        while d <= ends_at:
+            rowdict[ex].append({'colspan': 1})
+            d += timedelta(days=1)
+
+        c = get_conf(ex)
+        banks[ex] = c['opening']['bank']
+        details[ex] = {}
+        for cell in rowdict[ex]:
+            if 'cs' in cell:
+                for c in cell['cs']:
+                    details[ex][c.symbol] = {
+                        'name': c.name,
+                        'offer_cash': c.offer_cash or 0,
+                        'expected_ratio': c.expected_result_cash_ratio or 0,
+                        'expected_revenue': c.expected_annual_profit or 0,
+                    }
 
     if not exs:
         exs = ['无申购']
