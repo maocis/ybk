@@ -37,6 +37,7 @@ class Announcement(Model):
         'idformat': '{url}',
         'unique': ['url'],
         'indexes': [
+            [[('updated_at', 1), ('type_', 1)], {}],
             [[('published_at', 1), ('type_', 1)], {}],
             [[('exchange', 1), ('type_', 1)], {}],
         ],
