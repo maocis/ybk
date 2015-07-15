@@ -322,6 +322,7 @@
             '<thead><tr>' + 
             '<th class="text-right">简称</th>' + 
             '<th class="text-right">代码</th>' + 
+            '<th class="text-right">单价</th>' +
             '<th class="text-right">申购市值</th>' + 
             '<th class="text-right">(预期)中签率</th>' + 
             '<th class="text-right">(预期)年化收益</th>' + 
@@ -332,6 +333,7 @@
             d = details[exchange][symbols[i]];
             detail += '<tr><td>' + d.name + '</td>' + 
               '<td>' + symbols[i] + '</td>' + 
+              '<td>' + ((Math.round(d.price * 100) / 100) || '-') + '</td>' + 
               '<td>' + ((Math.round(d.offer_cash / 100) / 100) || '-') + '万</td>' + 
               '<td>' + ((Math.round(d.expected_ratio * 10000) / 100) || '-') + '%</td>' + 
               '<td>' + ((Math.round(d.expected_revenue / 100) / 100) || '-') + '万</td></tr>';
@@ -341,7 +343,7 @@
           var cash = '<div>资金总市值: ' + ((Math.round(cash_total / 100) / 100) || '-') + '万</div>'
           $div.tooltip({
             placement: placement,
-            template: '<div class="popover" role="tooltip" style="min-width: 400px; font-size: 0.8em;">' + 
+            template: '<div class="popover" role="tooltip" style="min-width: 500px; font-size: 0.8em;">' + 
                 '<div class="arrow"></div>' + 
                 '<h3 class="popover-title">申购详情</h3>' + 
                 '<div class="popover-content">' + 

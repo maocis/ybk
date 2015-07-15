@@ -245,6 +245,7 @@ def announcement_calendar():
                 for c in cell['cs']:
                     details[ex][c.symbol] = {
                         'name': c.name,
+                        'price': c.offer_price,
                         'offer_cash': c.offer_cash or 0,
                         'expected_ratio': c.expected_result_cash_ratio or 0,
                         'expected_revenue': c.expected_annual_profit or 0,
