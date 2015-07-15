@@ -49,7 +49,7 @@ def announcement_raw():
     types = ['offer', 'result', 'stock']
     announcements = list(
         Announcement.find(cond)
-        .sort([('published_at', -1)])
+        .sort([('updated_at', -1)])
         .skip(skip).limit(limit))
     for a in announcements:
         a.typecn = type_to_cn(a.type_)
