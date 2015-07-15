@@ -213,6 +213,8 @@ def announcement_calendar():
                 cs = list(Collection.find({'offers_at': c.offers_at,
                                            'exchange': c.exchange}))
                 ndays = (c.cashout_at - c.offers_at).days
+                if c.offers_at + timedelta(days=ndays) > ends_at:
+                    ndays = (ends_at - c.offers_at).days + 1
                 rowdict[c.exchange].append({'colspan': ndays,
                                             'exchange': c.exchange,
                                             'count': len(cs),
@@ -230,7 +232,9 @@ def announcement_calendar():
     for ex in ddict:
         d = ddict[ex]
         while d <= ends_at:
-            rowdict[ex].append({'colspan': 1})
+            spans = sum(x['colspan'] for x in rowdict[ex])
+            if spans < 11:
+                rowdict[ex].append({'colspan': 1})
             d += timedelta(days=1)
 
         c = get_conf(ex)

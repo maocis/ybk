@@ -191,7 +191,7 @@
         <table id="calendar" class="table table-bordered">
           <thead>
             <tr style="font-size: 0.9em;">
-              <th style="text-align: center;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日期<br>交易所&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+              <th style="text-align: center; background: -webkit-gradient(linear, left bottom, right top, color-stop(50%,#fef), color-stop(50%,white));">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日期<br>交易所&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
               {% for weekday, date in heads %}
               <th style="text-align: center; width: 8%;{% if date == thisdate %}background-color: #feb;{% endif %}"> {{date}} <br> {{weekday}} </th>
               {% endfor %}
@@ -200,7 +200,7 @@
           <tbody>
             {% for ex in exs %}
             <tr>
-              <td style="text-align: center;">{{ ex }}</td>
+              <td style="text-align: center; background-color: #fef;" {% if ex == "无申购" %}colspan="12"{% endif %}>{{ ex }}</td>
               {% for c in rowdict[ex] %}
               <td colspan="{{c.colspan}}" style="text-align: center; {% if c.symbols %}background-color: #bef;{% endif %}"
                 data-exchange="{{ c.exchange }}"
