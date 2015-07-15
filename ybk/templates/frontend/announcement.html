@@ -193,7 +193,7 @@
             <tr style="font-size: 0.9em;">
               <th style="text-align: center;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日期<br>交易所&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
               {% for weekday, date in heads %}
-              <th style="text-align: center; width: 8%"> {{date}} <br> {{weekday}} </th>
+              <th style="text-align: center; width: 8%;{% if date == thisdate %}background-color: #feb;{% endif %}"> {{date}} <br> {{weekday}} </th>
               {% endfor %}
             </tr>
           </thead>

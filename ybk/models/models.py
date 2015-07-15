@@ -172,7 +172,6 @@ class Collection(Model):
     def cashout_at(self):
         """ 出金日期 """
         c = get_conf(self.exchange)
-        print(c)
         return self.offset(c['cashout'])
 
     def offset(self, incr):

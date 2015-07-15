@@ -252,6 +252,9 @@ def announcement_calendar():
     prev_starts_at = (starts_at - timedelta(days=10)).strftime('%Y%m%d')
     next_starts_at = (starts_at + timedelta(days=10)).strftime('%Y%m%d')
 
+    thisdate = (datetime.utcnow() + timedelta(hours=8))
+    thisdate = '{}/{}'.format(thisdate.month, thisdate.day)
+
     return render_template('frontend/announcement.html', **locals())
 
 
