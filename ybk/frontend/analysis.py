@@ -51,7 +51,6 @@ def analysis():
     before = today - timedelta(days=conf['cashout'])
     cashout_at = today + timedelta(days=conf['cashout'])
     colls = list(Collection.find({'exchange': ex.abbr,
-                                  'offers_at': {'$lt': cashout_at,
-                                                '$gte': before}}))
+                                  'offers_at': {'$gte': before}}))
     locals()['zip'] = zip
     return render_template('frontend/analysis.html', **locals())
