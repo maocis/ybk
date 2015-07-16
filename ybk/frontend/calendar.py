@@ -9,7 +9,7 @@ from ybk.settings import get_conf
 from .views import frontend
 
 
-@frontend.route('/announcement/calendar/')
+@frontend.route('/calendar/')
 def calendar():
     nav = 'calendar'
 
