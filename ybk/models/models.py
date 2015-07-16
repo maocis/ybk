@@ -33,6 +33,16 @@ class Exchange(Model):
     url = StringField()
     updated_at = DateTimeField(auto='modified')
 
+    @classmethod
+    def _all(cls):
+        return list(Exchange.cached(300).find())
+
+    @classmethod
+    def find_exchange(cls, exchange):
+        for ex in cls._all():
+            if ex.abbr == exchange:
+                return ex
+
     @cached_property_ttl(300)
     def num_collections(self):
         """ 交易品种数 """
@@ -384,7 +394,7 @@ class Collection(Model):
 
     @property
     def expected_invest_cash(self):
-        ex = Exchange.find_one({'abbr': self.exchange})
+        ex = Exchange.find_exchange(self.exchange)
         if ex.expected_invest_cash and self.total_offer_cash:
             return (self.offer_cash or 0) / self.total_offer_cash \
                 * ex.expected_invest_cash
@@ -392,7 +402,7 @@ class Collection(Model):
     @property
     def expected_annual_profit(self):
         """ 预期年化收益率 """
-        ex = Exchange.find_one({'abbr': self.exchange})
+        ex = Exchange.find_exchange(self.exchange)
         if ex.expected_invest_cash and ex.median_increase:
             return self.expected_result_cash_ratio * ex.median_increase
 
@@ -400,7 +410,7 @@ class Collection(Model):
     def expected_result_cash_ratio(self):
         """ 预期资金中签率 """
         if not self.result_ratio_cash:
-            ex = Exchange.find_one({'abbr': self.exchange})
+            ex = Exchange.find_exchange(self.exchange)
             if ex.expected_invest_cash:
                 return self.total_offer_cash / ex.expected_invest_cash
         else:
