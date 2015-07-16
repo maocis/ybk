@@ -50,9 +50,14 @@
 
       {% endblock %}
 
-      {% include "footer.html" %}
+      
     </div> <!-- /container -->
 
+    <div class="container">
+    {% include "footer.html" %}
+    </div>
+
+    
     {% if not config.DEBUG %}
     <!-- 站长统计(百度) 只在生产环境起作用 -->
     <script>

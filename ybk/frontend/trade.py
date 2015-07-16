@@ -49,7 +49,7 @@ def trade_quote_history():
                               exchange, symbol)
     xdata = [q.quote_at.strftime('%Y/%m/%d') for q in qs]
     sdata = [
-        (q.open_, q.high, q.low, q.close)
+        (q.open_, q.close, q.low, q.high,)
         for q in qs]
     adata = [int(q.amount / 10000) for q in qs]
     num_prefix = 100 - len(xdata)

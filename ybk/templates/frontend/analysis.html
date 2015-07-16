@@ -1,8 +1,192 @@
 {% extends "layout.html" %}
+
 {% block main %}
-    <div class="row" style="margin-bottom: 20px;">
-      <div class="text-center" style="border: 1px solid #ccc; margin: 30px; padding-bottom: 10px;">
-        <h1>施工中... 0%</h1>
+<div class="rows">
+  <div class="col-md-2">
+    <ul class="nav nav-pills nav-stacked">
+    {% for ex, rating in zip(exchanges, ratings) %}
+      <li role="presentation" 
+    {% if ex == exchange %}class="active"{% endif %} style="line-height: 0.1;"><a href="{{ url_for('frontend.analysis', exchange=ex) }}">{{ ex }}</a></li>
+    {% endfor %}
+    </ul>
+  </div>
+  <div class="col-md-10">
+    <div class="summary">
+      <h3>{{ exchange }}概况 - {{ ex.rating }}星</h3>
+      <table class="table">
+        <thead><tr>
+            <th style="width: 16%;"></th>
+            <th style="width: 16%;"></th>
+            <th style="width: 16%;"></th>
+            <th style="width: 16%;"></th>
+            <th style="width: 16%;"></th>
+            <th style="width: 16%;"></th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><b>交易品种数:</b></td> <td>{{ ex.num_collections }}</td>
+            <td><b>月均申购次数:</b></td> <td>{{ ex.offers_per_month | strformat('{:.2f}') }}</td>
+            <td><b>15-90天中位数涨幅:</b></td> <td>{{ ex.median_increase | percentage('.2')  }}</td>
+          </tr>
+          <tr>
+            <td><b>平均上市时间:</b></td> <td>{{ ex.average_trading_days | strformat('{:.1f}') }}天</td>
+            <td><b>近3次平均中签率:</b></td> <td>{{ ex.average_result_cash_ratio | percentage('.2') }}</td>
+            <td><b>近3次平均申购资金:</b></td> <td>{{ ex.average_invest_cash | strformat('{:.2f}') }}亿</td>
+          </tr>
+        </tbody>
+      </table>
+        
+      <div class="row">
+        <div class="col-md-6">
+          <div id="invest-history" style="height: 300px;">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div id="increase-history" style="height: 300px;">
+          </div>
+        </div>
       </div>
+
+      <h4>申购品种中签预测</h4>
+      <p>预期总申购资金(EWMA模型): {{ ((ex.expected_invest_cash or 0) / 100000000) | strformat('{:.2f}') }}亿</p>
+      <table class="table table-bordered text-right">
+        <thead>
+          <tr>
+            <th class="text-right">申购日期</th>
+            <th class="text-right">藏品名称</th>
+            <th class="text-right">藏品代码</th>
+            <th class="text-right">申购价格</th>
+            <th class="text-right">申购数量</th>
+            <th class="text-right">资金占比</th>
+            <th class="text-right">资金市值</th>
+            <th class="text-right">预期申购资金</th>
+            <th class="text-right">预期中签率</th>
+            <th class="text-right">预期收益率</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in colls %}
+          <tr>
+            <td> {{ c.offers_at | bjdate }} </td>
+            <td> {{ c.name }} </td>
+            <td> {{ c.symbol }} </td>
+            <td> {{ c.offer_price }} </td>
+            <td> {{ c.offer_quantity }} </td>
+            <td> {{ c.offer_cash_ratio }} </td>
+            <td> {{ ((c.offer_cash or 0) / 10000) | strformat('{:.1f}') }}万 </td>
+            <td> {{ ((c.expected_invest_cash or 0) / 100000000) | strformat('{:.2f}') }} 亿 </td>
+            <td> {{ c.expected_result_cash_ratio | percentage('.2') }} </td>
+            <td> {{ c.expected_annual_profit | percentage('.2') }} </td>
+
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="//cdn.bootcss.com/echarts/2.2.5/echarts.js"></script>
+<script>
+var ih_option = {
+        title : {
+        text: '日申购总资金',
+        subtext: '随时间变化图'
+    },
+    tooltip : {
+        trigger: 'axis'
+    },
+    legend: {
+        data:['本所', '全网']
+    },
+    toolbox: {
+        show : false,
+    },
+    calculable : true,
+    xAxis : [
+        {
+            type : 'category',
+            boundaryGap : true,
+            data : {{ ih_dates | safe }},
+        }
+    ],
+    yAxis : [
+        {
+            type : 'value',
+            axisLabel : {
+                formatter: '{value}亿'
+            }
+        }
+    ],
+    series : [
+        {
+            name : '本所',
+            type : 'line',
+            data : {{ ih_values_self | safe }},
+        },
+        {
+            name : '全网',
+            type : 'line',
+            data : {{ ih_values_all | safe }},
+        },
+    ]
+};
+
+var inc_option = {
+        title : {
+        text: '日涨幅',
+        subtext: '发行15天-90天'
+    },
+    tooltip : {
+        trigger: 'item',
+    },
+    legend: {
+        show: false,
+        data: {{ symbols | safe }},
+    },
+    toolbox: {
+        show : false,
+    },
+    xAxis : [
+        {
+            type : 'category',
+            boundaryGap : true,
+            data : {{ inc_days | safe }},
+            axisLabel: {
+                formatter: '第{value}天'
+            }
+        }
+    ],
+    yAxis : [
+        {
+            type : 'value',
+            axisLabel : {
+                formatter: '{value}%'
+            }
+        }
+    ],
+    series : {{ inc_series | safe }},
+};
+
+require.config({
+    paths: {
+        echarts: '//cdn.bootcss.com/echarts/2.2.5/'
+    }
+});
+require(
+    [
+        'echarts',
+        'echarts/chart/line',
+    ],
+    function (ec) {
+        var ih = ec.init(document.getElementById('invest-history'));
+        ih.setOption(ih_option);
+
+        var inc = ec.init(document.getElementById('increase-history'));
+        inc.setOption(inc_option);
+    }
+);
+</script>
 {% endblock %}

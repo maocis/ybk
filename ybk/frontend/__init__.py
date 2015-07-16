@@ -7,7 +7,8 @@ from .forum import forum
 from .index import index
 from .trade import trade
 from .walkthrough import walkthrough
+from .calendar import calendar
 
 __all__ = ['frontend'
            'about', 'analysis', 'announcement', 'forum',
-           'index', 'trade', 'walkthrough']
+           'index', 'trade', 'walkthrough', 'calendar']
