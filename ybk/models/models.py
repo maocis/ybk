@@ -393,7 +393,7 @@ class Collection(Model):
     def expected_annual_profit(self):
         """ 预期年化收益率 """
         ex = Exchange.find_one({'abbr': self.exchange})
-        if ex.expected_invest_cash:
+        if ex.expected_invest_cash and ex.median_increase:
             return self.expected_result_cash_ratio * ex.median_increase
 
     @property
