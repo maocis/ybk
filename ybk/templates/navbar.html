@@ -3,7 +3,7 @@
       {% set navbars = [
         {'nav': 'index', 'name': '首页', 'url': url_for('frontend.index')},
         {'nav': 'walkthrough', 'name': '开户攻略', 'url': url_for('frontend.walkthrough')},
-        {'nav': 'announcement', 'name': '公告信息', 'url': url_for('frontend.announcement'), 'submenu': [{'name': '公告原文', 'url': url_for('frontend.announcement_raw')}, {'name': '交易品种', 'url': url_for('frontend.announcement_collection')}]},
+        {'nav': 'announcement', 'name': '公告信息', 'url': url_for('frontend.announcement')},
         {'nav': 'calendar', 'name': '申购日历', 'url': url_for('frontend.calendar')},
         {'nav': 'analysis', 'name': '中签分析', 'url': url_for('frontend.analysis')},
         {'nav': 'trade', 'name': '交易行情', 'url': url_for('frontend.trade')},

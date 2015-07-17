@@ -66,6 +66,7 @@ def announcement_collection():
     nav = 'announcement'
     tab = 'collection'
 
+    search = request.args.get('search', '')
     exchange = request.args.get('exchange', '')
     page = int(request.args.get('page', 1) or 1)
 

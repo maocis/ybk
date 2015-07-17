@@ -254,6 +254,14 @@
           $('.search input').val($(this).data('exchange'));
           $('.search input').trigger('keyup');
         });
+
+        var search = "{{ search }}";
+        $(document).ready(function() {  
+          if (search) {
+            $('.search input').val(search);
+            $('.search input').trigger('keyup'); 
+          }
+        })
       {% endif %}
 
     </script>
