@@ -2,7 +2,7 @@ url: http://www.shscce.com
 name: 上海邮币卡交易中心
 abbr: 上海邮币卡
 notrade: 6
-cashout: 2
+cashout: 1
 stock:
     index: http://www.shscce.com/html/shscce/zxgg/index_1.shtml
     relative: http://www.shscce.com
