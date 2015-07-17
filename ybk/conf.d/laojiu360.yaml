@@ -1,7 +1,7 @@
 url: http://www.laojiu360.com/
 name: 北酒所中国老酒交易平台
 abbr: 北酒所
-notrade: 6
+notrade: 5, 6
 cashout: 2
 stock:
     index: http://www.laojiu360.com/CMS/List?clidindex=information_disclosure&IsMobileDevice=False 
