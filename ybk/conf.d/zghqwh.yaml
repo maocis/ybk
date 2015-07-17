@@ -29,11 +29,11 @@ result:
     maxpage: 1
 opening:
     url: http://www.zghqwh.com/kh/
-    guide: http://www.zghqwh.com/show.asp?id=191
+    guide: http://www.zghqwh.com/web/about/14.html
     bank: [工商银行, 建设银行, 招商银行]
     code: [00001212, 4300000194, 999307]
     name: [湖南华强文化艺术品交易中心有限责任公司, 湖南华强文化艺术品交易中心有限责任公司, 湖南华强文化艺术品交易中心有限责任公司]
-    download: http://www.zghqwh.com/about.asp?id=33
+    download: http://www.zghqwh.com/web/about/33.html
 quote:
     realtime:
         url: http://180.96.50.179:16925/tradeweb/hq/getHqV_lbData.jsp
