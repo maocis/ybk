@@ -14,7 +14,7 @@ stock:
 offer:
     index: http://www.laojiu360.com/CMS/List?clidindex=information_disclosure&IsMobileDevice=False 
     relative: http://www.laojiu360.com
-    detail: (\d+-\d+-\d+)</span>\s*<a[^>]*href="([^"]+)"[^>]*>([^>]*(挂牌交易|申购)[^>]*)</a>
+    detail: (\d+-\d+-\d+)</span>\s*<a[^>]*href="([^"]+)"[^>]*>([^>]*(挂牌交易)[^>]*)</a>
     fields: [published_at, url, title]
     encoding: utf-8
     page: http://www.laojiu360.com/CMS/List?clidindex=information_disclosure&page={page}&IsMobileDevice=False
@@ -22,7 +22,7 @@ offer:
 result:
     index: http://www.laojiu360.com/CMS/List?clidindex=information_disclosure&IsMobileDevice=False 
     relative: http://www.laojiu360.com
-    detail: (\d+-\d+-\d+)</span>\s*<a[^>]*href="([^"]+)"[^>]*>([^>]*中签[^>]*)</a>
+    detail: (\d+-\d+-\d+)</span>\s*<a[^>]*href="([^"]+)"[^>]*>([^>]*申购中签[^>]*)</a>
     fields: [published_at, url, title]
     encoding: utf-8
     page: http://www.laojiu360.com/CMS/List?clidindex=information_disclosure&page={page}&IsMobileDevice=False
