@@ -1,6 +1,10 @@
 import time
 import copy
-from datetime import datetime
+from collections import defaultdict
+from datetime import datetime, timedelta
+
+
+from ybk.log import serve_log as log
 
 from .mangaa import (
     Model,
@@ -12,6 +16,7 @@ from .mangaa import (
 
 from .quote import Quote
 from .models import Collection
+from .user import User
 
 
 class Transaction(Model):
@@ -219,3 +224,82 @@ class Position(Model):
             return True
         else:
             return False
+
+
+class ProfitLog(Model):
+
+    """ 用户的收益日志 """
+    meta = {
+        'indexes': [
+            [[('user', 1), ('date', 1)], {'unique': True}],
+        ],
+    }
+
+    user = StringField(blank=False)
+    date = DateTimeField(blank=False)
+    profit = FloatField()
+
+    @classmethod
+    def profits(cls, user):
+        """ 获得收益日志 """
+        return [{'date': pl.date,
+                 'profit': pl.profit}
+                for pl in cls.find({'user': user},
+                                   sort=[('date', 1)])]
+
+    @classmethod
+    def ensure_all_profits(cls):
+        for u in User.find():
+            cls.ensure_profits(u._id)
+
+    @classmethod
+    def ensure_profits(cls, user):
+        """ 确保生成收益日志 """
+        log.info('为用户{}生成收益日志'.format(user))
+        ts = list(reversed(Transaction.user_recent_transactions(user)))
+        if ts:
+            today = datetime.utcnow() + timedelta(hours=8)
+            today = today.replace(hour=0, minute=0, microsecond=0)
+            di = 0
+            date = ts[di].operated_at
+            positions = {}
+            realized_profits = defaultdict(float)
+            while date < today:
+                profit = 0
+                # include new transactions
+                while di < len(ts) and ts[di].operated_at <= date:
+                    t = ts[di]
+                    op = 1 if t.type_ == 'buy' else -1
+                    pair = (t.exchange, t.symbol)
+                    if pair not in positions:
+                        positions[pair] = (t.price, t.quantity * op)
+                    else:
+                        pv = positions[pair]
+                        amount = pv[0] * pv[1] + t.price * t.quantity * op
+                        quantity = pv[1] + t.quantity
+                        if quantity == 0:
+                            realized_profits[pair] += pv[1] * (pv[0] - t.price)
+                            del positions[pair]
+                        else:
+                            positions[pair] = (amount / quantity, quantity)
+                    di += 1
+
+                # calculate profit
+                for pair in positions:
+                    q = Quote.find_one({'exchange': pair[0],
+                                        'symbol': pair[1],
+                                        'quote_type': '1d',
+                                        'quote_at': {'$lte': date}},
+                                       sort=[('quote_at', -1)])
+                    if q:
+                        pv = positions[pair]
+                        profit += (q.close - pv[0]) * pv[1]
+
+                    profit += sum(realized_profits.values())
+
+                # update profit
+                coll = cls._get_collection()
+                coll.update_one({'date': date, 'user': user},
+                                {'$set': {'profit': profit}},
+                                upsert=True)
+                date += timedelta(days=1)

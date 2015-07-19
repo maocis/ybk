@@ -9,6 +9,7 @@ from ybk.config import setup_config
 from ybk.crawlers import crawl, crawl_all
 from ybk.parsers import parse, parse_all
 from ybk.quotes import realtime, realtime_all, history, history_all
+from ybk.models import ProfitLog
 from ybk.log import crawl_log, quote_log
 
 
@@ -25,26 +26,35 @@ def do_cron(parser, args):
     setup_config(args)
     lockfile = '/tmp/ybk.cron.lock'
     path = pathlib.Path(lockfile)
-    if not path.exists():
-        path.open('w').write('')
-        try:
-            crawl_all()
-        except:
-            crawl_log.exception('出错啦')
-        finally:
-            path.unlink()
 
-        path.open('w').write('')
-        try:
-            now = datetime.utcnow() + timedelta(hours=8)
+    class doing(object):
+
+        def __enter__(self):
+            path.open('w').write('')
+
+        def __exit__(self, type, value, traceback):
+            if value:
+                crawl_log.exception('出错啦')
+            path.unlink()
+            return True
+
+    if not path.exists():
+        with doing():
+            crawl_all()
+
+        now = datetime.utcnow() + timedelta(hours=8)
+        with doing():
             if 9 <= now.hour <= 20 and now.weekday() != 6:
                 realtime_all()
+
+        with doing():
             if now.hour == 6 and now.minute < 5:
                 history_all()
-        except:
-            quote_log.exception('出错啦')
-        finally:
-            path.unlink()
+
+        with doing():
+            if True or now.hour == 0 and now.minute < 5:
+                # 生成所有人的历史收益记录
+                ProfitLog.ensure_all_profits()
     else:
         crawl_log.info('已有cron在跑, 直接退出')
 
