@@ -52,7 +52,7 @@ def do_cron(parser, args):
                 history_all()
 
         with doing():
-            if True or now.hour == 0 and now.minute < 5:
+            if now.minute < 5:
                 # 生成所有人的历史收益记录
                 ProfitLog.ensure_all_profits()
     else:
