@@ -6,7 +6,7 @@ from flask import render_template, request, jsonify
 from flask.ext.login import login_required, current_user
 
 from ybk.settings import ABBRS
-from ybk.models import Position, Transaction
+from ybk.models import Position, Transaction, ProfitLog
 from ybk.log import serve_log as log
 from .views import user
 
@@ -23,6 +23,11 @@ def position():
     unrealized_profit = Position.unrealized_profit(user)
     annual_profit = Position.annual_profit(user)
     position = Position.user_position(user)
+
+    # charts
+    pfs = ProfitLog.profits(user)[-20:]
+    pldates = [pf['date'].strftime('%Y-%m-%d') for pf in pfs]
+    plvalues = [int(pf['profit']) for pf in pfs]
 
     exchanges = [{'value': n, 'text': n}
                  for n in sorted(ABBRS)]

@@ -21,22 +21,28 @@
       <div class="col-md-8">
         <h3>持仓概况</h3>
         <div class="col-md-4">
-         <b>持有藏品:</b> {{ num_collections or 0 }}种
+          <div class="col-md-12">
+           <b>持有藏品:</b> {{ num_collections or 0 }}种
+          </div>
+          <div class="col-md-12">
+           <b>平均涨幅:</b> {{ (average_increase or 0) | percentage('.1') }}
+          </div>
+          <div class="col-md-12">
+           <b>持仓总市值:</b> {{ (market_value or 0) | strformat('{:.1f}') }}元
+          </div>
+          <div class="col-md-12">
+           <b>未实现收益:</b> {{ (unrealized_profit or 0) | strformat('{:.1f}') }}元
+          </div>
+          <div class="col-md-12">
+           <b>已实现收益:</b> {{ (realized_profit or 0) | strformat('{:.1f}') }}元
+          </div>
+          <div class="col-md-12">
+           <b>年化收益:</b> {{ (annual_profit or 0) | strformat('{:.1f}') }}元
+          </div>
         </div>
-        <div class="col-md-4">
-         <b>平均涨幅:</b> {{ (average_increase or 0) | percentage('.1') }}
-        </div>
-        <div class="col-md-4">
-         <b>持仓总市值:</b> {{ (market_value or 0) | strformat('{:.1f}') }}元
-        </div>
-        <div class="col-md-4">
-         <b>未实现收益(浮盈):</b> {{ (unrealized_profit or 0) | strformat('{:.1f}') }}元
-        </div>
-        <div class="col-md-4">
-         <b>已实现收益:</b> {{ (realized_profit or 0) | strformat('{:.1f}') }}元
-        </div>
-        <div class="col-md-4">
-         <b>年化收益:</b> {{ (annual_profit or 0) | strformat('{:.1f}') }}元
+        <div class="col-md-8">
+          <div id="profitlog" style="height: 120px;">
+          </div>
         </div>
         <table id="position-list" class="table"
                 data-toggle="table"
@@ -227,6 +233,70 @@
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
     {% endassets %}
   {% endif %}
+
+<script src="//cdn.bootcss.com/echarts/2.2.5/echarts.js"></script>
+<script>
+var option = {
+    title : {
+      x: 'center',
+      text: '历史收益',
+    },
+    tooltip : {
+        trigger: 'axis'
+    },
+    legend: {
+        show: false,
+        data:['历史收益']
+    },
+    toolbox: {
+        show : false,
+    },
+    grid: {
+      x: 80,
+      y: 20,
+      x2: 10,
+      y2: 30,
+    },
+    xAxis : [
+        {
+            type : 'category',
+            boundaryGap : true,
+            data : {{ pldates | safe }},
+        }
+    ],
+    yAxis : [
+        {
+            type : 'value',
+            splitNumber: 2, 
+            axisLabel : {
+                formatter: '{value}元'
+            }
+        }
+    ],
+    series : [
+        {
+            name : '历史收益',
+            type : 'line',
+            data : {{ plvalues | safe }},
+        },
+    ]
+};
+require.config({
+    paths: {
+        echarts: '//cdn.bootcss.com/echarts/2.2.5/'
+    }
+});
+require(
+    [
+        'echarts',
+        'echarts/chart/line',
+    ],
+    function (ec) {
+        var c = ec.init(document.getElementById('profitlog'));
+        c.setOption(option);
+    }
+);
+</script>
 
 <script>
 $(function() {
