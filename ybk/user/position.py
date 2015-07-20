@@ -25,7 +25,7 @@ def position():
     position = Position.user_position(user)
 
     # charts
-    pfs = ProfitLog.profits(user)[-20:]
+    pfs = ProfitLog.profits(user)
     pldates = [pf['date'].strftime('%Y-%m-%d') for pf in pfs]
     plvalues = [int(pf['profit']) for pf in pfs]
 
