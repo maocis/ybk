@@ -6,7 +6,7 @@ cashout: 3
 stock:
     index: http://www.ybika.com/notice/index_1.htm
     relative: http://www.ybika.com
-    detail: (\d+-\d+-\d+)</span>\s*<a href="([^"]+)"[^>]*>([^<]*托管入库[^<]*)
+    detail: (\d+-\d+-\d+)</span>\s*<a href="([^"]+)"[^>]*>([^<]*(托管|入库)[^<]*)
     fields: [published_at, url, title]
     encoding: utf-8
     page: http://www.ybika.com/notice/index_{page}.htm
