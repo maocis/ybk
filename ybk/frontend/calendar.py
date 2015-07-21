@@ -18,7 +18,7 @@ def calendar():
     if starts_at:
         starts_at = datetime.strptime(starts_at, '%Y%m%d')
 
-    today = datetime.utcnow() + timedelta(hours=8)
+    today = datetime.utcnow()# + timedelta(hours=8)
     today = today.replace(hour=0, minute=0, microsecond=0)
     if not starts_at:
         starts_at = today - timedelta(days=3)
