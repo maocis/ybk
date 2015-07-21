@@ -47,7 +47,7 @@ def analysis():
     # predict
     conf = get_conf(ex.abbr)
     today = datetime.utcnow() + timedelta(hours=8)
-    today = today.replace(hour=0, minute=0, microsecond=0)
+    today = today.replace(hour=0, minute=0, second=0, microsecond=0)
     before = today - timedelta(days=conf['cashout'])
     cashout_at = today + timedelta(days=conf['cashout'])
     colls = list(Collection.find({'exchange': ex.abbr,

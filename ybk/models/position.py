@@ -259,7 +259,7 @@ class ProfitLog(Model):
         ts = list(reversed(Transaction.user_recent_transactions(user)))
         if ts:
             today = datetime.utcnow() + timedelta(hours=8)
-            today = today.replace(hour=0, minute=0, microsecond=0)
+            today = today.replace(hour=0, minute=0, second=0, microsecond=0)
             di = 0
             date = ts[di].operated_at
             positions = {}

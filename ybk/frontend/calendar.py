@@ -18,11 +18,12 @@ def calendar():
     if starts_at:
         starts_at = datetime.strptime(starts_at, '%Y%m%d')
 
-    today = datetime.utcnow()# + timedelta(hours=8)
-    today = today.replace(hour=0, minute=0, microsecond=0)
+    today = datetime.utcnow() + timedelta(hours=8)
+    today = today.replace(hour=0, minute=0, second=0, microsecond=0)
     if not starts_at:
         starts_at = today - timedelta(days=3)
     ends_at = starts_at + timedelta(days=10)
+    open('/tmp/log', 'a').write(str(starts_at)+ '\n')
 
     # 表头
     heads = []
