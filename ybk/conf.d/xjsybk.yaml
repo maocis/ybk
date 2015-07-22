@@ -5,7 +5,7 @@ notrade: 6
 cashout: 2
 stock:
     index: http://www.xjsybk.com/xinxipilu/
-    relative: http://www.xjsybk.com/
+    relative: http://www.xjsybk.com
     detail: <a href="([^"]+)"[^>]*>([^>]*托管[^>]*)</a><span>(\d+-\d+-\d+)
     fields: [url, title, published_at]
     encoding: utf-8
@@ -13,7 +13,7 @@ stock:
     maxpage: 1
 offer:
     index: http://www.xjsybk.com/xinxipilu/
-    relative: http://www.xjsybk.com/
+    relative: http://www.xjsybk.com
     detail: <a href="([^"]+)"[^>]*>([^>]*申购[^>]*)</a><span>(\d+-\d+-\d+)
     fields: [url, title, published_at]
     encoding: utf-8
@@ -21,7 +21,7 @@ offer:
     maxpage: 1
 result:
     index: http://www.xjsybk.com/xinxipilu/
-    relative: http://www.xjsybk.com/
+    relative: http://www.xjsybk.com
     detail: <a href="([^"]+)"[^>]*>([^>]*中签[^>]*)</a><span>(\d+-\d+-\d+)
     fields: [url, title, published_at]
     encoding: utf-8
