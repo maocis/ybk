@@ -71,6 +71,9 @@ class Position(Model):
     user = StringField(blank=False)
     quantity = FloatField(blank=False, default=0)
 
+    # cache for realized profits
+    rprofits = {}
+
     @classmethod
     def num_exchanges(cls, user):
         """ 用户持有多少个交易所的持仓 """
@@ -105,6 +108,7 @@ class Position(Model):
     @classmethod
     def _user_position(cls, user):
         """ 目前持仓概况 """
+        cls.rprofits[user] = 0
         collections = {}
         for p in cls.find({'user': user}):
             pair = (p.exchange, p.symbol)
@@ -166,6 +170,9 @@ class Position(Model):
                         'unrealized_profit': unrealized_profit,
                         'annual_profit': annual_profit,
                     })
+                else:
+                    if realized_profit > 0:
+                        cls.rprofits[user] += realized_profit
         return sorted(position, key=lambda x: x['exchange'])
 
     @classmethod
@@ -190,8 +197,8 @@ class Position(Model):
     @classmethod
     def realized_profit(cls, user):
         """ 已实现收益 """
-        return sum(p['realized_profit'] for p in
-                   cls.user_position(user))
+        return sum(p['realized_profit'] 
+                    for p in cls.user_position(user)) + cls.rprofits.get(user, 0)
 
     @classmethod
     def annual_profit(cls, user):
