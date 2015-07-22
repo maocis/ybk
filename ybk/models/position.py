@@ -97,7 +97,7 @@ class Position(Model):
 
         now = time.time()
         if 'position' not in cls.pcache or \
-                cls.pcache.get('time', now) < now - 5:
+                cls.pcache.get('time', now) < now - 60:
             cls.pcache['position'] = cls._user_position(user)
             cls.pcache['time'] = time.time()
         return copy.deepcopy(cls.pcache['position'])
@@ -189,8 +189,8 @@ class Position(Model):
     @classmethod
     def realized_profit(cls, user):
         """ 已实现收益 """
-        return sum(p['realized_profit'] 
-                    for p in cls.user_position(user))
+        return sum(p['realized_profit']
+                   for p in cls.user_position(user))
 
     @classmethod
     def annual_profit(cls, user):
