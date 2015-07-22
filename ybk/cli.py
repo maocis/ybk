@@ -10,7 +10,7 @@ from ybk.crawlers import crawl, crawl_all
 from ybk.parsers import parse, parse_all
 from ybk.quotes import realtime, realtime_all, history, history_all
 from ybk.models import ProfitLog
-from ybk.log import crawl_log, quote_log
+from ybk.log import crawl_log
 
 
 def _get_site_by_abbr(abbr):
@@ -117,7 +117,7 @@ def do_serve(parser, args):
     elif args.production:
         app.run(host='0.0.0.0',
                 port=conf['port'],
-                processes=conf['num_processes'])
+                threaded=True)
     else:
         parser.print_help()
 
