@@ -1,4 +1,3 @@
-import time
 from datetime import datetime, timedelta
 
 from .mangaa import (
@@ -44,38 +43,35 @@ class Quote(Model):
 
         从日线数据中取就可以了, 实时交易价格也会保存在日线中
         """
-        if not hasattr(cls, 'lp_cache'):
-            setattr(cls, 'lp_cache', {})
-        pair = (exchange, symbol)
-        if not cls.lp_cache or \
-                cls.lp_cache.get('time', time.time()) < time.time() - 300:
-            cls.lp_cache = {(q.exchange, q.symbol): q.close
-                            for q in cls.find({
-                                'quote_type': '1d',
-                                'quote_at': {'$gte': ndays_ago(10)}},
-                sort=[('quote_at', 1)])}
-            cls.lp_cache['time'] = time.time()
-        return cls.lp_cache.get(pair)
+        today = datetime.utcnow() + timedelta(hours=8)
+        today = today.replace(hour=0, minute=0, second=0, microsecond=0)
+        qs = cls.cached(300).find({'exchange': exchange,
+                                   'symbol': symbol,
+                                   'quote_type': '1d',
+                                   'quote_at': {'$lte': today}},
+                                  {'close': 1},
+                                  sort=[('quote_at', -1)],
+                                  limit=1)
+        if qs:
+            return qs[0].close
 
     @classmethod
     def increase(cls, exchange, symbol):
         """ 获得品种的今日涨幅 """
-        if not hasattr(cls, 'i_cache'):
-            setattr(cls, 'i_cache', {})
-        pair = (exchange, symbol)
         now = datetime.utcnow() + timedelta(hours=8)
         if now.hour < 9 and now.minute < 30:
             now -= timedelta(days=1)
         date = now.replace(hour=0, minute=0, second=0, microsecond=0)
-        if not cls.i_cache or \
-                cls.i_cache.get('time', time.time()) < time.time() - 300:
-            cls.i_cache = {(q.exchange, q.symbol): q.close / q.lclose - 1
-                           for q in cls.find({
-                               'quote_type': '1d',
-                               'quote_at': date,
-                           }) if q.lclose}
-            cls.i_cache['time'] = time.time()
-        return cls.i_cache.get(pair)
+        qs = cls.cached(300).find({
+            'exchange': exchange,
+            'symbol': symbol,
+            'quote_type': '1d',
+            'quote_at': date},
+            {'close': 1, 'lclose': 1},
+            limit=1)
+        if qs and qs[0].lclose:
+            q = qs[0]
+            return q.close / q.lclose - 1
 
 
 def ndays_ago(n):

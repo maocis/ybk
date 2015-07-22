@@ -16,6 +16,7 @@ import traceback
 # Python.
 from re import compile
 from datetime import datetime
+from collections import OrderedDict
 
 # Pymongo.
 from pymongo.cursor import Cursor
@@ -737,6 +738,10 @@ class CachedModel(object):
             @functools.wraps(attr)
             def deco(*args, **kwargs):
                 cache = self.caches[self.cls]
+                args = [OrderedDict(sorted(x.items()))
+                        if isinstance(x, dict) else x
+                        for x in args]
+                kwargs = OrderedDict(sorted(kwargs.items()))
                 key = pickle.dumps([attr.__name__, args, kwargs])
                 cache_miss = key not in cache
 
