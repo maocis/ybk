@@ -86,6 +86,6 @@ server {
 
 
 ```bash
-# 每小时执行一次
-0 * * * * PYBIN/ybk cron --mongodb_url=mongodb://localhost/ybk >> CRONLOG 2>&1
+# 每5分钟执行一次
+*/5 * * * * PYBIN/ybk cron --mongodb_url=mongodb://localhost/ybk >> CRONLOG 2>&1
 ```
