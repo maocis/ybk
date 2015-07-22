@@ -71,9 +71,6 @@ class Position(Model):
     user = StringField(blank=False)
     quantity = FloatField(blank=False, default=0)
 
-    # cache for realized profits
-    rprofits = {}
-
     @classmethod
     def num_exchanges(cls, user):
         """ 用户持有多少个交易所的持仓 """
@@ -108,7 +105,6 @@ class Position(Model):
     @classmethod
     def _user_position(cls, user):
         """ 目前持仓概况 """
-        cls.rprofits[user] = 0
         collections = {}
         for p in cls.find({'user': user}):
             pair = (p.exchange, p.symbol)
@@ -156,23 +152,19 @@ class Position(Model):
                 past_days = max(1, (last_sell_at - first_buy_at).days)
                 annual_profit = (365 / past_days) * \
                     (unrealized_profit + realized_profit)
-                if quantity > 0:
-                    position.append({
-                        'exchange': exchange,
-                        'symbol': symbol,
-                        'name': Collection.get_name(exchange, symbol),
-                        'avg_buy_price': avg_buy_price,
-                        'quantity': quantity,
-                        'latest_price': latest_price,
-                        'increase': increase,
-                        'total_increase': latest_price / avg_buy_price - 1,
-                        'realized_profit': realized_profit,
-                        'unrealized_profit': unrealized_profit,
-                        'annual_profit': annual_profit,
-                    })
-                else:
-                    if realized_profit > 0:
-                        cls.rprofits[user] += realized_profit
+                position.append({
+                    'exchange': exchange,
+                    'symbol': symbol,
+                    'name': Collection.get_name(exchange, symbol),
+                    'avg_buy_price': avg_buy_price,
+                    'quantity': quantity,
+                    'latest_price': latest_price,
+                    'increase': increase,
+                    'total_increase': latest_price / avg_buy_price - 1,
+                    'realized_profit': realized_profit,
+                    'unrealized_profit': unrealized_profit,
+                    'annual_profit': annual_profit,
+                })
         return sorted(position, key=lambda x: x['exchange'])
 
     @classmethod
@@ -198,7 +190,7 @@ class Position(Model):
     def realized_profit(cls, user):
         """ 已实现收益 """
         return sum(p['realized_profit'] 
-                    for p in cls.user_position(user)) + cls.rprofits.get(user, 0)
+                    for p in cls.user_position(user))
 
     @classmethod
     def annual_profit(cls, user):
@@ -271,7 +263,7 @@ class ProfitLog(Model):
             date = ts[di].operated_at
             positions = {}
             realized_profits = defaultdict(float)
-            while date < today:
+            while date <= today:
                 profit = 0
                 # include new transactions
                 while di < len(ts) and ts[di].operated_at <= date:
@@ -283,9 +275,9 @@ class ProfitLog(Model):
                     else:
                         pv = positions[pair]
                         amount = pv[0] * pv[1] + t.price * t.quantity * op
-                        quantity = pv[1] + t.quantity
+                        quantity = pv[1] + t.quantity * op
                         if quantity == 0:
-                            realized_profits[pair] += pv[1] * (pv[0] - t.price)
+                            realized_profits[pair] += pv[1] * (t.price - pv[0])
                             del positions[pair]
                         else:
                             positions[pair] = (amount / quantity, quantity)
@@ -302,7 +294,7 @@ class ProfitLog(Model):
                         pv = positions[pair]
                         profit += (q.close - pv[0]) * pv[1]
 
-                    profit += sum(realized_profits.values())
+                profit += sum(realized_profits.values())
 
                 # update profit
                 coll = cls._get_collection()
