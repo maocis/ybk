@@ -17,6 +17,7 @@ class Quote(Model):
         'idformat': '{exchange}_{symbol}_{quote_type}_{quote_at}',
         'unique': ['exchange', 'symbol', 'quote_type', 'quote_at'],
         'indexes': [
+            [[('exchange', 1), ('quote_at', 1)], {}],
             [[('exchange', 1), ('symbol', 1),
               ('quote_type', 1), ('quote_at', 1)], {}],
         ],
