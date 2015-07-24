@@ -4,15 +4,15 @@ abbr: 中南文交所
 notrade: 6
 cashout: 2
 stock:
-    index: http://www.znypjy.com/a/xinxipilu/tuoguangonggao/
+    index: http://www.znypjy.com/a/xinxipilu/tongzhigonggao/list_7_1.html
     relative: http://www.znypjy.com
-    detail: href="([^"]+)">([^<]*)</a><span>(\d+-\d+-\d+)
+    detail: href="([^"]+)">([^<]*托管入库[^<]*)</a><span>(\d+-\d+-\d+)
     fields: [url, title, published_at]
     encoding: utf-8
     page: http://www.znypjy.com/a/xinxipilu/shengougonggao/list_9_{page}.html
     maxpage: 1
 offer:
-    index: http://www.znypjy.com/a/xinxipilu/shengougonggao/
+    index: http://www.znypjy.com/a/xinxipilu/tongzhigonggao/list_7_1.html
     relative: http://www.znypjy.com
     detail: href="([^"]+)">([^<]*挂牌交易[^<]*)</a><span>(\d+-\d+-\d+)
     fields: [url, title, published_at]
@@ -20,7 +20,7 @@ offer:
     page: http://www.znypjy.com/a/xinxipilu/shengougonggao/list_9_{page}.html
     maxpage: 1
 result:
-    index: http://www.znypjy.com/a/xinxipilu/shengougonggao/
+    index: http://www.znypjy.com/a/xinxipilu/tongzhigonggao/list_7_1.html
     relative: http://www.znypjy.com
     detail: href="([^"]+)">([^<]*中签[^<]*)</a><span>(\d+-\d+-\d+)
     fields: [url, title, published_at]
