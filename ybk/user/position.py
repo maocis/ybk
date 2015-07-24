@@ -58,8 +58,6 @@ def position_list():
                       key=lambda x: x[sort] or 0,
                       reverse=order == 'desc')
     for p in position:
-        if p['quantity'] == 0:
-            continue
         p['name'] = (p['name'] or '')[:5]
         p['increase'] = '{:.1f}%'.format((p['increase'] or 0) * 100)
         p['total_increase'] = '{:.1f}%'.format((p['total_increase'] or 0)
@@ -68,6 +66,7 @@ def position_list():
         p['avg_buy_price'] = '{:.2f}'.format(p['avg_buy_price'])
         if p['latest_price']:
             p['latest_price'] = '{:.2f}'.format(p['latest_price'])
+    position = [p for p in position if p['quantity'] > 0]
     return jsonify(total=len(position), rows=position)
 
 
