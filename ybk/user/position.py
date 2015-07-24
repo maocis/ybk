@@ -58,6 +58,8 @@ def position_list():
                       key=lambda x: x[sort] or 0,
                       reverse=order == 'desc')
     for p in position:
+        if p['quantity'] == 0:
+            continue
         p['name'] = (p['name'] or '')[:5]
         p['increase'] = '{:.1f}%'.format((p['increase'] or 0) * 100)
         p['total_increase'] = '{:.1f}%'.format((p['total_increase'] or 0)
