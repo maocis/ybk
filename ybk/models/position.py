@@ -171,7 +171,7 @@ class Position(Model):
     @classmethod
     def average_increase(cls, user):
         """ 平均涨幅 """
-        position = cls.user_position(user)
+        position = [p for p in cls.user_position(user) if p['quantity']>0]
         if len(position):
             return sum(p['total_increase'] for p in position) / len(position)
 
