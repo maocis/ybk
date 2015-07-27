@@ -97,7 +97,7 @@ class Position(Model):
 
         now = time.time()
         if 'position' not in cls.pcache or \
-                cls.pcache.get('time', now) < now - 60:
+                cls.pcache.get('time', now) < now - 5:
             cls.pcache['position'] = cls._user_position(user)
             cls.pcache['time'] = time.time()
         return copy.deepcopy(cls.pcache['position'])
