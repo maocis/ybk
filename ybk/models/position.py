@@ -80,7 +80,8 @@ class Position(Model):
     @classmethod
     def num_collections(cls, user):
         """ 用户持有多少不同的藏品 """
-        return len(list(cls.find({'user': user}, {'_id': 1})))
+        return len(list(cls.find({'user': user, 'quantity': {'$gt': 0}},
+                                 {'_id': 1})))
 
     @classmethod
     def num_sold(cls, user):
