@@ -4,28 +4,28 @@ abbr: 北酒所
 notrade: 5, 6
 cashout: 2
 stock:
-    index: http://www.laojiu360.com/CMS/List?clidindex=information_disclosure&IsMobileDevice=False 
+    index: http://www.laojiu360.com/CMS/List?clidindex=trustee_notice&IsMobileDevice=False 
     relative: http://www.laojiu360.com
     detail: (\d+-\d+-\d+)</span>\s*<a[^>]*href="([^"]+)"[^>]*>([^>]*托管[^>]*)</a>
     fields: [published_at, url, title]
     encoding: utf-8
-    page: http://www.laojiu360.com/CMS/List?clidindex=information_disclosure&page={page}&IsMobileDevice=False
+    page: http://www.laojiu360.com/CMS/List?clidindex=trustee_notice&page={page}&IsMobileDevice=False
     maxpage: 1
 offer:
-    index: http://www.laojiu360.com/CMS/List?clidindex=information_disclosure&IsMobileDevice=False 
+    index: http://www.laojiu360.com/CMS/List?clidindex=purchase_notice&IsMobileDevice=False 
     relative: http://www.laojiu360.com
     detail: (\d+-\d+-\d+)</span>\s*<a[^>]*href="([^"]+)"[^>]*>([^>]*(挂牌交易)[^>]*)</a>
     fields: [published_at, url, title]
     encoding: utf-8
-    page: http://www.laojiu360.com/CMS/List?clidindex=information_disclosure&page={page}&IsMobileDevice=False
+    page: http://www.laojiu360.com/CMS/List?clidindex=purchase_notice&page={page}&IsMobileDevice=False
     maxpage: 1
 result:
-    index: http://www.laojiu360.com/CMS/List?clidindex=information_disclosure&IsMobileDevice=False 
+    index: http://www.laojiu360.com/CMS/List?clidindex=purchase_notice&IsMobileDevice=False 
     relative: http://www.laojiu360.com
     detail: (\d+-\d+-\d+)</span>\s*<a[^>]*href="([^"]+)"[^>]*>([^>]*申购中签[^>]*)</a>
     fields: [published_at, url, title]
     encoding: utf-8
-    page: http://www.laojiu360.com/CMS/List?clidindex=information_disclosure&page={page}&IsMobileDevice=False
+    page: http://www.laojiu360.com/CMS/List?clidindex=purchase_notice&page={page}&IsMobileDevice=False
     maxpage: 1
 opening:
     url: http://www.laojiu360.com/CMS/Custom/openAccount
