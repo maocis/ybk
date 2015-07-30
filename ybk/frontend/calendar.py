@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from collections import defaultdict
 
 from flask import render_template, request
+from flask.ext.login import login_required
 
 from ybk.models import Collection
 from ybk.settings import get_conf
@@ -10,6 +11,7 @@ from .views import frontend
 
 
 @frontend.route('/calendar/')
+@login_required
 def calendar():
     nav = 'calendar'
 

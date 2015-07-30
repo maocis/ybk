@@ -18,7 +18,7 @@
           <tbody>
             {% for ex in exs %}
             <tr>
-              <td style="text-align: center; background-color: #fef;" {% if ex == "无申购" %}colspan="12"{% endif %}><a href="{{ url_for('frontend.announcement_collection', search=ex) }}">{{ ex }}</a></td>
+              <td style="text-align: center; background-color: #fef;" {% if ex == "无申购" %}colspan="12"{% endif %}><a href="{{ url_for('frontend.collection', search=ex) }}">{{ ex }}</a></td>
               {% for c in rowdict[ex] %}
               <td colspan="{{c.colspan}}" style="text-align: center; {% if c.symbols %}background-color: #bef;{% endif %}"
                 data-exchange="{{ c.exchange }}"

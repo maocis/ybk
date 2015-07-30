@@ -29,11 +29,12 @@ def register():
     mobile = request.form.get('mobile', '')
     username = request.form.get('username', '')
     password = request.form.get('password', '')
+    invited_by = request.form.get('invited_by', '')
     code = request.form.get('code', '')
     v, reason = Code.verify(mobile, code)
     if v:
         try:
-            u = User.create_user(mobile, username, password)
+            u = User.create_user(mobile, username, password, invited_by)
         except Exception as e:
             return jsonify(status=500, reason=str(e))
         else:

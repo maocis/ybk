@@ -6,6 +6,8 @@ from itertools import groupby
 from collections import defaultdict
 from datetime import timedelta, datetime
 
+from xpinyin import Pinyin
+
 from ybk.settings import get_conf
 from ybk.utils import cached_property_ttl
 from .quote import Quote
@@ -19,6 +21,7 @@ from .mangaa import (
     DateTimeField,
 )
 
+py = Pinyin()
 
 class Exchange(Model):
 
@@ -307,6 +310,32 @@ class Collection(Model):
                                             '_id': 0})}
             cls.cache['time'] = time.time()
         return cls.cache.get(pair)
+
+    @classmethod
+    def search(cls, name_or_abbr, limit=10):
+        # warm cache
+        cls.get_name('', '')
+
+        na = name_or_abbr
+        pairs = []
+        for pair in cls.cache.keys():
+            if pair == 'time':
+                continue
+            name = cls.get_name(*pair)
+            initials = py.get_initials(name, '')
+            sna = set(na)
+            sname = set(name)
+            sinit = set(initials)
+
+            if name.startswith(na) or initials.startswith(na):
+                distance = min(max(len(sna - sname), len(sname - sna)),
+                               max(len(sna - sinit), len(sinit - sna)))
+                pairs.append((distance, pair))
+        return [p[1] for p in sorted(pairs)][:limit]
+
+    @property
+    def abbr(self):
+        return py.get_initials(self.name, '')
 
     @property
     def offer_mv(self):

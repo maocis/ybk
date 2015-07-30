@@ -27,6 +27,7 @@ setup(
         'cssselect',
         'pymongo>=3',
         'python-dateutil',
+        'xpinyin',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',

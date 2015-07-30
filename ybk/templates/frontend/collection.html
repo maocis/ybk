@@ -1,0 +1,98 @@
+{% extends "layout.html" %}
+
+{% block css %}
+
+    <link rel="alternate" type="application/rss+xml" title="邮币卡公告聚合 {% if exchange %}- {{exchange }} {% endif %}{% if type_ %}- {{typecn}} {% endif %}- RSS订阅" href="{{ url_for('frontend.announcement_feed', exchange=exchange, type=type_) }}" />
+
+    {% if config.DEBUG %}
+      <link href="{{ url_for('static', filename='css/bootstrap-table.min.css') }}" rel="stylesheet">
+    {% else %}
+      <link href="{{ url_for('static', filename='css/bootstrap-table.min.css') }}" rel="stylesheet">
+    {% endif %}
+{% endblock %}
+
+{% block main %}
+  <div class="row">
+    <div class="col-md-12">
+        <h2>交易品种</h2>
+        <table id="collection-list" class="table"
+                data-toggle="table"
+                data-classes="table table-condensed"
+                data-locale="zh-CN"
+                data-sort-name="offers_at"
+                data-sort-order="desc"
+                data-show-export="true"
+                data-url="{{ url_for('frontend.collection_list') }}"
+                data-pagination="true"
+                data-side-pagination="server"
+                data-page-size="100"
+                data-show-refresh="true"
+                data-search="true">
+          <thead>
+            <th data-field="offers_at" data-sortable="true">申购日</th>
+            <th data-field="exchange" data-sortable="true" data-formatter="exchangeFormatter">交易所</th>
+            <th data-field="name" data-sortable="true">藏品名</th>
+            <th data-field="symbol" data-sortable="true">代码</th>
+            <th data-field="offer_price" data-sortable="true" class="text-right">申价</th>
+            <th data-field="offer_quantity" data-sortable="true" class="text-right">申量</th>
+            <th data-field="offer_cash_ratio" data-sortable="true" class="text-right">资金</th>
+            <th data-field="offer_cash" data-sortable="true" class="text-right">市值</th>
+            <th data-field="result_ratio_cash" data-sortable="true" class="text-right">中签率</th>
+            <th data-field="total_increase" data-sortable="true" class="text-right" data-formatter="increaseFormatter">现涨幅</th>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}
+
+  {% if config.DEBUG %}
+    <script src="{{ url_for('static', filename='js/bootstrap-table.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap-table-zh-CN.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap-table-export.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/tableExport.min.js') }}"></script>
+  {% else %}
+    {% assets filters="jsmin", output="assets/announcement.js",
+              "js/tableExport.min.js",
+              "js/bootstrap-table.min.js",
+              "js/bootstrap-table-zh-CN.min.js",
+              "js/bootstrap-table-export.js" %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+  {% endif %}
+
+    <script>
+
+
+        function exchangeFormatter(value, row, index) {
+          return '<a href="#" name="exchange" ' +
+            'data-exchange="' + value + '">' + value + '</a>'
+        }
+        function increaseFormatter(value, row, index) {
+          var url = "{{ url_for('frontend.trade') }}" + '?'
+              + $.param({exchange: row.exchange, symbol: row.symbol});
+          if (value) {
+            return '<a href="' + url + '" target="_blank">' + value + '</a>'
+          } else {
+            return '-';
+          }
+        }
+        $('table').on('click', 'a[name=exchange]', function(e) {
+          e.preventDefault();
+          $('.search input').val($(this).data('exchange'));
+          $('.search input').trigger('keyup');
+        });
+
+        var search = "{{ search }}";
+        $(document).ready(function() {  
+          if (search) {
+            $('.search input').val(search);
+            $('.search input').trigger('keyup'); 
+          }
+        })
+
+    </script>
+{% endblock %}
