@@ -34,19 +34,19 @@ def announcement():
     if exchange:
         cond['exchange'] = exchange
 
-    total = Announcement.find(cond).count()
+    total = Announcement.query(cond).count()
     pagination = Pagination(page, limit, total)
-    exchanges = list(sorted(list(e.abbr for e in Exchange.find())))
+    exchanges = list(sorted(list(e.abbr for e in Exchange.query())))
     types = ['offer', 'result', 'stock']
     announcements = list(
-        Announcement.find(cond)
+        Announcement.query(cond)
         .sort([('updated_at', -1)])
         .skip(skip).limit(limit))
     for a in announcements:
         a.typecn = type_to_cn(a.type_)
 
     try:
-        updated_at = list(Exchange.find()
+        updated_at = list(Exchange.query()
                           .sort([('updated_at', -1)])
                           .limit(1))[0].updated_at
     except:
@@ -79,7 +79,7 @@ def announcement_feed():
                     url=request.url_root)
 
     announcements = list(
-        Announcement.find(cond)
+        Announcement.query(cond)
         .sort([('updated_at', -1)])
         .limit(20))
 

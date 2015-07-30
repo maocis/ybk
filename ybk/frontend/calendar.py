@@ -39,9 +39,9 @@ def calendar():
     rowdict = defaultdict(list)  # 交易所 -> 每天有/没有
     seen = set()
     ddict = {}
-    for c in Collection.find({'offers_at': {'$gte': starts_at,
-                                            '$lte': ends_at}},
-                             sort=[('offers_at', 1)]):
+    for c in Collection.query({'offers_at': {'$gte': starts_at,
+                                             '$lte': ends_at}},
+                              sort=[('offers_at', 1)]):
         if (c.exchange, c.offers_at) in seen:
             continue
         seen.add((c.exchange, c.offers_at))
@@ -50,8 +50,8 @@ def calendar():
         d = ddict.get(c.exchange, starts_at)
         while d < c.cashout_at:
             if d >= c.offers_at and d < c.cashout_at:
-                cs = list(Collection.find({'offers_at': c.offers_at,
-                                           'exchange': c.exchange}))
+                cs = list(Collection.query({'offers_at': c.offers_at,
+                                            'exchange': c.exchange}))
                 ndays = (c.cashout_at - c.offers_at).days
                 if c.offers_at + timedelta(days=ndays) > ends_at:
                     ndays = (ends_at - c.offers_at).days + 1

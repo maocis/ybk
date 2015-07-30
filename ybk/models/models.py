@@ -12,8 +12,8 @@ from ybk.settings import get_conf
 from ybk.utils import cached_property_ttl
 from .quote import Quote
 
-from .mangaa import (
-    Model,
+from yamo import (
+    Document, IDFormatter, Index,
     IntField,
     FloatField,
     StringField,
@@ -23,22 +23,22 @@ from .mangaa import (
 
 py = Pinyin()
 
-class Exchange(Model):
+
+class Exchange(Document):
 
     """ 交易所 """
-    meta = {
-        'idformat': '{abbr}',
-        'unique': ['abbr'],
-    }
+    class Meta:
+        idf = IDFormatter('{abbr}')
+        idx1 = Index('abbr', unique=True)
 
-    name = StringField()
-    abbr = StringField()  # 简称
-    url = StringField()
-    updated_at = DateTimeField(auto='modified')
+    name = StringField(required=True)
+    abbr = StringField(required=True)  # 简称
+    url = StringField(required=True)
+    updated_at = DateTimeField(modified=True)
 
     @classmethod
     def _all(cls):
-        return list(Exchange.cached(300).find())
+        return list(Exchange.cached(300).query())
 
     @classmethod
     def find_exchange(cls, exchange):
@@ -49,14 +49,14 @@ class Exchange(Model):
     @cached_property_ttl(300)
     def num_collections(self):
         """ 交易品种数 """
-        return Collection.find({'exchange': self.abbr}).count()
+        return Collection.count({'exchange': self.abbr})
 
     @cached_property_ttl(300)
     def offers_per_month(self):
         """ 月均申购次数 """
         months = set()
         days = set()
-        for c in Collection.cached(300).find({'exchange': self.abbr}):
+        for c in Collection.cached(300).query({'exchange': self.abbr}):
             if c.offers_at:
                 days.add(c.offers_at.strftime('%Y%m%d'))
                 months.add(c.offers_at.strftime('%Y%m'))
@@ -68,7 +68,7 @@ class Exchange(Model):
         """ 平均涨幅 """
         result = 0
         count = 0
-        for c in Collection.cached(300).find({'exchange': self.abbr}):
+        for c in Collection.cached(300).query({'exchange': self.abbr}):
             lprice = Quote.latest_price(c.exchange, c.symbol)
             price = c.offer_price
             if lprice and price:
@@ -81,7 +81,7 @@ class Exchange(Model):
     def median_increase(self):
         """ 中位数涨幅(半个月-3个月新品) """
         incs = []
-        for c in Collection.cached(300).find({'exchange': self.abbr}):
+        for c in Collection.cached(300).query({'exchange': self.abbr}):
             if offers_between(c, 15, 90):
                 lprice = Quote.latest_price(c.exchange, c.symbol)
                 price = c.offer_price
@@ -94,16 +94,16 @@ class Exchange(Model):
     def average_trading_days(self):
         """ 平均上市时间 """
         days = []
-        for c in Collection.cached(300).find({'exchange': self.abbr}):
-            quotes = Quote.cached(300).find({'exchange': c.exchange,
-                                             'symbol': c.symbol,
-                                             'quote_type': '1d'})
+        for c in Collection.cached(300).query({'exchange': self.abbr}):
+            quotes = Quote.cached(300).query({'exchange': c.exchange,
+                                              'symbol': c.symbol,
+                                              'quote_type': '1d'})
             days.append(len(quotes))
         if len(days) > 0:
             return sum(days) / len(days)
 
     def _get_colls_by_day(self):
-        colls = Collection.cached(300).find({'exchange': self.abbr})
+        colls = Collection.cached(300).query({'exchange': self.abbr})
         colls = [c for c in colls if c.offers_at]
         colls = sorted(colls,
                        key=lambda x: x.offers_at,
@@ -124,7 +124,8 @@ class Exchange(Model):
                     'invest_cash': invest_cash,
                     'total_cash': sum(c.invest_cash_real or 0
                                       for c in Collection.cached(300)
-                                      .find({'offers_at': colls[0].offers_at}))
+                                      .query({'offers_at':
+                                              colls[0].offers_at}))
                 })
         return history
 
@@ -164,15 +165,15 @@ class Exchange(Model):
     @cached_property_ttl(300)
     def increase_history(self):
         """ 涨幅的历史记录 """
-        colls = Collection.cached(300).find({'exchange': self.abbr})
+        colls = Collection.cached(300).query({'exchange': self.abbr})
 
         symbols = [c.symbol for c in colls
                    if offers_between(c, 15, 90)]
         hdict = defaultdict(list)
-        for q in Quote.cached(300).find({'exchange': self.abbr,
-                                         'symbol': {'$in': symbols},
-                                         'quote_type': '1d'},
-                                        sort=[('quote_at', 1)]):
+        for q in Quote.cached(300).query({'exchange': self.abbr,
+                                          'symbol': {'$in': symbols},
+                                          'quote_type': '1d'},
+                                         sort=[('quote_at', 1)]):
             if q.close:
                 hdict[q.symbol].append(q.close)
         for symbol, values in hdict.items():
@@ -223,46 +224,37 @@ class Exchange(Model):
                        self.median_increase / 0.003)
 
 
-class Announcement(Model):
+class Announcement(Document):
 
     """ 公告信息 """
-    meta = {
-        'idformat': '{url}',
-        'unique': ['url'],
-        'indexes': [
-            [[('updated_at', 1), ('type_', 1)], {}],
-            [[('published_at', 1), ('type_', 1)], {}],
-            [[('exchange', 1), ('type_', 1)], {}],
-        ],
-    }
-    exchange = StringField()        # 交易所简称(ID)
-    type_ = StringField()           # 申购("offer")/中签("result")
-    url = StringField()             # 公告链接
-    title = StringField()           # 公告标题
-    html = StringField()            # 原始html
-    published_at = DateTimeField()  # 交易所发布时间
-    updated_at = DateTimeField(auto='modified')
+    class Meta:
+        idf = IDFormatter('{url}')
+        idx1 = Index('url', unique=True)
+        idx2 = Index(['updated_at', 'type_'])
+        idx3 = Index(['published_at', 'type_'])
+        idx4 = Index(['exchange', 'type_'])
 
+    exchange = StringField(required=True)       # 交易所简称(ID)
+    type_ = StringField(required=True)          # 申购("offer")/中签("result")
+    url = StringField(required=True)            # 公告链接
+    title = StringField()                       # 公告标题
+    html = StringField()                        # 原始html
+    published_at = DateTimeField()              # 交易所发布时间
+    updated_at = DateTimeField(modified=True)
     parsed = BooleanField(default=False)
 
 
-class Collection(Model):
+class Collection(Document):
 
     """ 收藏品: Stamp/Coin/Card """
+    class Meta:
+        idf = IDFormatter('{exchange}_{symbol}')
+        idx1 = Index(['exchange', 'symbol'], unique=True)
+        idx2 = Index('from_url')
 
-    meta = {
-        'idformat': '{exchange}_{symbol}',
-        'unique': ['exchange', 'symbol'],
-        'indexes': [
-            [[('exchange', 1), ('symbol', 1)], {}],
-            [[('from_url', 1)], {}],
-        ]
-    }
-
-    from_url = StringField(blank=True)        # 来自哪个公告
-
-    exchange = StringField(blank=False)        # 交易所ID(简称)
-    symbol = StringField(blank=False)          # 交易代码
+    from_url = StringField()        # 来自哪个公告
+    exchange = StringField(required=True)        # 交易所ID(简称)
+    symbol = StringField(required=True)          # 交易代码
     name = StringField()                        # 交易名
     type_ = StringField(default="邮票")           # "邮票"/"钱币"/"卡片"
     status = StringField(default="申购中")          # "申购中"/"已上市"
@@ -286,15 +278,15 @@ class Collection(Model):
     pickup_min = IntField()         # 最小提货量
     trade_limit = FloatField()      # 单笔最大下单量
 
-    offers_at = DateTimeField(blank=True)     # 申购日 *
-    draws_at = DateTimeField(blank=True)      # 抽签日 *
-    trades_at = DateTimeField(blank=True)     # 上市交易日 *
+    offers_at = DateTimeField()     # 申购日 *
+    draws_at = DateTimeField()      # 抽签日 *
+    trades_at = DateTimeField()     # 上市交易日 *
 
     invest_mv = FloatField()       # 申购市值(Market Value)
     invest_cash = FloatField()     # 申购资金 *
     invest_cash_return_ratio = FloatField()   # 资金中签率, 和上面那个二选一 *
 
-    updated_at = DateTimeField(auto='modified')
+    updated_at = DateTimeField(modified=True)
 
     @classmethod
     def get_name(cls, exchange, symbol):
@@ -303,11 +295,11 @@ class Collection(Model):
         pair = (exchange, symbol)
         if not cls.cache or cls.cache.get('time', time.time()) < 3600:
             cls.cache = {(c.exchange, c.symbol): c.name
-                         for c in cls.find({},
-                                           {'exchange': 1,
-                                            'symbol': 1,
-                                            'name': 1,
-                                            '_id': 0})}
+                         for c in cls.query({},
+                                            {'exchange': 1,
+                                             'symbol': 1,
+                                             'name': 1,
+                                             '_id': 0})}
             cls.cache['time'] = time.time()
         return cls.cache.get(pair)
 
@@ -418,8 +410,8 @@ class Collection(Model):
     def total_offer_cash(self):
         return sum(c.offer_cash or 0
                    for c in Collection.cached(300)
-                   .find({'exchange': self.exchange,
-                          'offers_at': self.offers_at}))
+                   .query({'exchange': self.exchange,
+                           'offers_at': self.offers_at}))
 
     @property
     def expected_invest_cash(self):

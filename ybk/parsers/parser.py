@@ -23,8 +23,8 @@ def parse(site):
     log.info('解析交易所 {}'.format(abbr))
     num_parsed = 0
     num_failed = 0
-    for a in Announcement.find({'exchange': abbr,
-                                'parsed': {'$ne': True}}):
+    for a in Announcement.query({'exchange': abbr,
+                                 'parsed': {'$ne': True}}):
         log.info('parsing {}'.format(a.url))
         try:
             for c in parser.parse(a.type_, a.html):

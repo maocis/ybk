@@ -52,11 +52,10 @@ def realtime(site):
     quotes = parse_quotes(type_, text)
     saved = 0
     for q in quotes:
-        coll = Collection._get_collection()
-        coll.update({'exchange': exchange,
-                     'symbol': q['symbol'].strip()},
-                    {'$set': {'name': q['name']}},
-                    upsert=True)
+        Collection.update_one({'exchange': exchange,
+                               'symbol': q['symbol'].strip()},
+                              {'$set': {'name': q['name']}},
+                              upsert=True)
         q['exchange'] = exchange
         q['quote_type'] = '1d'
         q['quote_at'] = today
@@ -65,11 +64,11 @@ def realtime(site):
         else:
             # 找到上一个交易日的数据, 如果和lclose不符则舍弃
             # 需要保证数据每天更新/不足时需要把日线补足才能正常显示
-            lq = Quote.find_one({'exchange': exchange,
-                                 'symbol': q['symbol'].strip(),
-                                 'quote_type': '1d',
-                                 'quote_at': {'$lt': today}},
-                                sort=[('quote_at', -1)])
+            lq = Quote.query_one({'exchange': exchange,
+                                  'symbol': q['symbol'].strip(),
+                                  'quote_type': '1d',
+                                  'quote_at': {'$lt': today}},
+                                 sort=[('quote_at', -1)])
             if not lq or abs(lq.close - q['lclose']) < 0.01:
                 Quote(q).upsert()
                 saved += 1

@@ -15,14 +15,14 @@ from .views import admin
 def parse():
     nav = 'parse'
     url = request.args.get('url')
-    num_parsed = Announcement.find({'parsed': True,
-                                    'type_': {'$in':
-                                              ['offer', 'result']}}).count()
-    num_total = Announcement.find(
-        {'type_': {'$in': ['offer', 'result']}}).count()
+    num_parsed = Announcement.count({'parsed': True,
+                                     'type_': {'$in':
+                                               ['offer', 'result']}})
+    num_total = Announcement.count(
+        {'type_': {'$in': ['offer', 'result']}})
     if url:
-        announcement = Announcement.find_one({'url': url})
-        colls = list(Collection.find({'from_url': url}))
+        announcement = Announcement.query_one({'url': url})
+        colls = list(Collection.query({'from_url': url}))
         for coll in colls:
             if coll.offers_at:
                 coll.offers_at = coll.offers_at.strftime('%Y%m%d')
@@ -40,10 +40,10 @@ def parse():
 @admin.route('/admin/parse/findone')
 @admin_required
 def parse_findone():
-    announcement = Announcement.find_one({'parsed': False,
-                                          'type_': {'$in':
-                                                    ['offer', 'result']}},
-                                         sort=[('published_at', -1)])
+    announcement = Announcement.query_one({'parsed': False,
+                                           'type_': {'$in':
+                                                     ['offer', 'result']}},
+                                          sort=[('published_at', -1)])
     if announcement:
         return redirect(url_for('admin.parse', url=announcement.url))
     else:
@@ -77,8 +77,8 @@ def parse_save():
                 coll['offer_cash_ratio'].replace('%', '')) / 100.
             Collection(coll).upsert()
 
-        Announcement.find_one({'_id': from_url}).update(
-            {'$set': {'parsed': True}})
+        Announcement.update_one({'_id': from_url},
+                                {'$set': {'parsed': True}})
     elif type_ == 'result':
         for coll in result:
             coll['exchange'] = exchange
@@ -95,8 +95,8 @@ def parse_save():
                 del coll['invest_cash_return_ratio']
             Collection(coll).upsert()
 
-        Announcement.find_one({'_id': from_url}).update(
-            {'$set': {'parsed': True}})
+        Announcement.update_one({'_id': from_url},
+                                {'$set': {'parsed': True}})
     return jsonify(status=200)
 
 
@@ -104,5 +104,5 @@ def parse_save():
 @admin_required
 def parse_remove():
     _id = request.form.get('_id')
-    Announcement.remove({'_id': _id})
+    Announcement.delete_one({'_id': _id})
     return jsonify(status=200)

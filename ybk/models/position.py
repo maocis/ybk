@@ -6,8 +6,8 @@ from datetime import datetime, timedelta
 
 from ybk.log import serve_log as log
 
-from .mangaa import (
-    Model,
+from yamo import (
+    Document, Index,
     IntField,
     FloatField,
     StringField,
@@ -19,34 +19,31 @@ from .models import Collection
 from .user import User
 
 
-class Transaction(Model):
+class Transaction(Document):
 
     """ 用户交易信息 """
-    meta = {
-        'indexes': [
-            [[('user', 1), ('type_', 1),
-              ('exchange', 1), ('symbol', 1)], {}],
-            [[('user', 1), ('operated_at', 1)], {}],
-        ],
-    }
-    exchange = StringField(blank=False)         # 交易所ID(简称)
-    symbol = StringField(blank=False)           # 交易代码
+    class Meta:
+        idx1 = Index(['user', 'type_', 'exchange', 'symbol'])
+        idx2 = Index(['user', 'operated_at'])
 
-    user = StringField(blank=False)
-    type_ = StringField(blank=False)            # buy/sell
-    price = FloatField(blank=False)
-    quantity = IntField(blank=False)
-    operated_at = DateTimeField(auto='created')
+    exchange = StringField(required=True)         # 交易所ID(简称)
+    symbol = StringField(required=True)           # 交易代码
+
+    user = StringField(required=True)
+    type_ = StringField(required=True)            # buy/sell
+    price = FloatField(required=True)
+    quantity = IntField(required=True)
+    operated_at = DateTimeField(created=True)
 
     @classmethod
     def user_total_transactions(cls, user):
         """ 用户总操作次数 """
-        return cls.find({'user': user}).count()
+        return cls.count({'user': user})
 
     @classmethod
     def user_recent_transactions(cls, user, offset=0, limit=None):
         """ 用户最近的操作 """
-        qs = cls.find({'user': user}, sort=[('operated_at', -1)])
+        qs = cls.query({'user': user}, sort=[('operated_at', -1)])
         if offset:
             qs.skip(offset)
         if limit:
@@ -54,39 +51,34 @@ class Transaction(Model):
         return list(qs)
 
 
-class Position(Model):
+class Position(Document):
 
     """ 用户持仓信息 """
+    class Meta:
+        idx1 = Index(['user', 'exchange', 'symbol'], unique=True)
 
-    meta = {
-        'unique': ['user', 'exchange', 'symbol'],
-        'indexes': [
-            [[('user', 1), ('exchange', 1), ('symbol', 1)], {}],
-        ],
-    }
+    exchange = StringField(required=True)         # 交易所ID(简称)
+    symbol = StringField(required=True)           # 交易代码
 
-    exchange = StringField(blank=False)         # 交易所ID(简称)
-    symbol = StringField(blank=False)           # 交易代码
-
-    user = StringField(blank=False)
-    quantity = FloatField(blank=False, default=0)
+    user = StringField(required=True)
+    quantity = FloatField(required=True, default=0)
 
     @classmethod
     def num_exchanges(cls, user):
         """ 用户持有多少个交易所的持仓 """
         return len(set(p.exchange for p in
-                       cls.find({'user': user}, {'exchange': 1})))
+                       cls.query({'user': user}, {'exchange': 1})))
 
     @classmethod
     def num_collections(cls, user):
         """ 用户持有多少不同的藏品 """
-        return len(list(cls.find({'user': user, 'quantity': {'$gt': 0}},
-                                 {'_id': 1})))
+        return len(list(cls.query({'user': user, 'quantity': {'$gt': 0}},
+                                  {'_id': 1})))
 
     @classmethod
     def num_sold(cls, user):
         """ 用户已卖出过多少个藏品 """
-        return len(set('{exchange}_{symbol}'.format(**t._data) for t in
+        return len(set('{exchange}_{symbol}'.format(**t) for t in
                        Transaction.find({'user': user, 'type_': 'sell'},
                                         {'exchange': 1, 'symbol': 1})))
 
@@ -107,13 +99,13 @@ class Position(Model):
     def _user_position(cls, user):
         """ 目前持仓概况 """
         collections = {}
-        for p in cls.find({'user': user}):
+        for p in cls.query({'user': user}):
             pair = (p.exchange, p.symbol)
             collections.setdefault(pair, 0)
             collections[pair] += p.quantity
         buy_info = {}
-        for t in Transaction.find({'user': user, 'type_': 'buy'},
-                                  sort=[('operated_at', 1)]):
+        for t in Transaction.query({'user': user, 'type_': 'buy'},
+                                   sort=[('operated_at', 1)]):
             pair = (t.exchange, t.symbol)
             if pair in collections:
                 buy_info.setdefault(pair, [0, 0, None])
@@ -122,8 +114,8 @@ class Position(Model):
                 if not buy_info[pair][2]:
                     buy_info[pair][2] = t.operated_at
         sell_info = {}
-        for t in Transaction.find({'user': user, 'type_': 'sell'},
-                                  sort=[('operated_at', -1)]):
+        for t in Transaction.query({'user': user, 'type_': 'sell'},
+                                   sort=[('operated_at', -1)]):
             pair = (t.exchange, t.symbol)
             if pair in collections:
                 sell_info.setdefault(pair, [0, 0, None])
@@ -171,7 +163,7 @@ class Position(Model):
     @classmethod
     def average_increase(cls, user):
         """ 平均涨幅 """
-        position = [p for p in cls.user_position(user) if p['quantity']>0]
+        position = [p for p in cls.user_position(user) if p['quantity'] > 0]
         if len(position):
             return sum(p['total_increase'] for p in position) / len(position)
 
@@ -201,9 +193,9 @@ class Position(Model):
 
     @classmethod
     def do_op(cls, t, reverse=False):
-        c = cls.find_one({'user': t.user,
-                          'exchange': t.exchange,
-                          'symbol': t.symbol})
+        c = cls.query_one({'user': t.user,
+                           'exchange': t.exchange,
+                           'symbol': t.symbol})
         if not c:
             if reverse:
                 return False
@@ -220,23 +212,20 @@ class Position(Model):
             c.quantity -= t.quantity
 
         if c.quantity >= 0:
-            c.save()
+            c.upsert()
             return True
         else:
             return False
 
 
-class ProfitLog(Model):
+class ProfitLog(Document):
 
     """ 用户的收益日志 """
-    meta = {
-        'indexes': [
-            [[('user', 1), ('date', 1)], {'unique': True}],
-        ],
-    }
+    class Meta:
+        idx1 = Index(['user', 'date'], unique=True)
 
-    user = StringField(blank=False)
-    date = DateTimeField(blank=False)
+    user = StringField(required=True)
+    date = DateTimeField(required=True)
     profit = FloatField()
 
     @classmethod
@@ -244,12 +233,12 @@ class ProfitLog(Model):
         """ 获得收益日志 """
         return [{'date': pl.date,
                  'profit': pl.profit}
-                for pl in cls.find({'user': user},
-                                   sort=[('date', 1)])]
+                for pl in cls.query({'user': user},
+                                    sort=[('date', 1)])]
 
     @classmethod
     def ensure_all_profits(cls):
-        for u in User.find():
+        for u in User.query():
             cls.ensure_profits(u._id)
 
     @classmethod
@@ -286,11 +275,11 @@ class ProfitLog(Model):
 
                 # calculate profit
                 for pair in positions:
-                    q = Quote.find_one({'exchange': pair[0],
-                                        'symbol': pair[1],
-                                        'quote_type': '1d',
-                                        'quote_at': {'$lte': date}},
-                                       sort=[('quote_at', -1)])
+                    q = Quote.query_one({'exchange': pair[0],
+                                         'symbol': pair[1],
+                                         'quote_type': '1d',
+                                         'quote_at': {'$lte': date}},
+                                        sort=[('quote_at', -1)])
                     if q:
                         pv = positions[pair]
                         profit += (q.close - pv[0]) * pv[1]
@@ -298,8 +287,7 @@ class ProfitLog(Model):
                 profit += sum(realized_profits.values())
 
                 # update profit
-                coll = cls._get_collection()
-                coll.update_one({'date': date, 'user': user},
-                                {'$set': {'profit': profit}},
-                                upsert=True)
+                cls.update_one({'date': date, 'user': user},
+                               {'$set': {'profit': profit}},
+                               upsert=True)
                 date += timedelta(days=1)

@@ -4,26 +4,24 @@ from datetime import datetime, timedelta
 
 import bcrypt
 
-from .mangaa import (
-    Model,
+from yamo import (
+    Document, IDFormatter, Index,
     BooleanField,
     StringField,
     DateTimeField,
 )
 
 
-class Code(Model):
+class Code(Document):
 
     """ 短信验证码 """
-    meta = {
-        'indexes': [
-            [[('mobile', 1), ('sent_at', 1)], {}],
-        ]
-    }
-    mobile = StringField(blank=False)
-    code = StringField(blank=False)
-    text = StringField(blank=False)
-    sent_at = DateTimeField(auto='created')
+    class Meta:
+        idx1 = Index(['mobile', 'send_at'])
+
+    mobile = StringField(required=True)
+    code = StringField(required=True)
+    text = StringField(required=True)
+    sent_at = DateTimeField(created=True)
 
     @classmethod
     def can_create(cls, mobile, type_):
@@ -31,11 +29,11 @@ class Code(Model):
             return False, '手机号码格式不正确'
 
         if type_ == 'register':
-            u = User.find_one({'mobile': mobile})
+            u = User.query_one({'mobile': mobile})
             if u and u.is_active():
                 return False, '该手机已注册'
 
-        c = cls.find_one({'mobile': mobile}, sort=[('sent_at', -1)])
+        c = cls.query_one({'mobile': mobile}, sort=[('sent_at', -1)])
         if c and c.sent_at >= datetime.utcnow() - timedelta(seconds=89):
             return False, '发送验证码间隔太频繁'
 
@@ -55,7 +53,7 @@ class Code(Model):
 
     @classmethod
     def verify(cls, mobile, code):
-        c = cls.find_one({'mobile': mobile}, sort=[('sent_at', -1)])
+        c = cls.query_one({'mobile': mobile}, sort=[('sent_at', -1)])
         if c:
             if c.sent_at < datetime.utcnow() - timedelta(seconds=60 * 15):
                 return False, '验证码超时'
@@ -63,37 +61,34 @@ class Code(Model):
         return False, '验证码未发送'
 
 
-class User(Model):
+class User(Document):
 
     """ 用户 """
-    meta = {
-        'idformat': '{mobile}',
-        'unique': ['mobile'],
-        'indexes': [
-            [[('_is_admin', 1)], {}],
-            [[('_is_active', 1)], {}],
-            [[('mobile', 1)], {'unique': True}],
-            [[('username', 1)], {'unique': True}],
-        ]
-    }
-    mobile = StringField()
+    class Meta:
+        idf = IDFormatter('{mobile}')
+        idx1 = Index('mobile', unique=True)
+        idx2 = Index('_is_admin')
+        idx3 = Index('_is_active')
+        idx4 = Index('username', unique=True)
+
+    mobile = StringField(required=True)
     username = StringField()
     password = StringField()    # bcrypt hashed
     invited_by = StringField()  # 邀请人id
-    created_at = DateTimeField(auto='created')
-    last_login_at = DateTimeField(auto='modified')
+    created_at = DateTimeField(created=True)
+    last_login_at = DateTimeField(modified=True)
 
     _is_active = BooleanField(default=False)  # 通过验证
     _is_admin = BooleanField(default=False)
 
     def add_to_admin(self):
         self._is_admin = True
-        self.save()
+        self.upsert()
         return True
 
     def activate(self):
         self._is_active = True
-        self.save()
+        self.upsert()
 
     def is_admin(self):
         return self._is_admin
@@ -112,8 +107,8 @@ class User(Model):
 
     @classmethod
     def check_available(cls, mobile=None, username=None):
-        u1 = cls.find_one({'mobile': mobile})
-        u2 = cls.find_one({'username': username})
+        u1 = cls.query_one({'mobile': mobile})
+        u2 = cls.query_one({'username': username})
         if u1 or u2:
             return False
         else:
@@ -141,7 +136,7 @@ class User(Model):
 
     @classmethod
     def check_login(cls, mobile, password):
-        u = cls.find_one({'mobile': mobile})
+        u = cls.query_one({'mobile': mobile})
         password = password.encode('utf-8')
         if u:
             hashed = u.password.encode('utf-8')

@@ -14,7 +14,7 @@ from ybk.settings import get_conf
 def analysis():
     nav = 'analysis'
     exchange = request.args.get('exchange')
-    exs = sorted(list(Exchange.find()), key=lambda x: x.abbr)
+    exs = sorted(list(Exchange.query()), key=lambda x: x.abbr)
     exchanges = [e.abbr for e in exs]
     ratings = [ex.rating for ex in exs]
     if not exchange:
@@ -53,7 +53,7 @@ def analysis():
     today = today.replace(hour=0, minute=0, second=0, microsecond=0)
     before = today - timedelta(days=conf['cashout'])
     cashout_at = today + timedelta(days=conf['cashout'])
-    colls = list(Collection.find({'exchange': ex.abbr,
-                                  'offers_at': {'$gte': before}}))
+    colls = list(Collection.query({'exchange': ex.abbr,
+                                   'offers_at': {'$gte': before}}))
     locals()['zip'] = zip
     return render_template('frontend/analysis.html', **locals())

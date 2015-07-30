@@ -11,8 +11,8 @@ from .views import frontend
 @frontend.route('/walkthrough/')
 def walkthrough():
     def open_at(exchange):
-        q = Quote.find_one({'exchange': exchange},
-                           sort=[('quote_at', 1)])
+        q = Quote.query_one({'exchange': exchange},
+                            sort=[('quote_at', 1)])
         d = q.quote_at if q else None
         return d.strftime('%Y年%m月') if d else '尚未'
 

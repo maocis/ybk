@@ -4,32 +4,29 @@ import requests
 
 import ybk.config
 
-from .mangaa import (
-    Model,
+from yamo import (
+    Document, IDFormatter, Index,
     IntField,
     StringField,
     DateTimeField,
 )
 
 
-class WechatAccessToken(Model):
+class WechatAccessToken(Document):
 
     """ 微信ACCESS_TOKEN """
+    class Meta:
+        idf = IDFormatter('{access_token}')
+        idx1 = Index('expires_at', expireAfterSeconds=7200)
 
-    meta = {
-        'idformat': 'access_token',
-        'indexes': [
-            [[('expires_at', 1)], {'expireAfterSeconds': 0}],
-        ],
-    }
-    access_token = StringField()
+    access_token = StringField(required=True)
     expires_in = IntField()
-    expires_at = DateTimeField()
-    updated_at = DateTimeField(auto='modified')
+    expires_at = DateTimeField(required=True)
+    updated_at = DateTimeField(modified=True)
 
     @classmethod
     def get_access_token(cls):
-        instance = cls.find_one()
+        instance = cls.query_one()
         if instance:
             return instance['access_token']
         else:
@@ -50,11 +47,11 @@ class WechatAccessToken(Model):
             return j['access_token']
 
 
-class WechatEvent(Model):
+class WechatEvent(Document):
 
     """ 微信事件
 
     暂时只保存, 不处理
     """
     xml = StringField()  # xml格式数据主题
-    updated_at = DateTimeField(auto='modified')
+    updated_at = DateTimeField(modified=True)

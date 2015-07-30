@@ -21,11 +21,11 @@ def collection():
     cond = {}
     if exchange:
         cond['exchange'] = exchange
-    total = Collection.find(cond).count()
+    total = Collection.query(cond).count()
     pagination = Pagination(page, limit, total)
 
     collections = list(
-        Collection.find(cond)
+        Collection.query(cond)
         .sort([('offers_at', -1)])
         .skip(skip).limit(limit))
     for c in collections:
@@ -59,8 +59,8 @@ def collection_list():
             {'name': {'$regex': search}},
             {'symbol': {'$regex': search}},
         ]
-    total = Collection.find(cond).count()
-    qs = Collection.find(cond)
+    total = Collection.count(cond)
+    qs = Collection.query(cond)
     if dbsort:
         qs = qs.sort(dbsort).skip(offset).limit(limit)
     rows = [{

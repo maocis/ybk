@@ -37,13 +37,13 @@ def trade_quote_history():
     """ K线数据 """
     exchange = request.args.get('exchange', '')
     symbol = request.args.get('symbol', '')
-    c = Collection.find_one({'exchange': exchange, 'symbol': symbol})
+    c = Collection.query_one({'exchange': exchange, 'symbol': symbol})
     period = request.args.get('period', '1d')
 
     # chart1
-    qs = list(Quote.cached(3600).find({'exchange': exchange,
-                                       'symbol': symbol,
-                                       'quote_type': period}))
+    qs = list(Quote.cached(3600).query({'exchange': exchange,
+                                        'symbol': symbol,
+                                        'quote_type': period}))
 
     name = '{}({}_{})'.format(Collection.get_name(exchange, symbol),
                               exchange, symbol)
@@ -166,8 +166,8 @@ def trade_quote_realtime():
     sort = request.args.get('sort', '').strip()
     order = request.args.get('order', 'asc').strip()
 
-    today = Quote.cached(3600).find_one({'quote_type': '1d'},
-                                        sort=[('quote_at', -1)]).quote_at
+    today = Quote.cached(3600).query_one({'quote_type': '1d'},
+                                         sort=[('quote_at', -1)]).quote_at
     cond = {'quote_type': '1d',
             'quote_at': today}
     colls = set()
@@ -180,7 +180,7 @@ def trade_quote_realtime():
     elif category == 'all':
         pass
     elif category == 'index':
-        cs = list(Collection.cached(3600).find({'name': {'$regex': '指数$'}}))
+        cs = list(Collection.cached(3600).query({'name': {'$regex': '指数$'}}))
         colls = set((c.exchange, c.symbol) for c in cs)
         symbols = [c.symbol for c in cs]
         cond['symbol'] = {'$in': symbols}
@@ -192,7 +192,7 @@ def trade_quote_realtime():
     elif category == 'diy':
         raise NotImplementedError
 
-    qs = [q for q in Quote.find(cond)
+    qs = [q for q in Quote.query(cond)
           if (not colls) or
           ((q.exchange, q.symbol) in colls)]
 

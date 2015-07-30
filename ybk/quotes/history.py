@@ -56,7 +56,7 @@ def history(site):
 
 
 def history_sysframe(exchange, url):
-    for c in Collection.find({'exchange': exchange}):
+    for c in Collection.query({'exchange': exchange}):
         try:
             if history_exists(c):
                 continue
@@ -197,7 +197,7 @@ def history_winner(exchange, url):
                             save_quotes(q, c, first_quote=True)
                         kline_days.append(q)
 
-    for c in Collection.find({'exchange': exchange}):
+    for c in Collection.query({'exchange': exchange}):
         try:
             if history_exists(c) or not re.compile('^\d+$').match(c.symbol):
                 continue
@@ -211,14 +211,14 @@ def history_winner(exchange, url):
 def history_exists(c):
     if c.offers_at:
         first_date_before = c.offers_at + timedelta(days=7)
-        q = Quote.find_one({'exchange': c.exchange,
-                            'symbol': c.symbol,
-                            'quote_type': '1d',
-                            'quote_at': {'$lte':
-                                         first_date_before}})
-        count = Quote.find({'exchange': c.exchange,
-                            'symbol': c.symbol,
-                            'quote_type': '1d'}).count()
+        q = Quote.query_one({'exchange': c.exchange,
+                             'symbol': c.symbol,
+                             'quote_type': '1d',
+                             'quote_at': {'$lte':
+                                          first_date_before}})
+        count = Quote.count({'exchange': c.exchange,
+                             'symbol': c.symbol,
+                             'quote_type': '1d'})
 
         past_days = (datetime.utcnow() - c.offers_at).days
         if past_days <= 2:
@@ -245,6 +245,6 @@ def save_quotes(q, c, first_quote=False):
                          ''.format(c.exchange, c.symbol,
                                    c.offer_price, c.offer_quantity,
                                    c.offers_at))
-                c.save()
+                c.upsert()
 
     Quote(q).upsert()

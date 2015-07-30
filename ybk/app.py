@@ -60,7 +60,7 @@ def configure_extensions(app):
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User.find_one({'_id': user_id})
+        return User.query_one({'_id': user_id})
 
     login_manager.setup_app(app)
 

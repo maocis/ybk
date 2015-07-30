@@ -28,6 +28,7 @@ setup(
         'pymongo>=3',
         'python-dateutil',
         'xpinyin',
+        'yamo>=0.2.6',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',

@@ -15,7 +15,7 @@ def load_symbols():
     result = [
         {'text': '{}({})'.format(c.symbol, c.name),
          'value': c.symbol}  # '{}-{}'.format(c.symbol, c.name)}
-        for c in Collection.find(
+        for c in Collection.query(
             cond,
             {'name': 1, 'symbol': 1})]
     return jsonify(result=result)
