@@ -181,7 +181,7 @@ $(function() {
             } else{
               $.post(
                 "{{ url_for('user.register') }}",
-                {mobile: mobile, username: username, password: password,
+                {mobile: mobile, invited_by: invited_by, username: username, password: password,
                   code:code},
                   function (data) {
                     if (data.status != 200){
