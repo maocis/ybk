@@ -173,14 +173,9 @@ def trade_quote_realtime():
     colls = set()
     symbols = []
     if search:
-        cs = list(Collection.cached(3600).find(
-            {}, {'exchange': 1, 'name': 1, 'symbol': 1}))
-        cs = [c for c in cs
-              if search in c.exchange or
-              search in c.symbol or
-              search in c.name]
-        symbols = [c.symbol for c in cs]
-        colls = set((c.exchange, c.symbol) for c in cs)
+        pairs = Collection.search(search)
+        symbols = [p[1] for p in pairs]
+        colls = set(pairs)
         cond['symbol'] = {'$in': symbols}
     elif category == 'all':
         pass

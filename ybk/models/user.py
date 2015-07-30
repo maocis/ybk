@@ -6,7 +6,6 @@ import bcrypt
 
 from .mangaa import (
     Model,
-    IntField,
     BooleanField,
     StringField,
     DateTimeField,
@@ -80,6 +79,7 @@ class User(Model):
     mobile = StringField()
     username = StringField()
     password = StringField()    # bcrypt hashed
+    invited_by = StringField()  # 邀请人id
     created_at = DateTimeField(auto='created')
     last_login_at = DateTimeField(auto='modified')
 
@@ -120,13 +120,16 @@ class User(Model):
             return True
 
     @classmethod
-    def create_user(cls, mobile, username, password):
+    def create_user(cls, mobile, username, password, invited_by):
+        if not cls.find_one({'_id': invited_by}):
+            raise ValueError('请输入正确的邀请人手机号码')
         if not cls.check_available(mobile, username):
             raise ValueError('手机号码或用户名已被使用')
         u = cls({
             'mobile': mobile,
             'username': username,
             'password': cls.create_password(password),
+            'invited_by': invited_by,
         })
         u.save()
         return u

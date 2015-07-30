@@ -161,6 +161,7 @@
     $('#bar li').on('click', function(e) {
         e.preventDefault();
         e.target.blur();
+        $('input[type=text]').focus();
         var category = $(this).data('category');
 
         if (category) {
@@ -172,8 +173,8 @@
             $('#bar li[data-category=' + category + ']').addClass('active');
             $('#history').hide();
             $('#realtime').show();
-            $('.search input').val('');
-            $('.search input').trigger('keyup');
+            // $('.search input').val('');
+            // $('.search input').trigger('keyup');
             $('#rtable').bootstrapTable('refresh', {url: url});
         }
     });
@@ -205,6 +206,7 @@
             $('#bar').show();
         }
     );
+
 
 </script>
 {% endblock %}

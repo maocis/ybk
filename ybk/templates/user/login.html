@@ -44,7 +44,7 @@
                     <div class="row">
                       <div class="col-lg-12">
                         <div class="text-center">
-                          <a href="#" tabindex="5" class="forgot-password">忘记密码?</a>
+                          <a href="#" tabindex="5" id="forgot-password" class="forgot-password">忘记密码?</a>
                         </div>
                       </div>
                     </div>
@@ -54,6 +54,9 @@
                   <!-- <h3 class="text-center">暂不开放</h3> -->
                   <div class="form-group">
                     <input type="text" name="mobile" id="mobile" tabindex="1" class="form-control" placeholder="手机号码" value="">
+                  </div>
+                  <div class="form-group">
+                    <input type="text" name="invited-by" id="invited-by" tabindex="1" class="form-control" placeholder="推荐人手机号码" value="">
                   </div>
                   <div class="form-group">
                     <input type="text" name="username" id="username" tabindex="2" class="form-control" placeholder="用户名" value="">
@@ -106,6 +109,13 @@ $(function() {
     $(this).addClass('active');
   });
 
+  $('#forgot-password').click(function(e) {
+    e.preventDefault();
+    e.target.blur();
+    $('.error').text('该功能尚未实现');
+    clearError();
+  })
+
   $(location.hash+'-form-link').trigger('click');
   function clearError(){
     setTimeout(
@@ -137,6 +147,7 @@ $(function() {
             );
     } else if (name == 'register-submit') {
       var mobile = $('#register-form [name=mobile]').val();
+      var invited_by = $('#register-form [name=invited-by]').val();
       var username = $('#register-form [name=username]').val();
       var password = $('#register-form [name=password]').val();
       var password2 = $('#register-form [name=password2]').val();
@@ -144,7 +155,10 @@ $(function() {
       if (!mobile.match(/^\d{11}/)) {
         $('.error').text('手机号码必须为11位数字');
         clearError();
-      } else if (!username) {
+      } else if (!invited_by.match(/^\d{11}/)) {
+        $('.error').text('推荐人手机号码必须为11位数字');
+        clearError();
+      }else if (!username) {
         $('.error').text('用户名必须不为空');
         clearError();
       } else if (password != password2) {

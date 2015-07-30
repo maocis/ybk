@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 
 from flask import render_template, request
+from flask.ext.login import login_required
+
 from .views import frontend
 
 from ybk.models import Exchange, Collection
@@ -8,6 +10,7 @@ from ybk.settings import get_conf
 
 
 @frontend.route('/analysis/')
+@login_required
 def analysis():
     nav = 'analysis'
     exchange = request.args.get('exchange')
