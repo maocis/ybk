@@ -304,16 +304,14 @@ class Collection(Document):
         return cls.cache.get(pair)
 
     @classmethod
-    def search(cls, name_or_abbr, limit=10):
+    def search(cls, name_or_abbr, limit=100):
         # warm cache
         cls.get_name('', '')
-
         na = name_or_abbr
         pairs = []
-        for pair in cls.cache.keys():
-            if pair == 'time':
-                continue
-            name = cls.get_name(*pair)
+        exchanges = set()
+
+        def add_name(name, pair):
             initials = py.get_initials(name, '')
             sna = set(na)
             sname = set(name)
@@ -323,6 +321,30 @@ class Collection(Document):
                 distance = min(max(len(sna - sname), len(sname - sna)),
                                max(len(sna - sinit), len(sinit - sna)))
                 pairs.append((distance, pair))
+
+        def add_exchange(name):
+            initials = py.get_initials(name, '')
+            sna = set(na)
+            sname = set(name)
+            sinit = set(initials)
+
+            if name.startswith(na) or initials.startswith(na):
+                distance = min(max(len(sna - sname), len(sname - sna)),
+                            max(len(sna - sinit), len(sinit - sna)))
+                for pair in cls.cache.keys():
+                    if pair[0] == name:
+                        pairs.append((distance, pair))
+
+        for pair in cls.cache.keys():
+            if pair == 'time':
+                continue
+            exchanges.add(pair[0])
+            name = cls.get_name(*pair)
+            add_name(name, pair)
+
+        for name in exchanges:
+            add_exchange(name)
+
         return [p[1] for p in sorted(pairs)][:limit]
 
     @property
