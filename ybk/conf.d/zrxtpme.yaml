@@ -20,7 +20,9 @@ offer:
     page: http://www.zrxtpme.com/news/56-p-{page}.html
     maxpage: 1
 result:
-    index: http://www.zrxtpme.com/news/56.html
+    index:
+        - http://www.zrxtpme.com/news/56.html
+        - http://www.zrxtpme.com/news/39.html
     relative: http://www.zrxtpme.com
     detail: (\d+/\d+/\d+)</span><a href="([^"]+)">([^<]*中签[^<]*)</a>
     fields: [published_at, url, title]

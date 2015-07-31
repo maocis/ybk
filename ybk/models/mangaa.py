@@ -54,7 +54,10 @@ def setup(mongodb_url='mongodb://localhost:27017/test'):
     for x in _manipulators:
         if hasattr(x.cls, '_indexes'):
             for indexlist, kwargs in x.cls._indexes:
-                db[x.cls_name].ensure_index(indexlist, **kwargs)
+                try:
+                    db[x.cls_name].ensure_index(indexlist, **kwargs)
+                except:
+                    pass
 
         if hasattr(x.cls, '_shardkey'):
             try:
