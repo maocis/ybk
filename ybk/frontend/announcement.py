@@ -34,24 +34,19 @@ def announcement():
     if exchange:
         cond['exchange'] = exchange
 
-    total = Announcement.query(cond).count()
+    total = Announcement.count(cond)
     pagination = Pagination(page, limit, total)
     exchanges = list(sorted(list(e.abbr for e in Exchange.query())))
     types = ['offer', 'result', 'stock']
     announcements = list(
-        Announcement.query(cond)
-        .sort([('updated_at', -1)])
-        .skip(skip).limit(limit))
+        Announcement.query(cond,
+                           sort=[('updated_at', -1)],
+                           skip=skip, limit=limit))
     for a in announcements:
         a.typecn = type_to_cn(a.type_)
 
-    try:
-        updated_at = list(Exchange.query()
-                          .sort([('updated_at', -1)])
-                          .limit(1))[0].updated_at
-    except:
-        # 只有当数据库为空时才会这样
-        updated_at = None
+    ex = Exchange.query_one(sort=[('updated_at', -1)])
+    updated_at = None if not ex else ex.updated_at
 
     return render_template('frontend/announcement.html', **locals())
 

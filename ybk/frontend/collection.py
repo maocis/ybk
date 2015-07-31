@@ -21,13 +21,13 @@ def collection():
     cond = {}
     if exchange:
         cond['exchange'] = exchange
-    total = Collection.query(cond).count()
+    total = Collection.count(cond)
     pagination = Pagination(page, limit, total)
 
     collections = list(
-        Collection.query(cond)
-        .sort([('offers_at', -1)])
-        .skip(skip).limit(limit))
+        Collection.query(cond,
+                         sort=[('offers_at', -1)],
+                         skip=skip, limit=limit))
     for c in collections:
         lp = Quote.latest_price(c.exchange, c.symbol)
         if lp and c.offer_price:
@@ -60,9 +60,10 @@ def collection_list():
             {'symbol': {'$regex': search}},
         ]
     total = Collection.count(cond)
-    qs = Collection.query(cond)
+    qs = Collection.find(cond)
     if dbsort:
-        qs = qs.sort(dbsort).skip(offset).limit(limit)
+        qs = [Collection(c) for c in
+              qs.sort(dbsort).skip(offset).limit(limit)]
     rows = [{
             'offers_at': c.offers_at,
             'exchange': c.exchange,

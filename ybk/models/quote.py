@@ -42,15 +42,14 @@ class Quote(Document):
         """
         today = datetime.utcnow() + timedelta(hours=8)
         today = today.replace(hour=0, minute=0, second=0, microsecond=0)
-        qs = cls.cached(300).query({'exchange': exchange,
+        q = cls.cached(300).query_one({'exchange': exchange,
                                     'symbol': symbol,
                                     'quote_type': '1d',
                                     'quote_at': {'$lte': today}},
                                    {'close': 1},
-                                   sort=[('quote_at', -1)],
-                                   limit=1)
-        if qs:
-            return qs[0].close
+                                   sort=[('quote_at', -1)])
+        if q:
+            return q.close
 
     @classmethod
     def increase(cls, exchange, symbol):
@@ -59,15 +58,13 @@ class Quote(Document):
         if now.hour < 9 and now.minute < 30:
             now -= timedelta(days=1)
         date = now.replace(hour=0, minute=0, second=0, microsecond=0)
-        qs = cls.cached(300).query({
+        q = cls.cached(300).query_one({
             'exchange': exchange,
             'symbol': symbol,
             'quote_type': '1d',
             'quote_at': date},
-            {'close': 1, 'lclose': 1},
-            limit=1)
-        if qs and qs[0].lclose:
-            q = qs[0]
+            {'close': 1, 'lclose': 1})
+        if q and q.lclose:
             return q.close / q.lclose - 1
 
 

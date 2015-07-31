@@ -307,7 +307,7 @@ class Collection(Document):
     def search(cls, name_or_abbr, limit=100):
         # warm cache
         cls.get_name('', '')
-        na = name_or_abbr
+        na = name_or_abbr.upper()
         pairs = []
         exchanges = set()
 
