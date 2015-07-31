@@ -50,9 +50,13 @@ def crawl(site, maxpage=None):
             maxpage = tconf['maxpage']
         else:
             maxpage = min(maxpage, tconf['maxpage'])
-        content = session.get(tconf['index'], timeout=(5, 10)).content
-        content = fix_javascript(tconf['index'], content)
-        parse_index(ex, type_, content, tconf)
+        index = tconf['index']
+        if not isinstance(index, list):
+            index = [index]
+        for url in index:
+            content = session.get(url, timeout=(5, 10)).content
+            content = fix_javascript(url, content)
+            parse_index(ex, type_, content, tconf)
         for page in range(2, maxpage + 1):
             url = tconf['page'].format(page=page)
             content = session.get(url, timeout=(5, 10)).content
