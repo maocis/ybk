@@ -1,7 +1,7 @@
 url: http://www.zrxtpme.com
 name: 中融文化邮票钱币交易中心
 abbr: 中融邮币卡
-notrade: 6
+notrade: 5, 6
 cashout: 2
 stock:
     index: http://www.zrxtpme.com/news/58.html
