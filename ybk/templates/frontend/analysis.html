@@ -60,7 +60,7 @@
             <th class="text-right">资金占比</th>
             <th class="text-right">资金市值</th>
             <th class="text-right">预期申购资金</th>
-            <th class="text-right">预期中签率</th>
+            <th class="text-right">预期资金(市值)中签率</th>
             <th class="text-right">预期收益率</th>
           </tr>
         </thead>
@@ -75,7 +75,7 @@
             <td> {{ c.offer_cash_ratio }} </td>
             <td> {{ ((c.offer_cash or 0) / 10000) | strformat('{:.1f}') }}万 </td>
             <td> {{ ((c.expected_invest_cash or 0) / 100000000) | strformat('{:.2f}') }} 亿 </td>
-            <td> {{ c.expected_result_cash_ratio | percentage('.2') }} </td>
+            <td> {{ c.expected_result_cash_ratio | percentage('.2') }} ({{ c.expected_result_mv_ratio | percentage('.2') }}) </td>
             <td> {{ c.expected_annual_profit | percentage('.2') }} </td>
 
           </tr>

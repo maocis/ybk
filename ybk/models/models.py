@@ -223,6 +223,14 @@ class Exchange(Document):
             return int(self.average_result_cash_ratio *
                        self.median_increase / 0.003)
 
+    @cached_property_ttl(300)
+    def total_market_value(self):
+        mv = 0
+        for c in Collection.find({'exchange': self.abbr}):
+            if c.offer_quantity:
+                mv += c.offer_quantity * c.latest_price
+        return mv
+
 
 class Announcement(Document):
 
@@ -330,7 +338,7 @@ class Collection(Document):
 
             if name.startswith(na) or initials.startswith(na):
                 distance = min(max(len(sna - sname), len(sname - sna)),
-                            max(len(sna - sinit), len(sinit - sna)))
+                               max(len(sna - sinit), len(sinit - sna)))
                 for pair in cls.cache.keys():
                     if pair[0] == name:
                         pairs.append((distance, pair))
@@ -441,6 +449,20 @@ class Collection(Document):
         if ex.expected_invest_cash and self.total_offer_cash:
             return (self.offer_cash or 0) / self.total_offer_cash \
                 * ex.expected_invest_cash
+
+    @property
+    def expected_invest_mv(self):
+        ex = Exchange.find_exchange(self.exchange)
+        if ex.total_market_value:
+            return ex.total_market_value
+
+    @property
+    def expected_result_mv_ratio(self):
+        """ 预期市值中签率 """
+        if not self.result_ratio_cash:
+            ex = Exchange.find_exchange(self.exchange)
+            if ex.expected_invest_mv and self.offer_mv:
+                return self.offer_mv / ex.expected_invest_mv
 
     @property
     def expected_annual_profit(self):
