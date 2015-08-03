@@ -55,7 +55,7 @@ def history(site, force=False):
         return
 
 
-def history_sysframe(exchange, url):
+def history_sysframe(exchange, url, force):
     for c in Collection.query({'exchange': exchange}):
         try:
             if not force and history_exists(c):
