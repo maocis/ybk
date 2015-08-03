@@ -99,7 +99,7 @@ def parse_index(ex, type_, content, conf):
              for key, value in zip(conf['fields'], values)}
         if 'relative' in conf and not d['url'].startswith('http'):
             d['url'] = conf['relative'] + d['url']
-        if Announcement.find_one({'url': d['url']}):
+        if Announcement.query_one({'url': d['url']}):
             continue
 
         if ex.abbr == '中港邮币卡':

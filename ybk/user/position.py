@@ -98,7 +98,7 @@ def transaction_list():
 @login_required
 def transaction_delete():
     id_ = request.form.get('id')
-    t = Transaction.find_one({'_id': ObjectId(id_)})
+    t = Transaction.query_one({'_id': ObjectId(id_)})
 
     # 做一次反向操作
     if t.type_ == 'sell':

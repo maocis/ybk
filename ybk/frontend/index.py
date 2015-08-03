@@ -10,9 +10,9 @@ def index():
     nav = 'index'
     exchanges = CONFS
     announcements = [a for a in
-                     Announcement.find()
-                     .sort([('published_at', -1)])
-                     .limit(len(exchanges))]
+                     Announcement.query(
+                        sort=[('published_at', -1)],
+                        limit=len(exchanges))]
     for a in announcements:
         a.type_ = {
             'offer': '申购',

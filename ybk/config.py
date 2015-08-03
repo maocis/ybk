@@ -61,5 +61,6 @@ def setup_logging(conf):
 
 
 def setup_mongodb(conf):
-    from ybk.models import setup
-    setup(conf['mongodb_url'])
+    from yamo import Connection
+    conn = Connection(conf['mongodb_url'])
+    conn.register_all()

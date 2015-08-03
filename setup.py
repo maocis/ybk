@@ -5,7 +5,7 @@ except ImportError:
 
 setup(
     name='ybk',
-    version='0.1.0',
+    version='0.2.3',
     description='Youbika Aggregation',
     url='https://github.com/observerss/ybk',
     author='Jingchao Hu(observerss)',
@@ -28,6 +28,7 @@ setup(
         'pymongo>=3',
         'python-dateutil',
         'xpinyin',
+        'yamo>=0.2.9',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
