@@ -85,15 +85,17 @@ class Position(Document):
     @classmethod
     def user_position(cls, user):
         """ 目前持仓概况, cached """
-        if not hasattr(cls, 'pcache'):
-            setattr(cls, 'pcache', {})
+        cachekey = 'pcache_{}'.format(user)
+        if not hasattr(cls, cachekey):
+            setattr(cls, cachekey, {})
 
         now = time.time()
-        if 'position' not in cls.pcache or \
-                cls.pcache.get('time', now) < now - 5:
-            cls.pcache['position'] = cls._user_position(user)
-            cls.pcache['time'] = time.time()
-        return copy.deepcopy(cls.pcache['position'])
+        cache = getattr(cls, cachekey)
+        if 'position' not in cache or \
+                cache.get('time', now) < now - 5:
+            cache['position'] = cls._user_position(user)
+            cache['time'] = time.time()
+        return copy.deepcopy(cache['position'])
 
     @classmethod
     def _user_position(cls, user):
