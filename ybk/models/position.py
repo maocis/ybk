@@ -155,7 +155,7 @@ class Position(Document):
                     'quantity': quantity,
                     'latest_price': latest_price,
                     'increase': increase,
-                    'total_increase': latest_price / avg_buy_price - 1,
+                    'total_increase': latest_price / avg_buy_price - 1 if avg_buy_price > 0 else 100,
                     'realized_profit': realized_profit,
                     'unrealized_profit': unrealized_profit,
                     'annual_profit': annual_profit,
