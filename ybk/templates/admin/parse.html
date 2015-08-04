@@ -74,13 +74,13 @@
                     <tbody name="tbody">
                         {% for c in colls %}
                         {% if c.name and c.symbol and c.offer_quantity and
-                        c.offer_price and c.offers_at and c.offer_cash_ratio %}
+                        c.offer_price and c.offers_at2 and c.offer_cash_ratio %}
                         <tr>
                         <td>{{c.name}}</td>
                         <td>{{c.symbol}}</td>
                         <td>{{c.offer_quantity}}</td>
                         <td>{{c.offer_price}}</td>
-                        <td>{{c.offers_at}}</td>
+                        <td>{{c.offers_at2}}</td>
                         <td>{{c.offer_cash_ratio}}</td>
                         <td><button type="row">删</button></td>
                         </tr>

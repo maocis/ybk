@@ -245,6 +245,7 @@ def save_quotes(q, c, first_quote=False):
                          ''.format(c.exchange, c.symbol,
                                    c.offer_price, c.offer_quantity,
                                    c.offers_at))
-                c.upsert()
+                # 然而实际上不补齐
+                # c.upsert()
 
     Quote(q).upsert()

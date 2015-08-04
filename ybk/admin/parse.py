@@ -25,7 +25,7 @@ def parse():
         colls = list(Collection.query({'from_url': url}))
         for coll in colls:
             if coll.offers_at:
-                coll.offers_at = coll.offers_at.strftime('%Y%m%d')
+                coll.offers_at2 = coll.offers_at.strftime('%Y%m%d')
             if coll.offer_cash_ratio:
                 coll.offer_cash_ratio = '{:2.0f}%'.format(
                     coll.offer_cash_ratio * 100)
