@@ -107,7 +107,7 @@ def transaction_delete():
         t.type_ = 'sell'
     Position.do_op(t, reverse=True)
 
-    t.delete()
+    t.remove()
     return jsonify(status=200)
 
 

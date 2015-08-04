@@ -138,7 +138,9 @@ class Position(Document):
                     quantity -= quantity2
                     realized_profit = amount2 - avg_buy_price * quantity2
 
-                assert quantity == collections[pair], '交易和库存对不上'
+                if quantity != collections[pair]:
+                    cls.update_one({'exchange': pair[0], 'symbol': pair[1],
+                                    'user': user}, {'$set': {'quantity': quantity}})
                 latest_price = Quote.latest_price(exchange, symbol)
                 increase = Quote.increase(exchange, symbol)
                 if not latest_price:
