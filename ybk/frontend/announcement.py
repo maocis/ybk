@@ -74,9 +74,8 @@ def announcement_feed():
                     url=request.url_root)
 
     announcements = list(
-        Announcement.query(cond)
-        .sort([('updated_at', -1)])
-        .limit(20))
+        Announcement.query(cond,
+            sort=[('updated_at', -1)], limit=20))
 
     for a in announcements:
         feed.add('{} {}'.format(bjdate(a.published_at), a.title.strip()),

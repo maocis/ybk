@@ -44,7 +44,7 @@ def do_cron(parser, args):
 
         now = datetime.utcnow() + timedelta(hours=8)
         with doing():
-            if 9 <= now.hour <= 20 and now.weekday() != 6:
+            if 9 <= now.hour <= 20:
                 realtime_all()
 
         with doing():
@@ -52,7 +52,7 @@ def do_cron(parser, args):
                 history_all()
 
         with doing():
-            if now.minute < 5:
+            if 9 <= now.hour <= 20:
                 # 生成所有人的历史收益记录
                 ProfitLog.ensure_all_profits()
     else:
@@ -96,7 +96,7 @@ def do_quote(parser, args):
         parser = parser._actions[-1].choices['history']
         if args.sites:
             for site in args.sites:
-                history(site)
+                history(site, args.force)
         elif args.all:
             history_all()
         else:
@@ -161,6 +161,7 @@ def main():
     qsubparsers = qparse.add_subparsers(dest='qsubparser')
     qrparse = qsubparsers.add_parser('realtime', help='实时行情')
     qhparse = qsubparsers.add_parser('history', help='历史行情')
+    qhparse.add_argument('--force', action='store_true', help='强制更新全部品种')
     group = qrparse.add_mutually_exclusive_group(required=False)
     group.add_argument('--sites', nargs='+',
                        help='解析的站点简称,  e.g. "南京文交所", 默认全部解析')

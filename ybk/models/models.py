@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import time
 import math
+import logging
 from itertools import groupby
 from collections import defaultdict
 from datetime import timedelta, datetime
@@ -22,6 +23,7 @@ from yamo import (
 )
 
 py = Pinyin()
+log = logging.getLogger('ybk')
 
 
 class Exchange(Document):
@@ -226,9 +228,10 @@ class Exchange(Document):
     @cached_property_ttl(300)
     def total_market_value(self):
         mv = 0
-        for c in Collection.find({'exchange': self.abbr}):
-            if c.offer_quantity:
-                mv += c.offer_quantity * c.latest_price
+        for c in Collection.query({'exchange': self.abbr}):
+            lprice = Quote.latest_price(c.exchange, c.symbol)
+            if c.offer_quantity and lprice:
+                mv += c.offer_quantity * lprice * 10
         return mv
 
 
@@ -362,8 +365,9 @@ class Collection(Document):
     @property
     def offer_mv(self):
         """ 申购市值配额 """
-        return self.offer_quantity * self.offer_price * \
-            (1 - self.offer_cash_ratio)
+        if self.offer_quantity:
+            return self.offer_quantity * self.offer_price * \
+                (1 - self.offer_cash_ratio)
 
     @property
     def offer_cash(self):
@@ -460,9 +464,8 @@ class Collection(Document):
     def expected_result_mv_ratio(self):
         """ 预期市值中签率 """
         if not self.result_ratio_cash:
-            ex = Exchange.find_exchange(self.exchange)
-            if ex.expected_invest_mv and self.offer_mv:
-                return self.offer_mv / ex.expected_invest_mv
+            if self.expected_invest_mv and self.offer_mv:
+                return self.offer_mv / self.expected_invest_mv
 
     @property
     def expected_annual_profit(self):

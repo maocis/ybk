@@ -29,14 +29,14 @@ def history_all():
         while retries > 0:
             retries -= 1
             try:
-                history(site)
+                history(site, force=True)
             except:
                 log.exception('站点{}历史行情获取失败, retries={}'.format(site, retries))
             else:
                 break
 
 
-def history(site):
+def history(site, force=False):
     conf = get_conf(site)
     exchange = conf['abbr']
     url = conf['quote']['history']['url']
@@ -47,18 +47,18 @@ def history(site):
         return
 
     if type_ == 'sysframe':
-        history_sysframe(exchange, url)
+        history_sysframe(exchange, url, force)
     elif type_ == 'winner':
-        history_winner(exchange, url)
+        history_winner(exchange, url, force)
     else:
         log.warning('{}无法识别'.format(type_))
         return
 
 
-def history_sysframe(exchange, url):
+def history_sysframe(exchange, url, force):
     for c in Collection.query({'exchange': exchange}):
         try:
-            if history_exists(c):
+            if not force and history_exists(c):
                 continue
 
             # 拿到数据文件
@@ -110,7 +110,7 @@ def history_sysframe(exchange, url):
             log.exception('{}:{} 抓取失败'.format(c.exchange, c.symbol))
 
 
-def history_winner(exchange, url):
+def history_winner(exchange, url, force):
     assert url.startswith('tcp://')
     host, port = url[6:].split(':')
     port = int(port)
@@ -199,7 +199,7 @@ def history_winner(exchange, url):
 
     for c in Collection.query({'exchange': exchange}):
         try:
-            if history_exists(c) or not re.compile('^\d+$').match(c.symbol):
+            if not force and history_exists(c):
                 continue
             log.info('feching {}_{} on {}'.format(c.exchange, c.symbol, url))
             data = get_day_data(c.symbol)
@@ -245,6 +245,7 @@ def save_quotes(q, c, first_quote=False):
                          ''.format(c.exchange, c.symbol,
                                    c.offer_price, c.offer_quantity,
                                    c.offers_at))
-                c.upsert()
+                # 然而实际上不补齐
+                # c.upsert()
 
     Quote(q).upsert()
