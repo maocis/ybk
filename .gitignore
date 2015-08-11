@@ -4,6 +4,7 @@ bower_components/
 *.py[cod]
 
 # config file
+accounts.yaml
 config.yaml
 
 # mongodb dump

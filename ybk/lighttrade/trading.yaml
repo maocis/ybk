@@ -1,0 +1,91 @@
+中南文交所:
+    front_url: http://180.97.2.112:15945/tradeweb\httpXmlServlet
+    index_url: http://180.97.2.112:15945/tradeweb/front/frame/index.jsp
+    quote_http: http://180.97.2.112:15914
+    quote_tcp: tcp://180.97.2.112:15913
+    system: sysframe
+    tradeweb_url: http://180.97.2.112:15945/tradeweb/httpXmlServlet
+中港邮币卡:
+    front_url: http://180.235.68.102:10002/common_front/checkneedless/user/logon/logon.action
+    index_url: http://180.235.68.102:10002/common_front/front/frame/index_PC.jsp
+    quote_http: http://180.235.68.100:20004
+    quote_tcp: tcp://180.235.68.100:20003
+    system: sysframe
+    tradeweb_url: http://180.235.68.100:10005/issue_tradeweb/httpXmlServlet
+中艺邮币卡:
+    front_url: http://jy.cacecybk.com.cn:16922/common_front/checkneedless/user/logon/logon.action
+    index_url: http://jy.cacecybk.com.cn:16922/common_front/front/frame/index_PC.jsp
+    quote_http: http://jy.cacecybk.com.cn:16914
+    quote_tcp: tcp://jy.cacecybk.com.cn:16913
+    system: sysframe
+    tradeweb_url: http://jy.cacecybk.com.cn:16915/issue_tradeweb/httpXmlServlet
+中融邮币卡:
+    front_url: http://118.145.4.48:16962/common_front/checkneedless/user/logon/logon.action
+    index_url: http://118.145.4.48:16962/common_front/front/frame/index_PC.jsp
+    quote_http: http://118.145.4.48:16964
+    quote_tcp: tcp://118.145.4.48:16963
+    system: sysframe
+    tradeweb_url: http://118.145.4.48:16965/issue_tradeweb/httpXmlServlet
+北酒所:
+    front_url: http://114.247.118.106:16926/common_front/checkneedless/user/logon/logon.action
+    index_url: http://114.247.118.106:16926/common_front/front/frame/index_PC.jsp
+    quote_http: http://114.247.118.103:16914
+    quote_tcp: tcp://114.247.118.103:16913
+    system: sysframe
+    tradeweb_url: http://114.247.118.103:16915/issue_tradeweb/httpXmlServlet
+华中文交所:
+    front_url: http://trade.hbcpre.com:16902/common_front/checkneedless/user/logon/logon.action
+    index_url: http://trade.hbcpre.com:16902/common_front/front/frame/index_PC.jsp
+    quote_http: http://61.183.138.62:19914
+    quote_tcp: tcp://61.183.138.62:19913
+    system: sysframe
+    tradeweb_url: http://61.183.138.62:19915/issue_tradeweb/httpXmlServlet
+华夏文交所:
+    front_url: http://218.249.27.82:10002/common_front/checkneedless/user/logon/logon.action
+    index_url: http://218.249.27.82:10002/common_front/front/frame/index.jsp
+    quote_http: http://218.249.27.82:20504
+    quote_tcp: tcp://218.249.27.82:20503
+    system: sysframe
+    tradeweb_url: http://218.249.27.82:10505/issue_tradeweb/httpXmlServlet
+华强文交所:
+    front_url: http://180.96.50.179:16925/tradeweb\httpXmlServlet
+    index_url: http://180.96.50.179:16925/tradeweb/front/frame/index.jsp
+    quote_http: http://180.96.50.179:16914
+    quote_tcp: tcp://180.96.50.179:16913
+    system: sysframe
+    tradeweb_url: http://180.96.50.179:16925/tradeweb/httpXmlServlet
+南京文交所:
+    front_url: http://180.97.2.67:19999/tradeweb\httpXmlServlet
+    index_url: http://180.97.2.67:19999/tradeweb/front/frame/index.jsp
+    quote_http: http://180.97.2.67:19914
+    quote_tcp: tcp://180.97.2.67:19913
+    system: sysframe
+    tradeweb_url: http://180.97.2.67:19999/tradeweb/httpXmlServlet
+南昌文交所:
+    front_url: http://220.177.253.217:16952/common_front/checkneedless/user/logon/logon.action
+    index_url: http://220.177.253.217:16952/common_front/front/frame/index_PC.jsp
+    quote_http: http://220.177.253.215:16914
+    quote_tcp: tcp://220.177.253.215:16913
+    system: sysframe
+    tradeweb_url: http://220.177.253.215:16915/issue_tradeweb/httpXmlServlet
+宁夏文交所:
+    front_url: http://222.185.140.167:9003/common_front/checkneedless/user/logon/logon.action
+    index_url: http://222.185.140.167:9003/common_front/front/frame/index_PC.jsp
+    quote_http: http://222.185.140.166:9014
+    quote_tcp: tcp://222.185.140.166:9013
+    system: sysframe
+    tradeweb_url: http://222.185.140.166:9025/issue_tradeweb/httpXmlServlet
+成都文交所:
+    front_url: http://118.145.4.144:16922/common_front/checkneedless/user/logon/logon.action
+    index_url: http://118.145.4.144:16922/common_front/front/frame/index_PC.jsp
+    quote_http: http://118.145.4.144:16914
+    quote_tcp: tcp://118.145.4.144:16913
+    system: sysframe
+    tradeweb_url: http://118.145.4.144:16925/issue_tradeweb/httpXmlServlet
+金马甲:
+    front_url: http://jyqzadmin.jinmajia.com:16922/common_front/checkneedless/user/logon/logon.action
+    index_url: http://jyqzadmin.jinmajia.com:16922/common_front/front/frame/index.jsp
+    quote_http: http://jyqz.jinmajia.com:16914
+    quote_tcp: tcp://jyqz.jinmajia.com:16913
+    system: sysframe
+    tradeweb_url: http://jyqz.jinmajia.com:16915/issue_tradeweb/httpXmlServlet
