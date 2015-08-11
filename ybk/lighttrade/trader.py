@@ -38,11 +38,20 @@ class Trader(object):
         t0 = time.time()
         return t0 + self.client.time_offset + self.client.latency
 
-    def buy_at(self, buys, at=datetime(2015, 8, 11, 9, 30)):
-        log.info('预约{}下单 {}'.format(at, buys))
+
+    def buy_at(self, symbols, at=datetime(2015, 8, 11, 9, 30)):
+        log.info('预约{}下单 {}'.format(at, symbols))
         sleep_time = at.timestamp() - self.server_time
+        buys = []
         while sleep_time > self.client.latency * 2 + 0.1:
             log.info('离下单还有{}秒'.format(sleep_time))
+            if not buys and sleep_time < 30 * 60:
+                for c in self.client.list_collection():
+                    if c['symbol'] in symbols:
+                        buys.append({'symbol': c['symbol'],
+                                     'price': c['highest'],
+                                     'quantity': 1})
+            print(buys)
             self.client.keep_alive()
             self.client.sync_server_time()
             sleep_time = at.timestamp() - self.server_time
@@ -56,20 +65,13 @@ class Trader(object):
             quantity = buys[idx]['quantity']
             while True:
                 done = self.client.buy(symbol, price, quantity)
-                exit(0)
                 if done:
                     break
             idx += 1
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
-    t = Trader(exchange='中港文交所',
+    logging.basicConfig(level=logging.INFO)
+    t = Trader(exchange='中港邮币卡',
                username='0001000000484', password='caibahaha')
-    t.buy_at(buys=[
-                dict(symbol='100041', price=3.9, quantity=10),
-                dict(symbol='100044', price=65, quantity=1),
-                dict(symbol='100008', price=72.8, quantity=1),
-                dict(symbol='100043', price=13, quantity=1),
-                dict(symbol='100042', price=8.84, quantity=1),
-             ],
-             at=datetime(2015, 8, 11, 9, 30))
+    t.buy_at(symbols=['100041', '100044', '100008', '100043', '100042'],
+             at=datetime(2015, 8, 12, 9, 30))
