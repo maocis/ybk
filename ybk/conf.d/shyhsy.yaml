@@ -22,7 +22,7 @@ offer:
 result:
     index: http://www.shyhsy.cn/news/list/34.html
     relative: http://www.shyhsy.cn
-    detail: (\d+<[^>]*>\d+/\d+)<[^>]*><[^>]*>\s*<[^>]*>\s*<[^>]*><a[^>]*href="([^"]+)"[^>]*>([^<]*(中签)[^<]*)</a>
+    detail: (\d+<[^>]*>\d+/\d+)<[^>]*><[^>]*>\s*<[^>]*>\s*<[^>]*><a[^>]*href="([^"]+)"[^>]*>([^<]*(申购中签)[^<]*)</a>
     fields: [published_at, url, title, _]
     encoding: utf-8
     page: http://www.shyhsy.cn/news/list/34/{page}.html
