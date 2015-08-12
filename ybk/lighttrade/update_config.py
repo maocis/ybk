@@ -51,8 +51,10 @@ def update_sysframe():
         si = d['ConfigInfo']['AllTelecomServer']['ServerInfo']
         if isinstance(si, dict):
             si = [si]
-        conf['tradeweb_url'] = 'http://{}:{}/'.format(si[0]['IPAddress'],
-                                                    si[0]['Port'])+ curl
+        proto = d['ConfigInfo']['Http']
+        conf['tradeweb_url'] = '{}{}:{}/'.format(proto,
+                                                 si[0]['IPAddress'],
+                                                 si[0]['Port']) + curl
 
         # consumer server
         try:

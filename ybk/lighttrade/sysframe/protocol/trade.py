@@ -120,6 +120,7 @@ class TradeProtocol(object):
         """
         cid = self.mid + str(symbol)
         price = '{:.2f}'.format(price)
+        closemode = '0' if type_ == 1 else '1'
         d = self.request_tradeweb('order', {'USER_ID': self.uid,
                                             'CUSTOMER_ID': self.cid,
                                             'SESSION_ID': self.sid,
@@ -127,8 +128,8 @@ class TradeProtocol(object):
                                             'COMMODITY_ID': cid,
                                             'PRICE': price,
                                             'QTY': str(quantity),
-                                            'SETTLE_BASIS': '1',
-                                            'CLOSEMODE': '0',
+                                            'SETTLE_BASIS': type_,
+                                            'CLOSEMODE': closemode,
                                             'TIMEFLAG': '0',
                                             'L_PRICE': '0',
                                             'BILLTYPE': '0'})

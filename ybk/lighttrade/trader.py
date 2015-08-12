@@ -29,6 +29,9 @@ class Trader(object):
             username = u['username']
             password = u['password']
 
+        if d.get('disabled'):
+            raise ValueError('该交易所被禁止')
+
         self.client = Client(front_url=d['front_url'],
                              tradeweb_url=d['tradeweb_url'])
         self.client.login(username, password)
@@ -45,13 +48,12 @@ class Trader(object):
         buys = []
         while sleep_time > self.client.latency * 2 + 0.1:
             log.info('离下单还有{}秒'.format(sleep_time))
-            if not buys and sleep_time < 30 * 60:
+            if not buys and sleep_time < 60 * 60:
                 for c in self.client.list_collection():
                     if c['symbol'] in symbols:
                         buys.append({'symbol': c['symbol'],
                                      'price': c['highest'],
                                      'quantity': 1})
-            print(buys)
             self.client.keep_alive()
             self.client.sync_server_time()
             sleep_time = at.timestamp() - self.server_time

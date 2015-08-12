@@ -23,7 +23,10 @@ class UserProtocol(object):
             return False
         else:
             self.sid = rc
-            self.uid = r['RESULT']['USERID']
+            if 'USERID' in r['RESULT']:
+                self.uid = r['RESULT']['USERID']
+            else:
+                self.uid = r['RESULT']['NAME']
             # 这样不知道对不对, 中港是这个规则
             self.cid = r['RESULT']['NAME'] + '00'
             self.username = username

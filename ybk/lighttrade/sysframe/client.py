@@ -5,6 +5,8 @@ import requests
 import xmltodict
 from .protocol import UserProtocol, TradeProtocol
 
+requests.packages.urllib3.disable_warnings()
+
 log = logging.getLogger('sysframe')
 
 class Client(UserProtocol, TradeProtocol):
@@ -58,7 +60,7 @@ class Client(UserProtocol, TradeProtocol):
 
         xml = self._create_xml(protocol, params)
         log.debug('发送请求 {}: {}'.format(url, xml))
-        r = self.session.post(url, headers=headers, data=xml)
+        r = self.session.post(url, headers=headers, data=xml, verify=False)
         result = r.content.decode('gb18030', 'ignore')
         log.debug('收到返回 {}'.format(result))
         if len(result) > 0:

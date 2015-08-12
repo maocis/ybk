@@ -1,5 +1,5 @@
 中南文交所:
-    front_url: http://180.97.2.112:15945/tradeweb\httpXmlServlet
+    front_url: 
     index_url: http://180.97.2.112:15945/tradeweb/front/frame/index.jsp
     quote_http: http://180.97.2.112:15914
     quote_tcp: tcp://180.97.2.112:15913
@@ -48,14 +48,14 @@
     system: sysframe
     tradeweb_url: http://218.249.27.82:10505/issue_tradeweb/httpXmlServlet
 华强文交所:
-    front_url: http://180.96.50.179:16925/tradeweb\httpXmlServlet
+    front_url: 
     index_url: http://180.96.50.179:16925/tradeweb/front/frame/index.jsp
     quote_http: http://180.96.50.179:16914
     quote_tcp: tcp://180.96.50.179:16913
     system: sysframe
     tradeweb_url: http://180.96.50.179:16925/tradeweb/httpXmlServlet
 南京文交所:
-    front_url: http://180.97.2.67:19999/tradeweb\httpXmlServlet
+    front_url: 
     index_url: http://180.97.2.67:19999/tradeweb/front/frame/index.jsp
     quote_http: http://180.97.2.67:19914
     quote_tcp: tcp://180.97.2.67:19913
@@ -88,4 +88,33 @@
     quote_http: http://jyqz.jinmajia.com:16914
     quote_tcp: tcp://jyqz.jinmajia.com:16913
     system: sysframe
-    tradeweb_url: http://jyqz.jinmajia.com:16915/issue_tradeweb/httpXmlServlet
+    tradeweb_url: https://jyqz.jinmajia.com:16915/issue_tradeweb/httpXmlServlet
+南方文交所:
+    front_url:
+    index_url: 
+    quote_http: http://183.6.187.34:19914
+    quote_tcp: tcp://183.6.187.34:19913
+    system: sysframe
+    tradeweb_url: https://183.6.187.34:19915/tradeweb/httpXmlServlet
+江苏文交所:
+    front_url:
+    index_url: 
+    quote_http: http://180.96.20.219:16844
+    quote_tcp: tcp://180.96.20.219:16843
+    system: sysframe
+    tradeweb_url: https://180.96.20.219:16824/tradeweb/httpXmlServlet
+福丽特:
+    front_url:
+    index_url: 
+    quote_http: http://tradeweb1.dzp.wjybk.com:16974
+    quote_tcp: tcp://tradeweb1.dzp.wjybk.com:16973
+    system: sysframe
+    tradeweb_url: https://tradeweb1.dzp.wjybk.com:16975/tradeweb/httpXmlServlet
+西部文交所:
+    disabled: True
+    front_url:
+    index_url: 
+    quote_http: http://118.145.4.50:10104
+    quote_tcp: tcp://118.145.4.50:10103
+    system: sysframe
+    tradeweb_url: https://118.145.4.50:10105/tradeweb/httpXmlServlet
