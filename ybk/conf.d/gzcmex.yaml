@@ -1,0 +1,50 @@
+url: http://qbyp.gzcmex.com/
+name: 广州商品交易所钱币邮票交易中心
+abbr: 广州文交所
+notrade: 6
+cashout: 2
+stock:
+    index: 
+        - http://qbyp.gzcmex.com/web/news/news.jsp?parentid=45&classid=56&spid=77
+        - http://qbyp.gzcmex.com/web/news/news.jsp?parentid=45&classid=56&spid=79
+        - http://qbyp.gzcmex.com/web/news/news.jsp?parentid=45&classid=56&spid=80
+    relative: http://qbyp.gzcmex.com
+    detail: <a[^>]*href="([^"]+)"[^>]*>([^<]*(托管|入库)[^<]*)</a></li>\s*<li[^>]*>(\d+-\d+-\d+)
+    fields: [url, title, _, published_at]
+    encoding: gb18030 
+    page: 
+    maxpage: 1
+offer:
+    index: 
+        - http://qbyp.gzcmex.com/web/news/news.jsp?parentid=45&classid=56&spid=77
+        - http://qbyp.gzcmex.com/web/news/news.jsp?parentid=45&classid=56&spid=78
+    relative: http://qbyp.gzcmex.com
+    detail: <a[^>]*href="([^"]+)"[^>]*>([^<]*(申购)[^<]*)</a></li>\s*<li[^>]*>(\d+-\d+-\d+)
+    fields: [url, title, _, published_at]
+    encoding: gb18030
+    page: 
+    maxpage: 1
+result:
+    index: 
+        - http://qbyp.gzcmex.com/web/news/news.jsp?parentid=45&classid=56&spid=77
+        - http://qbyp.gzcmex.com/web/news/news.jsp?parentid=45&classid=56&spid=78
+    relative: http://qbyp.gzcmex.com
+    detail: <a[^>]*href="([^"]+)"[^>]*>([^<]*(中签)[^<]*)</a></li>\s*<li[^>]*>(\d+-\d+-\d+)
+    fields: [url, title, _, published_at]
+    encoding: gb18030
+    page: 
+    maxpage: 1
+opening:
+    url: http://qbyp.gzcmex.com:16927/shzq_SelfOpenAccount/index.jsp
+    guide: http://qbyp.gzcmex.com/web/news/news_detail.jsp?parentid=47&classid=65&infoid=69
+    bank: [平安银行]
+    code: [无]
+    name: [广州商品交易所钱币邮票交易有限公司]
+    download: http://qbyp.gzcmex.com/web/news/news_detail.jsp?parentid=56&classid=77&infoid=199
+quote:
+    realtime:
+        url: 
+        type: getHqV_lbData
+    history:
+        url:  
+        type: sysframe
