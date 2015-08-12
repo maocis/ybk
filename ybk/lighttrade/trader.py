@@ -6,7 +6,7 @@ import yaml
 import logging
 from datetime import datetime
 
-from sysframe import Client as SysframeClient
+from ybk.lighttrade.sysframe import Client as SysframeClient
 
 log = logging.getLogger('trader')
 
