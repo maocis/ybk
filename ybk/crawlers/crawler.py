@@ -104,6 +104,10 @@ def parse_index(ex, type_, content, conf):
 
         if ex.abbr == '中港邮币卡':
             d['published_at'] = re.sub('<[^>]*>', '-', d['published_at'])
+        if ex.abbr == '三点零':
+            pa = d['published_at']
+            pa = re.sub('<[^>]*>', '', pa)
+            d['published_at'] = pa[2:] + '/' + pa[:2]
         d['published_at'] = parse_datetime(d['published_at']) \
             - timedelta(hours=8)
         d['exchange'] = ex._id

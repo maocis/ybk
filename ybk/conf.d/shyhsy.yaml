@@ -1,0 +1,43 @@
+url: http://www.shyhsy.cn/
+name: 3.0收藏品交易中心
+abbr: 三点零
+notrade: 6
+cashout: 2
+stock:
+    index: http://www.shyhsy.cn/news/list/34.html
+    relative: http://www.shyhsy.cn
+    detail: (\d+<span>\d+/\d+)<[^>]*><[^>]*>\s*<[^>]*>\s*<[^>]*><a[^>]*href="([^"]+)"[^>]*>([^<]*(托管|入库|征集)[^<]*)</a>
+    fields: [published_at, url, title, _]
+    encoding: utf-8
+    page: http://www.shyhsy.cn/news/list/34/{page}.html
+    maxpage: 3
+offer:
+    index: http://www.shyhsy.cn/news/list/34.html
+    relative: http://www.shyhsy.cn
+    detail: (\d+<[^>]*>\d+/\d+)<[^>]*><[^>]*>\s*<[^>]*>\s*<[^>]*><a[^>]*href="([^"]+)"[^>]*>([^<]*(申购公告)[^<]*)</a>
+    fields: [published_at, url, title, _]
+    encoding: utf-8
+    page: http://www.shyhsy.cn/news/list/34/{page}.html
+    maxpage: 3
+result:
+    index: http://www.shyhsy.cn/news/list/34.html
+    relative: http://www.shyhsy.cn
+    detail: (\d+<[^>]*>\d+/\d+)<[^>]*><[^>]*>\s*<[^>]*>\s*<[^>]*><a[^>]*href="([^"]+)"[^>]*>([^<]*(中签)[^<]*)</a>
+    fields: [published_at, url, title, _]
+    encoding: utf-8
+    page: http://www.shyhsy.cn/news/list/34/{page}.html
+    maxpage: 3
+opening:
+    url: http://www.shyhsy.cn/open_acc/center.html
+    guide: http://www.shyhsy.cn/trading/2167.html
+    bank: [建设银行]
+    code: [无]
+    name: [3.0收藏品交易中心]
+    download: http://www.shyhsy.cn/download/40.html
+quote:
+    realtime:
+        url: 
+        type: getHqV_lbData
+    history:
+        url:  
+        type: sysframe
