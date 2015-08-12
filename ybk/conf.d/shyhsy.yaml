@@ -36,8 +36,8 @@ opening:
     download: http://www.shyhsy.cn/download/40.html
 quote:
     realtime:
-        url: 
-        type: getHqV_lbData
+        url: http://www.shyhsy.cn/tools/submit_ajax.ashx?action=get_hq
+        type: get_hq
     history:
         url:  
         type: sysframe

@@ -158,6 +158,22 @@ def parse_quotes(type_, text):
                 'high': to_float(tds[9].text_content()),
                 'low': to_float(tds[10].text_content()),
             })
+    elif type_ == 'get_hq':
+        # 三点零
+        quotes = []
+        for x in text.splitlines():
+            vals = x.split('\t')
+            quotes.append({
+                'symbol': vals[0].strip(),
+                'name': vals[1].strip(),
+                'lclose': float(vals[3]),
+                'open_': float(vals[4]),
+                'high': float(vals[5]),
+                'low': float(vals[6]),
+                'close': float(vals[7]),
+                'volume': int(float(vals[9])),
+                'amount': float(vals[34])/100,
+            })
     else:
         raise NotImplementedError
     return quotes
