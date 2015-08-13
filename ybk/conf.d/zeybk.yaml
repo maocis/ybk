@@ -36,9 +36,9 @@ result:
 opening:
     url: http://uc.zeybk.com/custm/user/user_reg_add.htm
     guide: http://www.zeybk.com/Guide.aspx
-    bank: [建设银行, 工商银行, 农业银行]
-    code: [-, -, -]
-    name: [-, -, -]
+    bank: [中国银行, 民生银行, 华夏银行, 建设银行, 浦发银行, 上海银行]
+    code: [-, -, -, -, -, -]
+    name: [-, -, -, -, -, -]
     download: http://www.zeybk.com/Download.aspx?Type=0
 quote:
     realtime:
