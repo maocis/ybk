@@ -9,6 +9,17 @@ from .views import frontend
 def index():
     nav = 'index'
     exchanges = CONFS
+    for e in exchanges:
+        urls = e['offer']['index']
+        if isinstance(urls, list):
+            e['offer']['index_url'] = urls[0]
+        else:
+            e['offer']['index_url'] = urls
+        urls = e['result']['index']
+        if isinstance(urls, list):
+            e['result']['index_url'] = urls[0]
+        else:
+            e['result']['index_url'] = urls
     announcements = [a for a in
                      Announcement.query(
                         sort=[('published_at', -1)],

@@ -16,7 +16,7 @@ stock:
     maxpage: 1
 offer:
     index: 
-        - http://hbhuangjinwu.com/web/news/news.jsp?parentid=45&classid=66
+        - http://hbhuangjinwu.com/web/news/news.jsp?parentid=45&classid=61
         - http://hbhuangjinwu.com/web/news/news.jsp?parentid=45&classid=58
     relative: http://www.hbhuangjinwu.com
     detail: <a[^>]*href="([^"]+)"[^>]*>([^<]*(申购)[^<]*)</a></li>\s*<li[^>]*>(\d+-\d+-\d+)
