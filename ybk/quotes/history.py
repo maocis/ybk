@@ -209,6 +209,7 @@ def history_winner(exchange, url, force):
 
 
 def history_exists(c):
+    return False
     if c.offers_at:
         first_date_before = c.offers_at + timedelta(days=7)
         q = Quote.query_one({'exchange': c.exchange,
