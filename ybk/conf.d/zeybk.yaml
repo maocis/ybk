@@ -7,7 +7,7 @@ stock:
     index:
         - http://www.zeybk.com/Information.aspx?Type=8
         - http://www.zeybk.com/Information.aspx
-    relative: http://www.zeybk.com/
+    relative: http://www.zeybk.com/Information.aspx
     detail: <a[^>]*href='([^']+)'[^>]*>([^<]*(征集|招募|托管|入库)[^<]*)</a>\s*<span[^>]*>(\d+/\d+/\d+)
     fields: [url, title, _, published_at]
     encoding: utf-8
@@ -17,7 +17,7 @@ offer:
     index:
         - http://www.zeybk.com/Information.aspx?Type=5
         - http://www.zeybk.com/Information.aspx
-    relative: http://www.zeybk.com/
+    relative: http://www.zeybk.com/Information.aspx
     detail: <a[^>]*href='([^']+)'[^>]*>([^<]*(挂牌交易|申购)[^<]*)</a>\s*<span[^>]*>(\d+/\d+/\d+)
     fields: [url, title, _, published_at]
     encoding: utf-8
@@ -27,7 +27,7 @@ result:
     index:
         - http://www.zeybk.com/Information.aspx?Type=5
         - http://www.zeybk.com/Information.aspx
-    relative: http://www.zeybk.com/
+    relative: http://www.zeybk.com/Information.aspx
     detail: <a[^>]*href='([^']+)'[^>]*>([^<]*(中签)[^<]*)</a>\s*<span[^>]*>(\d+/\d+/\d+)
     fields: [url, title, _, published_at]
     encoding: utf-8
