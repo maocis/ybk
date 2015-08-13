@@ -1,0 +1,50 @@
+url: http://fs.dbce.cn/
+name: 东北商品交易中心发售平台
+abbr: 东北商品
+notrade: 6
+cashout: 2
+stock:
+    index: 
+        - http://fs.dbce.cn/news.php?big=2&nt=19
+        - http://fs.dbce.cn/news.php?big=2&nt=20
+        - http://fs.dbce.cn/news.php?big=2&nt=18
+    relative: http://fs.dbce.cn/
+    detail: (\d+\.\d+\.\d+)</span><a[^>]*href="([^"]+)"[^>]*>([^<]*(征集|托管|入库)[^<]*)</a>
+    fields: [published_at, url, title, _]
+    encoding: utf-8
+    page: 
+    maxpage: 1
+offer:
+    index: 
+        - http://fs.dbce.cn/news.php?big=2&nt=21
+        - http://fs.dbce.cn/news.php?big=2&nt=18
+    relative: http://fs.dbce.cn/
+    detail: (\d+\.\d+\.\d+)</span><a[^>]*href="([^"]+)"[^>]*>([^<]*(挂牌交易)[^<]*)</a>
+    fields: [published_at, url, title, _]
+    encoding: utf-8
+    page: 
+    maxpage: 1
+result:
+    index: 
+        - http://fs.dbce.cn/news.php?big=2&nt=21
+        - http://fs.dbce.cn/news.php?big=2&nt=18
+    relative: http://fs.dbce.cn/
+    detail: (\d+\.\d+\.\d+)</span><a[^>]*href="([^"]+)"[^>]*>([^<]*(中签)[^<]*)</a>
+    fields: [published_at, url, title, _]
+    encoding: utf-8
+    page: 
+    maxpage: 1
+opening:
+    url: http://fs.dbce.cn/wykh.php
+    guide: http://fs.dbce.cn/newsPageDan.php?big=4&nt=26
+    bank: [工商银行, 华夏银行]
+    code: [-, -]
+    name: [东北商品交易中心, 东北商品交易中心]
+    download: http://fs.dbce.cn/newsload.php?big=7&nt=43
+quote:
+    realtime:
+        url: 
+        type: getHqV_lbData
+    history:
+        url:  
+        type: sysframe
