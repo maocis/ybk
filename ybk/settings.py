@@ -11,6 +11,8 @@ ABBRS = {
                / (site + '.yaml')).open())['abbr']: site
     for site in SITES
 }
+if None in ABBRS:
+    del ABBRS[None]
 SITES = [p[1] for p in sorted(ABBRS.items())]
 
 

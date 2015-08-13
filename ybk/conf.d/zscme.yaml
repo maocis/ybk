@@ -1,0 +1,50 @@
+url: http://ybk.zscme.com/
+name: 中狮邮币卡交易中心
+abbr: 中狮邮币卡
+notrade: 6
+cashout: 2
+stock:
+    index: 
+        - http://ybk.zscme.com/investment.asp?id=27
+        - http://ybk.zscme.com/investment.asp?id=26
+        - http://ybk.zscme.com/investment.asp?id=25
+    relative: http://ybk.zscme.com/
+    detail: <a[^>]*href="([^"]+)"[^>]*>([^<]*(征集|托管|入库)[^<]*)</a>(<[^>]*>)*(\d+-\d+-\d+)
+    fields: [url, title, _, _, published_at]
+    encoding: gb18030 
+    page: 
+    maxpage: 1
+offer:
+    index: 
+        - http://ybk.zscme.com/investment.asp?id=28
+        - http://ybk.zscme.com/investment.asp?id=25
+    relative: http://ybk.zscme.com/
+    detail: <a[^>]*href="([^"]+)"[^>]*>([^<]*(申购|挂牌交易)[^<]*)</a>(<[^>]*>)*(\d+-\d+-\d+)
+    fields: [url, title, _, _, published_at]
+    encoding: gb18030 
+    page: 
+    maxpage: 1
+result:
+    index: 
+        - http://ybk.zscme.com/investment.asp?id=28
+        - http://ybk.zscme.com/investment.asp?id=25
+    relative: http://ybk.zscme.com/
+    detail: <a[^>]*href="([^"]+)"[^>]*>([^<]*(中签)[^<]*)</a>(<[^>]*>)*(\d+-\d+-\d+)
+    fields: [url, title, _, _, published_at]
+    encoding: gb18030 
+    page: 
+    maxpage: 1
+opening:
+    url: #
+    guide: http://ybk.zscme.com/trading.asp?id=23 
+    bank: [工商银行]
+    code: [-]
+    name: [中狮邮币卡交易中心]
+    download: http://ybk.zscme.com/yhqy.asp?id=27
+quote:
+    realtime:
+        url: 
+        type: getHqV_lbData
+    history:
+        url:  
+        type: sysframe
