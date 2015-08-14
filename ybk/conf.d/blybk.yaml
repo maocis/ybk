@@ -1,0 +1,43 @@
+url: http://www.blybk.com/
+name: 保利邮币卡交易中心
+abbr: 保利邮币卡
+notrade: 6
+cashout: 2
+stock:
+    index: http://www.blybk.com/web/xinxipilou/
+    relative: http://www.blybk.com
+    detail: (\d+-\d+-\d+)</span><a[^>]*href="([^"]+)"[^>]*>([^<]*(征集|托管|入库)[^<]*)</a>
+    fields: [published_at, url, title, _]
+    encoding: utf-8
+    page: 
+    maxpage: 1
+offer:
+    index: http://www.blybk.com/web/xinxipilou/
+    relative: http://www.blybk.com
+    detail: (\d+-\d+-\d+)</span><a[^>]*href="([^"]+)"[^>]*>([^<]*(挂牌交易|申购)[^<]*)</a>
+    fields: [published_at, url, title, _]
+    encoding: utf-8
+    page: 
+    maxpage: 1
+result:
+    index: http://www.blybk.com/web/xinxipilou/
+    relative: http://www.blybk.com
+    detail: (\d+-\d+-\d+)</span><a[^>]*href="([^"]+)"[^>]*>([^<]*(中签)[^<]*)</a>
+    fields: [published_at, url, title, _]
+    encoding: utf-8
+    page: 
+    maxpage: 1
+opening:
+    url: http://www.blybk.com/kh/zaixiankaihu/
+    guide: http://www.blybk.com/web/khlc/
+    bank: [农业银行, 建设银行, 中国银行, 交通银行]
+    code: [-, -, -, -]
+    name: [保利邮币卡交易中心, 保利邮币卡交易中心, 保利邮币卡交易中心, 保利邮币卡交易中心]
+    download: http://www.blybk.com/web/rjxz/
+quote:
+    realtime:
+        url: 
+        type: getHqV_lbData
+    history:
+        url:  
+        type: sysframe

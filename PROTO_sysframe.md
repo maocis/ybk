@@ -20,6 +20,7 @@
 0. [交易协议](#trade) HTTP/xml
 	0. [登陆](#logon) `logon`
 	0. [检查用户](#check_user) `check_user`
+	0. [修改密码](#change_password) `change_password`
 	0. [服务器时间](#sys_time_query) `sys_time_query`
 	0. [查询商品信息](#commodity_query) `commodity_query`
 	0. [查询市场代码](#market_query) `market_query`
@@ -303,6 +304,25 @@ s.send(b'\x0d' + b'\x00\x00\x00\x00')
 				- MESSAGE
 				- MODULE 18 # 交易=18, 综合=99
 		
+		
+### <a id="change_password">修改密码</a>
+
+- URL: /issue_tradeweb/httpXmlServlet
+- TYPE: POST
+- REQUEST:
+	- GNNT
+		- REQ name=change_password
+			- USER_ID 10330008
+			- OLD_PASSWORD 111111
+			- NEW_PASSWORD caibahaha
+			- MODULE_ID 99
+			- SESSION_ID 2736065087393846840
+- RESPONSE:
+    - GNNT
+   		- REP name=change_password
+   			- RESULT
+   				- RETCODE 0
+   				- MESSAGE
 		
 ### <a id="sys_time_query">查询系统时间</a>
 

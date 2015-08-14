@@ -93,3 +93,17 @@ class UserProtocol(object):
         else:
             log.error('同步时间失败: {}'.format(r['MESSAGE']))
 
+
+    def change_password(self, password):
+        d = self.request_tradeweb('change_password',
+                                  {'USER_ID': self.uid,
+                                   'OLD_PASSWORD': self.password,
+                                   'NEW_PASSWORD': password,
+                                   'MODULE_ID': 99,
+                                   'SESSION_ID': self.sid})
+        r = d['GNNT']['REP']['RESULT']
+        if r['RETCODE'] == '0':
+            self.password = password
+            log.info('密码已修改为{}'.format(password))
+        else:
+            log.error('修改密码失败: {}'.format(r['MESSAGE']))

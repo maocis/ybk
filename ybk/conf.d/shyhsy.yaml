@@ -31,8 +31,8 @@ opening:
     url: http://www.shyhsy.cn/open_acc/center.html
     guide: http://www.shyhsy.cn/trading/2167.html
     bank: [建设银行]
-    code: [无]
-    name: [3.0收藏品交易中心]
+    code: [3100000189]
+    name: [叁点零收藏品交易中心]
     download: http://www.shyhsy.cn/download/40.html
 quote:
     realtime:
