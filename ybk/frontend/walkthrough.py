@@ -1,6 +1,7 @@
 from collections import defaultdict
 
 from flask import render_template
+from flask.ext.login import login_required
 
 from ybk.settings import CONFS
 from ybk.models import Quote
@@ -9,6 +10,7 @@ from .views import frontend
 
 
 @frontend.route('/walkthrough/')
+@login_required
 def walkthrough():
     def open_at(exchange):
         q = Quote.query_one({'exchange': exchange},

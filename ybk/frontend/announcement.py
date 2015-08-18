@@ -1,4 +1,6 @@
 from flask import render_template, request
+from flask.ext.login import login_required
+
 from werkzeug.contrib.atom import AtomFeed
 
 from ybk.models import Exchange, Announcement
@@ -16,6 +18,7 @@ def type_to_cn(type_):
 
 
 @frontend.route('/announcement/')
+@login_required
 def announcement():
     locals()['type_to_cn'] = type_to_cn
     nav = 'announcement'

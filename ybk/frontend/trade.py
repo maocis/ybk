@@ -1,5 +1,5 @@
 from flask import render_template, request, jsonify
-from flask.ext.login import current_user
+from flask.ext.login import current_user, login_required
 
 from .views import frontend
 
@@ -8,6 +8,7 @@ from ybk.models import Quote, Collection, Position
 
 
 @frontend.route('/trade/')
+@login_required
 def trade():
     nav = 'trade'
     exchange = request.args.get('exchange')

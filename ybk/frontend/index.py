@@ -1,4 +1,6 @@
 from flask import render_template
+from flask.ext.login import login_required
+
 from ybk.settings import CONFS
 from ybk.models import Announcement
 
@@ -6,6 +8,7 @@ from .views import frontend
 
 
 @frontend.route('/')
+@login_required
 def index():
     nav = 'index'
     exchanges = CONFS
