@@ -30,9 +30,9 @@ result:
 opening:
     url: http://www.cacecybk.com.cn:16929/SelfOpenAccount/firmController.fir?funcflg=getBrokerList
     guide: http://www.cacecybk.com.cn/web/news/news_detail.jsp?parentid=76&classid=84&infoid=60
-    bank: [农业银行]
-    code: [无]
-    name: []
+    bank: [农业银行, 光大银行]
+    code: [无, 无]
+    name: [-, -]
     download: http://www.cacecybk.com.cn/web/news/news_detail.jsp?parentid=79&classid=100&infoid=59
 quote:
     realtime:

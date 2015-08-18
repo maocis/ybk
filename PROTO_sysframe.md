@@ -32,7 +32,8 @@
 	0. [撤单](#order_wd) `order_wd`
 	0. [成交查询](#tradquery) `tradequery`
 0. [综合业务](#front)
-	0. 申购等
+	0. [出入金(农行/不完整)](#transferabc) `transferabc`
+	0. [出入金(其他)](#transfer) `transfer`
 	
 ## <a id="common">通用</a>
 
@@ -691,3 +692,30 @@ s.send(b'\x0d' + b'\x00\x00\x00\x00')
 					- S_TR_N 12443
 					- A_TR_N 7750
 					- TR_T 1
+
+
+### <a id="transferabc">出入金(农行)</a>
+
+正常的post
+
+- URL: /bank_front/bank/money/gotoABCMoneyPage.action
+- TYPE: POST
+- REQUEST:
+
+	> inoutMoney=0&bankID=05&money=1&cardType=1&password=521710&InOutStart=0&PersonName=&AmoutDate=&BankName=&OutAccount=
+	- inoutMoney 0 # 0=出金?
+	- bankID 05 # 农行?
+	- money 1 # 金额
+	- cardType 1 # ?
+	- password XXXXX
+	- InOutStart 0
+	- PersonName 
+	- AmountDate
+	- BankName
+	- OutAccount
+- RESPONSE:
+	- 返回一个html
+	- 弹出U盾验证
+	- 验证通过后返回页面
+
+

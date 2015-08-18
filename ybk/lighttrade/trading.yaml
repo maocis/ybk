@@ -139,3 +139,10 @@
     quote_tcp: tcp://58.19.228.223:16924
     system: sysframe
     tradeweb_url: http://58.19.228.223:16925/issue_tradeweb/httpXmlServlet
+保利邮币卡:
+    front_url: http://175.102.34.91:16982/common_front/checkneedless/user/logon/logon.action
+    index_url: http://175.102.34.91:16982/common_front/front/frame/index_PC.jsp
+    quote_http: http://175.102.34.84:16984
+    quote_tcp: tcp://175.102.34.84:16983
+    system: sysframe
+    tradeweb_url: http://175.102.34.84:16985/issue_tradeweb/httpXmlServlet

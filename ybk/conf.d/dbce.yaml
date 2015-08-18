@@ -46,5 +46,5 @@ quote:
         url: 
         type: getHqV_lbData
     history:
-        url:  
+        url: http://221.203.22.70:16894
         type: sysframe
