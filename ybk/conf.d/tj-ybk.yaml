@@ -14,7 +14,7 @@ stock:
     maxpage: 1
 offer:
     index: 
-        - http://www.tj-ybk.com/html/27/category-catid-128.html
+        - http://www.tj-ybk.com/html/27/category-catid-127.html
     relative: http://www.tj-ybk.com
     detail: (\d+-\d+-\d+)</span><a[^>]*href="([^"]+)"[^>]*>([^<]*(挂牌交易|申购)[^<]*)</a>
     fields: [published_at, url, title, _]
