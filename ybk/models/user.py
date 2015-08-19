@@ -5,10 +5,15 @@ from datetime import datetime, timedelta
 import bcrypt
 
 from yamo import (
-    Document, IDFormatter, Index,
+    Document, EmbeddedDocument, IDFormatter, Index,
     BooleanField,
     StringField,
+    BinaryField,
+    ListField,
+    IntField,
+    FloatField,
     DateTimeField,
+    EmbeddedDocumentField,
 )
 
 
@@ -75,6 +80,8 @@ class User(Document):
     username = StringField()
     password = StringField()    # bcrypt hashed
     invited_by = StringField()  # 邀请人id
+    ymoney = IntField(default=1000) # Y币
+    reserved_ymoney = IntField(default=0) # 预扣Y币
     created_at = DateTimeField(created=True)
     last_login_at = DateTimeField(modified=True)
 
@@ -143,3 +150,82 @@ class User(Document):
             if bcrypt.hashpw(password, hashed) == hashed:
                 return u
         return None
+
+
+class BankAccount(EmbeddedDocument):
+
+    """ 银行账号 """
+
+    bank = StringField(required=True) # 建设银行/...
+    number = StringField(required=True)
+    front = BinaryField()
+    back = BinaryField()
+
+
+class Investor(Document):
+
+    """ 投资人 """
+
+    class Meta:
+        idf = IDFormatter('{id_number}')
+        idx1 = Index(['user', 'order'], unique=True)
+
+    user = StringField(required=True) # 用户
+    order = IntField(required=True) # 顺序
+    name = StringField(required=True)
+    id_type = StringField(required=True) # 身份证/..
+    id_number = StringField(required=True)  # 号码
+    id_front = BinaryField() # 照片
+    id_back = BinaryField()
+    mobile = StringField(required=True)
+    province = StringField(required=True)
+    city = StringField(required=True)
+    address = StringField(required=True)
+    bank_accounts = ListField(BankAccount)
+
+    @classmethod
+    def get_user_order(cls, user):
+        i = cls.query_one({'user': user}, sort=[('order', -1)], limit=1)
+        if not i:
+            return 1
+        else:
+            return i.order + 1
+
+
+class MyPosition(EmbeddedDocument):
+    """ 持仓 """
+    name = StringField(required=True)
+    symbol = StringField(required=True)
+    open_price = FloatField(required=True)
+    quantity = IntField(required=True)
+    price = FloatField(required=True)
+
+
+class MyMoney(EmbeddedDocument):
+    """ 资金 """
+    usable = FloatField(required=True)
+    withdrawable = FloatField(required=True)
+
+
+class TradeAccount(Document):
+
+    """ 交易账号 """
+
+    class Meta:
+        pass
+
+    user = StringField(required=True) # 所属用户
+    investor = StringField(required=True) # 投资人
+    bank = StringField(required=True) # 工商银行/...
+    exchange = StringField(required=True) # 交易所简称
+    login_name = StringField(required=True) # 账号
+    login_password = StringField(required=True) # 密码
+    money_password = StringField(required=False) # 资金密码
+
+    verified = BooleanField(default=False) # 验证通过
+    grab_buy_on = BooleanField(default=False) # 抢单买
+    grab_sell_on = BooleanField(default=False) # 抢单卖
+
+    position = ListField(MyPosition)
+    money = EmbeddedDocumentField(MyMoney)
+
