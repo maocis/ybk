@@ -43,7 +43,7 @@ opening:
     download: http://fs.dbce.cn/newsload.php?big=7&nt=43
 quote:
     realtime:
-        url: 
+        url: http://59.44.131.119:16822/tradeweb/hq/getHqV_lbData.jsp
         type: getHqV_lbData
     history:
         url: http://221.203.22.70:16894
