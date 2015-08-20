@@ -81,6 +81,35 @@ server {
 }
 ```
 
+Nginx with https
+
+
+```
+server {
+    listen 80;
+    server_name ybk369.com www.ybk369.com;
+    return 301 https://www.ybk369.com$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name www.ybk369.com;
+
+    ssl_certificate /etc/nginx/cert.d/www.ybk369.com.crt;
+    ssl_certificate_key /etc/nginx/cert.d/www.ybk369.com.key;
+
+
+    location /static/ {
+        root /var/www/ybk369.com/ybk;
+        try_files $uri $uri/ /index.html;
+    }
+
+    location / {
+        proxy_pass          http://localhost:5001;
+        include             /etc/nginx/proxy_params;
+    }
+}
+```
 
 ### Cronjob
 
