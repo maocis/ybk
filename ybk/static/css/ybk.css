@@ -152,3 +152,25 @@ table#transaction-list > tbody > tr > td {
 #calendar td.offer:hover {
     cursor: pointer;
 }
+
+
+/* Right tabs */
+ul.nav.nav-tabs {
+    text-align: right;
+}
+
+.nav-tabs>li {
+    float: none;
+    display: inline-block;
+}
+
+/*.right-tabs .nav {
+    float: right;
+    border-bottom: 0px;
+}
+.right-tabs .nav li { float: left }
+.right-tabs .tab-content {
+    float: left;
+    border-top: 1px solid #ddd;
+    margin-top: -1px;
+}*/

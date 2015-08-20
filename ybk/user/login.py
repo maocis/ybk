@@ -1,4 +1,5 @@
 import functools
+from datetime import datetime
 
 from flask import render_template, request, jsonify, redirect, current_app
 from flask.ext.login import login_user, current_user, logout_user
@@ -60,6 +61,8 @@ def check_login():
     u = User.check_login(mobile, password)
     if u:
         login_user(u, remember=remember)
+        u.last_login_at = datetime.utcnow()
+        u.upsert()
         return jsonify(status=200, reason='')
     else:
         return jsonify(status=403, reason='用户名或密码错误')

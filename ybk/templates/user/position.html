@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "user/layout.html" %}
 {% block css %}
       {% if config.DEBUG %}
         <link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet">
@@ -16,10 +16,9 @@
       {% endif %}
 
 {% endblock %}
-{% block main %}
+{% block submain %}
     <div class="row">
       <div class="col-md-8">
-        <h3>持仓概况</h3>
         <div class="col-md-4">
           <div class="col-md-12">
            <b>持有藏品:</b> {{ num_collections or 0 }}种

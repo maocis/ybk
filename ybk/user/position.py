@@ -14,6 +14,7 @@ from .views import user
 @user.route('/user/position/')
 @login_required
 def position():
+    nav = 'position'
     today = (datetime.utcnow() + timedelta(hours=8)).strftime('%Y-%m-%d')
     user = current_user._id
     num_collections = Position.num_collections(user)
