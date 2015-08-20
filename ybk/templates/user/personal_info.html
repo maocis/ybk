@@ -1,0 +1,33 @@
+{% extends "user/accounts.html" %}
+{% block detail %}
+<div class="">
+  注册时间: {{ current_user.created_at | bjtime }}
+  上次登录时间: {{ current_user.last_login_at | bjtime }}
+  Y币余额: {{ current_user.ymoney }}
+</div>
+<div class="">
+  <table class="table table-condensed">
+    <thead><tr>
+      <th sytle="width: 100px;">交易所</th>
+      {% for i in investors %}
+      <th style="width: 100px;">{{ i.name }}</th>
+      {% endfor %}
+      <th style="width: 100px;"><button class="btn btn-xs btn-primary">&plus;添加投资人</button></th>
+    </tr></thead>
+    <tbody>
+      {% for ex, trade_accounts in account_table.items() %}
+      <tr>
+        <td>{{ ex }}</td>
+        {% for ta in trade_accounts %}
+        {% if ta %}
+        <td>{{ ta.username }}({{ ta.bank }})</td>
+        {% else %}
+        <td><button class="btn btn-xs btn-default">&plus;添加交易账号</button></td>
+        {% endif %}
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

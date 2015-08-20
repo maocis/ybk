@@ -13,7 +13,7 @@ from yamo import (
     IntField,
     FloatField,
     DateTimeField,
-    EmbeddedDocumentField,
+    EmbeddedField,
 )
 
 
@@ -80,8 +80,8 @@ class User(Document):
     username = StringField()
     password = StringField()    # bcrypt hashed
     invited_by = StringField()  # 邀请人id
-    ymoney = IntField(default=1000) # Y币
-    reserved_ymoney = IntField(default=0) # 预扣Y币
+    ymoney = IntField(default=1000)  # Y币
+    reserved_ymoney = IntField(default=0)  # 预扣Y币
     created_at = DateTimeField(created=True)
     last_login_at = DateTimeField(modified=True)
 
@@ -156,7 +156,7 @@ class BankAccount(EmbeddedDocument):
 
     """ 银行账号 """
 
-    bank = StringField(required=True) # 建设银行/...
+    bank = StringField(required=True)  # 建设银行/...
     number = StringField(required=True)
     front = BinaryField()
     back = BinaryField()
@@ -170,12 +170,12 @@ class Investor(Document):
         idf = IDFormatter('{id_number}')
         idx1 = Index(['user', 'order'], unique=True)
 
-    user = StringField(required=True) # 用户
-    order = IntField(required=True) # 顺序
+    user = StringField(required=True)  # 用户
+    order = IntField(required=True)  # 顺序
     name = StringField(required=True)
-    id_type = StringField(required=True) # 身份证/..
+    id_type = StringField(required=True)  # 身份证/..
     id_number = StringField(required=True)  # 号码
-    id_front = BinaryField() # 照片
+    id_front = BinaryField()  # 照片
     id_back = BinaryField()
     mobile = StringField(required=True)
     province = StringField(required=True)
@@ -191,8 +191,13 @@ class Investor(Document):
         else:
             return i.order + 1
 
+    @classmethod
+    def user_investors(cls, user):
+        return list(cls.query({'user': user}, sort=[('order', 1)]))
+
 
 class MyPosition(EmbeddedDocument):
+
     """ 持仓 """
     name = StringField(required=True)
     symbol = StringField(required=True)
@@ -202,6 +207,7 @@ class MyPosition(EmbeddedDocument):
 
 
 class MyMoney(EmbeddedDocument):
+
     """ 资金 """
     usable = FloatField(required=True)
     withdrawable = FloatField(required=True)
@@ -214,18 +220,21 @@ class TradeAccount(Document):
     class Meta:
         pass
 
-    user = StringField(required=True) # 所属用户
-    investor = StringField(required=True) # 投资人
-    bank = StringField(required=True) # 工商银行/...
-    exchange = StringField(required=True) # 交易所简称
-    login_name = StringField(required=True) # 账号
-    login_password = StringField(required=True) # 密码
-    money_password = StringField(required=False) # 资金密码
+    user = StringField(required=True)  # 所属用户
+    investor = StringField(required=True)  # 投资人
+    bank = StringField(required=True)  # 工商银行/...
+    exchange = StringField(required=True)  # 交易所简称
+    login_name = StringField(required=True)  # 账号
+    login_password = StringField(required=True)  # 密码
+    money_password = StringField(required=False)  # 资金密码
 
-    verified = BooleanField(default=False) # 验证通过
-    grab_buy_on = BooleanField(default=False) # 抢单买
-    grab_sell_on = BooleanField(default=False) # 抢单卖
+    verified = BooleanField(default=False)  # 验证通过
+    grab_buy_on = BooleanField(default=False)  # 抢单买
+    grab_sell_on = BooleanField(default=False)  # 抢单卖
 
     position = ListField(MyPosition)
-    money = EmbeddedDocumentField(MyMoney)
+    money = EmbeddedField(MyMoney)
 
+    @classmethod
+    def user_accounts(cls, user):
+        return list(cls.query({'user': user}))
