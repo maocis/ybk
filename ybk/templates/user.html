@@ -10,6 +10,7 @@
                     <li><a href="{{ url_for('admin.index') }}">后台</a></li>
                     {% endif %}
                   {% endif %}
+                  <li><a href="{{ url_for('user.accounts') }}">账户</a></li>
                   <li><a href="{{ url_for('user.position') }}">持仓</a></li>
                   <li><a href="{{ url_for('user.logout', next=request.path) }}">登出</a></li>
                 </ul>
