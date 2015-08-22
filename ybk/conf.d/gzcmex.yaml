@@ -29,7 +29,7 @@ result:
         - http://qbyp.gzcmex.com/web/news/news.jsp?parentid=45&classid=56&spid=77
         - http://qbyp.gzcmex.com/web/news/news.jsp?parentid=45&classid=56&spid=78
     relative: http://qbyp.gzcmex.com
-    detail: <a[^>]*href="([^"]+)"[^>]*>([^<]*(中签)[^<]*)</a></li>\s*<li[^>]*>(\d+-\d+-\d+)
+    detail: <a[^>]*href="([^"]+)"[^>]*>([^<]*(申购中签)[^<]*)</a></li>\s*<li[^>]*>(\d+-\d+-\d+)
     fields: [url, title, _, published_at]
     encoding: gb18030
     page: 

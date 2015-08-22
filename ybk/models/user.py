@@ -181,7 +181,7 @@ class Investor(Document):
     province = StringField(required=True)
     city = StringField(required=True)
     address = StringField(required=True)
-    bank_accounts = ListField(BankAccount)
+    bank_accounts = ListField(EmbeddedField(BankAccount))
 
     @classmethod
     def get_user_order(cls, user):

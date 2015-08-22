@@ -1,4 +1,122 @@
 {% extends "user/accounts.html" %}
 {% block detail %}
-交易账号
+<div class="row" style="zoom: 0.8;">
+  <div class="col-md-9">
+  <div class="panel panel-default">
+  <div class="panel-heading">
+      <h3 class="panel-title">账号筛选</h3>
+    </div>
+    <div class="panel-body">
+      <div class="helper" {% if not investor and not exchange %}style="display:none;"{% endif %}>
+        <div style="float: left; width: 8%"><b>过滤条件</b></div>
+        <div id="filter" style="float: left; width: 92%">
+          {% if investor %}
+          <li class="selected" style="list-style-type: none; border: 1px solid #ccc; display: inline-block; padding: 2px;">
+          <a id="cancel-investor" href="#" style="text-decoration: none;">投资人: <strong style="color: red;">{{investor.name}}&nbsp;&times;</strong></a>
+          </li>
+          {% endif %}
+          {% if exchange %}
+          <li class="selected" style="list-style-type: none; border: 1px solid #ccc; display: inline-block; padding: 2px;">
+          <a id="cancel-exchange" href="#" style="text-decoration: none;">交易所: <strong style="color: red;">{{exchange.abbr}}&nbsp;&times;</strong></a>
+          </li>
+          {% endif %}
+        </div>
+
+      </div>
+      {% if not investor %}
+      {% if exchange %}
+      <div class="clearfix"></div>
+      <hr style="margin: 10px 0; padding: 0;">
+      {% endif %}
+      <div>
+        <div style="float: left; width: 8%"><b>投资人</b></div>
+        <div style="float: left; width: 92%">
+        {% for i in investors %}
+          <li style="list-style-type: none; float: left; margin: 0 5px;"><a href="{{ url_for('user.trade_account', investor=i._id, exchange=exchange.abbr if exchange else '') }}">{{ i.name }}</a></li>
+        {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+      {% if not exchange %}
+      <div class="clearfix"></div>
+      <hr style="margin: 10px 0; padding: 0;">
+      <div>
+        <div style="float: left; width: 8%"><b>交易所</b></div>
+        <div style="float: left; width: 92%">
+        {% for e in exchanges %}
+          <li style="list-style-type: none; float: left; margin: 0 5px;">
+            <a href="{{ url_for('user.trade_account', investor=investor._id if investor else '', exchange=e.abbr) }}">{{ e.abbr }}</a>
+          </li>
+        {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="alert alert-info" role="alert" style="padding: 2px; margin-top: -10px; margin-bottom: 5px;">
+    <b>*注意:</b> 部分交易所如上海文交所、上海邮币卡、海西文交所、湖南文交所等暂时不支持账号操作功能。 
+  </div>
+  <div class="toolbar" style="margin-bottom: 10px;">
+    <button class="btn btn-xs btn-default"><input type="checkbox"> 全选</button>
+    <button class="btn btn-xs btn-default" disabled>批量删除</button>
+    <button class="btn btn-xs btn-default" disabled>更新状态</button>
+    <button class="btn btn-xs btn-default" disabled>抢单设定</button>
+    <button class="btn btn-xs btn-default" disabled>批量买入</button>
+    <button class="btn btn-xs btn-default" disabled>批量卖出</button>
+    <button class="btn btn-xs btn-default" disabled>批量清仓</button>
+    <button class="btn btn-xs btn-default" disabled>批量转账</button>
+    <button class="btn btn-xs btn-default" disabled>批量修改密码</button>
+  </div>
+  <!-- table -->
+  <table class="table table-condensed">
+    <thead><tr>
+      <th style="width:50px;">选中</th>
+      <th style="width:100px;">交易所</th>
+      <th style="width:72px;">投资人</th>
+      <th style="width:100px;">所绑银行</th>
+      <th style="width:200px;">账号/登录密码/资金密码</th>
+      <th>状态</th>
+      <th>操作</th>
+    </tr></thead>
+    <tbody>
+    {% for a in trade_accounts %}
+    {% else %}
+    <tr><td colspan="7" class="text-center">暂无交易账号, 请在右边栏添加</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  <div class="col-md-3">
+    <h4 class="text-right">添加/编辑 账号&nbsp;</h4>
+    <hr>
+    <form class="form-horizontal">
+      <div class="form-group">
+        <label for="investor" class="col-sm-4 control-label">投资人</label>
+        <div class="col-sm-8">
+          <input type="text" class="form-control" id="investor" placeholder="投资人">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="buy-exchange" class="col-sm-4 control-label">交易所</label>
+        <div class="col-sm-8">
+          <select class="form-control" id="buy-exchange" placeholder="交易所"></select>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+  $('#filter').on('click', '#cancel-exchange', function() {
+    var investor = "{{ investor._id if investor else ''}}";
+    location.href = "{{ url_for('user.trade_account') }}" + '?investor=' + investor;
+  });
+  $('#filter').on('click', '#cancel-investor', function() {
+    var exchange = "{{ exchange.abbr if exchange else ''}}";
+    location.href = "{{ url_for('user.trade_account') }}" + '?exchange=' + exchange;
+  });
+</script>
 {% endblock %}
