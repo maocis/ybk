@@ -29,6 +29,7 @@ setup(
         'python-dateutil',
         'xpinyin',
         'yamo>=0.2.16',
+        'xmltodict',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
