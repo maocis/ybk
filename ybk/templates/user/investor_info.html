@@ -1,0 +1,238 @@
+{% extends "user/accounts.html" %}
+
+{% block css %}
+{% endblock %}
+
+
+{% set banks = ['工商银行', '农业银行', '建设银行', '中国银行', 
+                '交通银行', '平安银行', '华夏银行', '中信银行'] %}
+
+
+{% block detail %}
+
+<div class="row" style="-moz-column-width: 18em;
+ -webkit-column-width: 18em;
+ -moz-column-gap: 1em;
+ -webkit-column-gap:1em; 
+ margin: 0px 5px;">
+  {% for i in investors %}
+  <div style="width: 100%; display: inline-block;">
+    <div class="panel panel-info" style="zoom: 0.8">
+      <div class="panel-heading">
+        <div>
+        <span style="font-size: 1.2em;">{{ i.name }}&nbsp;</span>
+        <div class="pull-right">
+          <button name="edit" data-id="{{ i._id }}" class="btn btn-xs btn-default">修改</button>
+          <button name="delete" data-id="{{ i._id }}" class="btn btn-xs btn-default">删除</button>
+        </div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <p>身份证: {{ i.id_number }}</p>
+        <p>身份证照片: 正面<b>{% if i.id_front %}有{% else %}无{% endif %}</b>, 反面<b>{% if i.id_back %}有{% else %}无{% endif %}</b></p>
+        <p>手机号码: {{ i.mobile }}</p>
+        <p>住址: {{ i.province }} {{ i.city }} {{ i.address }}</p>
+        {% for ba in i.bank_accounts %}
+        <p>{{ ba.bank }}: {{ ba.number }}</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+<div class="row">
+    <h4> 添加/修改 投资人</h4>
+    <hr>
+    <form class="form-horizontal" style="zoom: 0.8;">
+      <div class="form-group">
+        <label for="name" class="col-md-1 control-label">姓名</label>
+        <div class="col-md-2">
+          <input type="text" class="form-control" id="name" placeholder="姓名">
+        </div>
+        <label for="mobile" class="col-md-1 control-label">手机</label>
+        <div class="col-md-2">
+          <input type="text" class="form-control" id="mobile" placeholder="手机号码">
+        </div>
+        <label for="id_number" class="col-md-1 control-label">身份证</label>
+        <div class="col-md-2">
+          <input type="text" class="form-control" id="id_number" placeholder="身份证号码">
+        </div>
+        <label class="col-md-1 control-label">证件照</label>
+        <div id="id-image">
+          <div class="col-md-1 text-center" id="front_block" style="line-height:35px;">
+            {% if front_b64 %}
+            <img name="add_front" src="data:image/jpeg;base64,{{front_b64}}" height="30">
+            {% else %}
+            <button name="add_front" class="btn btn-xs btn-default">+正面</button>
+            {% endif %}
+          </div>
+          <div class="col-md-1 text-center" id="back_block" style="line-height:35px;">
+            {% if back_b64 %}
+            <img name="add_back" src="data:image/jpeg;base64,{{back_b64}}" height="30">
+            {% else %}
+            <button name="add_back" class="btn btn-xs btn-default">+反面</button>
+            {% endif %}
+          </div>
+        </div>
+        <input id="add_file" type="file" class="hide">
+        <label for="province" class="col-md-1 control-label">省/直辖市</label>
+        <div class="col-md-2">
+          <input type="text" class="form-control" id="province" placeholder="省/直辖市">
+        </div>
+        <label for="city" class="col-md-1 control-label">市/区县</label>
+        <div class="col-md-2">
+          <input type="text" class="form-control" id="city" placeholder="市/区县">
+        </div>
+        <label for="address" class="col-md-1 control-label">住址</label>
+        <div class="col-md-5">
+          <input type="text" class="form-control" id="address" placeholder="住址">
+        </div>
+      {% for bank in banks %}
+        <label class="col-md-1 control-label">{{ bank }}</label>
+        <div class="col-md-2">
+          <input type="text" class="form-control" name="{{ bank }}" 
+          data-type="bank" placeholder="银行卡号">
+        </div>
+      {% endfor %}
+      </div>
+      <div class="form-group">
+        <div class="col-md-offset-5 col-md-7">
+          <button type="submit" name="save" class="btn btn-primary">添加/修改</button>
+        </div>
+      </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+  // file handling
+  var id_image = 'front';
+  $('#id-image').on('click', '[name=add_front]', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    id_image = 'front';
+    $('#add_file').click();
+  })
+  $('#id-image').on('click', '[name=add_back]', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    id_image = 'back';
+    $('#add_file').click();
+  })
+  $('#add_file').on('change', function(e) {
+    var file = e.target.files[0];
+    if (!file) {
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var content = e.target.result;
+      var b64 = btoa(content);
+      var selector = '#' + id_image + '_block';
+      var img_name = 'add_' + id_image
+      $(selector).html('<img name="' + img_name + 
+        '" src="data:image/jpeg;base64,' + 
+        b64 + '" height="60" style="margin-top: -30px;">');
+    };
+    reader.readAsBinaryString(file);
+  });
+
+
+  // save
+  $('[name=save]').on('click', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    var fimg = $('img[name=add_front]');
+    var bimg = $('img[name=add_back]')
+    var banks = {{ banks | safe }};
+    var bank_accounts = [];
+    for (var i=0; i<banks.length; i++) {
+      var val = $('input[name='+banks[i]+']').val();
+      if (val) {
+        bank_accounts.push(
+          {bank: banks[i],
+          number: val});
+      }
+    }
+    var data = {
+      name: $('#name').val(),
+      mobile: $('#mobile').val(),
+      id_number: $('#id_number').val(),
+      id_front: fimg && fimg.attr('src') || '',
+      id_back: bimg && bimg.attr('src') || '',
+      province: $('#province').val(),
+      city: $('#city').val(),
+      address: $('#address').val(),
+      bank_accounts: bank_accounts,
+    }
+    if (data.id_number) {
+      $.ajax({
+        method: "POST",
+        contentType: 'application/json',
+        url: "{{ url_for('user.investor_upsert') }}",
+        data: JSON.stringify(data),
+        success: function (r) {
+          if (r.status == 200) {
+            location.href = location.href;
+          } else {
+            alert(r.reason);
+          }
+        },
+        dataType: 'json',
+      });
+    }
+  });
+
+  // edit & delete
+
+  $('[name=delete]').on('click', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    if (confirm('确实要删除该账号吗? 删除操作不可逆')) {
+      $.post(
+        "{{ url_for('user.investor_delete') }}",
+        {id: $(this).data('id')},
+        function (r){
+          if (r.status == 200) {
+            location.href = location.href;
+          } else {
+            alert(r.reason);
+          }
+        })
+    }
+  });
+  $('[name=edit]').on('click', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    $.get("{{ url_for('user.investor_edit') }}",
+      {id: $(this).data('id')},
+      function (r) {
+        if (r.status == 200) {
+          $("body").animate({ scrollTop: $('body')[0].scrollHeight}, 500);
+          $('[data-type=bank]').val('');
+          $('#name').val(r.data.name);
+          $('#mobile').val(r.data.mobile);
+          $('#id_number').val(r.data.id_number);
+          $('#province').val(r.data.province);
+          $('#city').val(r.data.city);
+          $('#address').val(r.data.address);
+          if (r.data.id_front_b64) {
+            $('#front_block').html('<img name="add_front"  src="data:image/jpeg;base64,' + r.data.id_front_b64 +
+            '" height="60" style="margin-top: -30px;">');
+          }
+          if (r.data.id_back_b64) {
+            $('#back_block').html('<img name="add_back"  src="data:image/jpeg;base64,' + r.data.id_back_b64 +
+            '" height="60" style="margin-top: -30px;">');
+          }
+          for (var i=0; i<r.data.bank_accounts.length; i++) {
+            var ba = r.data.bank_accounts[i];
+            $('[name='+ba.bank+']').val(ba.number);
+          }
+        } else {
+          alert(r.reason);
+        }
+      }) 
+  })
+</script>
+{% endblock %}

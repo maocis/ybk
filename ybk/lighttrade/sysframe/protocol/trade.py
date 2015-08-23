@@ -4,6 +4,7 @@ import logging
 
 log = logging.getLogger('sysframe')
 
+
 class TradeProtocol(object):
 
     def list_collection(self, symbol=None):
@@ -28,8 +29,7 @@ class TradeProtocol(object):
                 'lowest': float(rec['SP_D']),
             } for rec in recs]
         else:
-            log.error('列表可交易藏品失败: {}'.format(r['RESULT']['MESSAGE']))
-
+            self.error('列表可交易藏品失败: {}'.format(r['RESULT']['MESSAGE']))
 
     def money(self):
         """ 可用资金 """
@@ -42,40 +42,39 @@ class TradeProtocol(object):
             return {'usable': float(rec['UF']),
                     'withdrawable': float(rec['DQ'])}
         else:
-            log.error('可用资金查询失败: {}'.format(r['RESULT']['MESSAGE']))
-
+            self.error('可用资金查询失败: {}'.format(r['RESULT']['MESSAGE']))
 
     def quote_detail(self, symbol):
         """ 盘口数据查询 """
         cid = self.mid + str(symbol)
         d = self.request_tradeweb('commodity_data_query',
-                                   {'USER_ID': self.uid,
-                                    'COMMODITY_ID': cid,
-                                    'SESSION_ID': self.sid})
+                                  {'USER_ID': self.uid,
+                                   'COMMODITY_ID': cid,
+                                   'SESSION_ID': self.sid})
         r = d['GNNT']['REP']
         if r['RESULT']['RETCODE'] == '0':
             rec = r['RESULTLIST']['REC']
             return {
                 'name': rec['CO_N'],
                 'price': float(rec['PR_C']),
-                'bid': float(rec['BID']), # 买一价
-                'ask': float(rec['OFFER']), # 卖一价
+                'bid': float(rec['BID']),  # 买一价
+                'ask': float(rec['OFFER']),  # 卖一价
                 'high': float(rec['HIGH']),
                 'low': float(rec['LOW']),
                 'last': float(rec['LAST']),
-                'average': float(rec['AVG']), # 均价
-                'change': float(rec['CHA']), # 涨跌
-                'volume': int(rec['VO_T']), # 成交量
-                'total': int(rec['TT_O']), # 藏品总量
-                'bids': [{'price': float(rec['BP_'+str(i)]),
-                          'quantity': int(rec['BV_'+str(i)])}
+                'average': float(rec['AVG']),  # 均价
+                'change': float(rec['CHA']),  # 涨跌
+                'volume': int(rec['VO_T']),  # 成交量
+                'total': int(rec['TT_O']),  # 藏品总量
+                'bids': [{'price': float(rec['BP_' + str(i)]),
+                          'quantity': int(rec['BV_' + str(i)])}
                          for i in range(1, 6)],
-                'asks': [{'price': float(rec['SP_'+str(i)]),
-                          'quantity': int(rec['SV_'+str(i)])}
+                'asks': [{'price': float(rec['SP_' + str(i)]),
+                          'quantity': int(rec['SV_' + str(i)])}
                          for i in range(1, 6)],
             }
         else:
-            log.error('盘口数据查询失败: {}'.format(r['RESULT']['MESSAGE']))
+            self.error('盘口数据查询失败: {}'.format(r['RESULT']['MESSAGE']))
 
     def position(self):
         """ 持仓查询 """
@@ -100,8 +99,11 @@ class TradeProtocol(object):
                     'average_price': float(rec['BU_A']),
                     'amount': float(rec['MV']),
                     'profit': float(rec['NP_PF']),
+                    'increase': float(rec['LP_R']),
                     }
                    for rec in recs]
+            for p in pos:
+                p['price'] = p['average_price'] * (1 + p['increase'])
             assert total == len(pos), '还没实现依次取'
 
             log.info('持有品种{}个, 市值{}元, 收益{}元'
@@ -111,8 +113,8 @@ class TradeProtocol(object):
                                ))
             return pos
         else:
-            log.error('持仓查询失败: {}'.format(r['RESULT']['MESSAGE']))
-
+            return []
+            self.error('持仓查询失败: {}'.format(r['RESULT']['MESSAGE']))
 
     def order(self, symbol, price, quantity, type_=1):
         """ 下单
@@ -139,9 +141,8 @@ class TradeProtocol(object):
             log.info('下单成功{} {}x{}'.format(symbol, price, quantity))
             return r['OR_N']
         else:
-            log.error('下单失败: {}'.format(r['MESSAGE']))
+            self.error('下单失败: {}'.format(r['MESSAGE']))
             return False
-
 
     def buy(self, *args, **kwargs):
         kwargs['type_'] = 1
@@ -150,7 +151,6 @@ class TradeProtocol(object):
     def sell(self, *args, **kwargs):
         kwargs['type_'] = 2
         self.order(*args, **kwargs)
-
 
     def order_status(self, order=None):
         """ 委托查询 """
@@ -188,8 +188,7 @@ class TradeProtocol(object):
                      } for rec in r['RESULTLIST']['REC']]
 
         else:
-            log.error('委托查询失败: {}'.format(r['RESULT']['MESSAGE']))
-
+            self.error('委托查询失败: {}'.format(r['RESULT']['MESSAGE']))
 
     def withdraw(self, order):
         """ 撤单 """
@@ -200,7 +199,7 @@ class TradeProtocol(object):
         if r['RESULT']['RETCODE'] == '0':
             log.info('委托单号{}撤单成功'.format(order))
         else:
-            log.error('撤单失败: {}'.format(r['RESULT']['MESSAGE']))
+            self.error('撤单失败: {}'.format(r['RESULT']['MESSAGE']))
 
     def orders(self):
         """ 成交查询 """
@@ -225,4 +224,4 @@ class TradeProtocol(object):
                 'commision': rec['COMM'],
             } for rec in recs]
         else:
-            log.error('成交查询失败: {}'.format(r['RESULT']['MESSAGE']))
+            self.error('成交查询失败: {}'.format(r['RESULT']['MESSAGE']))

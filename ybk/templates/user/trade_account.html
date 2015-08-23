@@ -1,0 +1,538 @@
+{% extends "user/accounts.html" %}
+
+{% block css %}
+<link href="{{ url_for('static', filename='css/selectize.bootstrap3.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/bootstrap-table.min.css') }}" rel="stylesheet">
+
+<style>
+  .panel-heading {padding: 5px 15px;}
+  .panel-body {padding: 5px 15px;}
+  .fixed-table-container thead th .th-inner {padding: 0px 5px;}
+  .fixed-table-container thead th .sortable {padding-right: 0px;}
+  .bootstrap-table .table, .bootstrap-table .table>tbody>tr>td, .bootstrap-table .table>tbody>tr>th, .bootstrap-table .table>tfoot>tr>td, .bootstrap-table .table>tfoot>tr>th, .bootstrap-table .table>thead>tr>td { padding: 3px 5px !important; }
+  .affix { margin-top: -160px;}
+</style>
+{% endblock %}
+
+{% block detail %}
+
+
+<div id="loading" style="display: none; position: absolute; z-index: 1; left: 500px; top: 300px;">
+  <img src="{{ url_for('static', filename='img/pie.svg') }}" width="50">
+</div>
+
+<div id="main" class="row" style="zoom: 0.8;">
+  <div class="col-md-9">
+
+  <div class="alert alert-warning" role="alert">
+    <b>*警告:</b> 该页面未完工, 存在大量已知/未知Bug, 随意操作可能引发各种意外情况, 请在@管理员指导下进行操作。 
+  </div>
+
+  <div class="panel panel-default">
+  <div class="panel-heading">
+      <h3 class="panel-title">账号筛选({{ trade_accounts | length }})</h3>
+    </div>
+    <div class="panel-body">
+      <div class="helper" {% if not investor and not exchange and not bank %}style="display:none;"{% endif %}>
+        <div style="float: left; width: 8%"><b>过滤条件</b></div>
+        <div id="filter" style="float: left; width: 92%">
+          {% if investor %}
+          <li class="selected" style="list-style-type: none; border: 1px solid #ccc; display: inline-block; padding: 2px;">
+          <a id="cancel-investor" href="#" style="text-decoration: none;">投资人: <strong style="color: red;">{{investor.name}}&nbsp;&times;</strong></a>
+          </li>
+          {% endif %}
+
+          {% if bank %}
+          <li class="selected" style="list-style-type: none; border: 1px solid #ccc; display: inline-block; padding: 2px;">
+          <a id="cancel-bank" href="#" style="text-decoration: none;">所绑银行: <strong style="color: red;">{{bank}}&nbsp;&times;</strong></a>
+          </li>
+          {% endif %}
+
+          {% if exchange %}
+          <li class="selected" style="list-style-type: none; border: 1px solid #ccc; display: inline-block; padding: 2px;">
+          <a id="cancel-exchange" href="#" style="text-decoration: none;">交易所: <strong style="color: red;">{{exchange.abbr}}&nbsp;&times;</strong></a>
+          </li>
+          {% endif %}
+        </div>
+
+      </div>
+      {% if not investor %}
+      {% if exchange or bank %}
+      <div class="clearfix"></div>
+      <hr style="margin: 5px 0; padding: 0;">
+      {% endif %}
+      <div>
+        <div style="float: left; width: 8%"><b>投资人</b></div>
+        <div style="float: left; width: 92%">
+        {% for i in investors %}
+          <li style="list-style-type: none; float: left; margin: 0 5px;"><a href="{{ url_for('user.trade_account', 
+                          investor=i._id,
+                          bank=bank,
+                          exchange=exchange.abbr if exchange else '') }}">{{ i.name }}</a></li>
+        {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      {% if not bank %}
+      <div class="clearfix"></div>
+      <hr style="margin: 5px 0; padding: 0;">
+      <div>
+        <div style="float: left; width: 8%"><b>所绑银行</b></div>
+        <div style="float: left; width: 92%">
+        {% for b in thebanks %}
+          <li style="list-style-type: none; float: left; margin: 0 5px;">
+            <a href="{{ url_for('user.trade_account', 
+                                investor=investor._id if investor else '', 
+                                exchange=exchange.abbr if exchange else '',
+                                bank=b) }}">{{ b }}</a>
+          </li>
+        {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      {% if not exchange %}
+      <div class="clearfix"></div>
+      <hr style="margin: 5px 0; padding: 0;">
+      <div>
+        <div style="float: left; width: 8%"><b>交易所</b></div>
+        <div style="float: left; width: 92%">
+        {% for e in exchanges %}
+          <li style="list-style-type: none; float: left; margin: 0 5px;">
+            <a href="{{ url_for('user.trade_account', 
+                                investor=investor._id if investor else '', 
+                                exchange=e.abbr,
+                                bank=bank) }}">{{ e.abbr }}</a>
+          </li>
+        {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+  <div class="toolbar" style="margin-bottom: 10px;">
+    <button id="select-all" name="select-all" class="btn btn-xs btn-default"><input type="checkbox"> 全选</button>
+    <button id="delete-selected" class="btn btn-xs btn-default" disabled>批量删除</button>
+    <button id="update-selected" class="btn btn-xs btn-default" disabled>更新状态</button>
+    <button class="btn btn-xs btn-default" disabled>抢单设定</button>
+    <button class="btn btn-xs btn-default" disabled>批量买入</button>
+    <button class="btn btn-xs btn-default" disabled>批量卖出</button>
+    <button class="btn btn-xs btn-default" disabled>批量清仓</button>
+    <button class="btn btn-xs btn-default" disabled>批量转账</button>
+    <button class="btn btn-xs btn-default" disabled>批量修改密码</button>
+  </div>
+  <!-- table -->
+
+  <table class="table table-condensed"
+          data-toggle="table"
+          data-sort-name="exchange"
+          data-classes=""
+          data-locale="zh-CN">
+    <thead><tr>
+      <th style="width:10px;"></th>
+      <th data-field="exchange" data-sortable="true" style="width:100px;">交易所</th>
+      <th data-sortable="true" style="width:72px;">投资人</th>
+      <th data-sortable="true" style="width:85px;">所绑银行</th>
+      <th style="width:200px;">账号/登录密码/资金密码</th>
+      <th data-sortable="true">状态</th>
+      <th style="width:180px;">操作</th>
+    </tr></thead>
+    <tbody>
+    {% for a in trade_accounts %}
+    <tr>
+      <td class="text-center"><input type="checkbox" name="check-account" data-id="{{ a._id }}" data-investor="{{ a.investor_name }}" data-exchange="{{ a.exchange }}" data-bank="{{ a.bank }}" data-login-name="{{ a.login_name }}"></td>
+      <td>{{ a.exchange }}</td>
+      <td>{{ a.investor_name }}</td>
+      <td>{{ a.bank }}</td>
+      <td>{{ a.login_name }}/{{ a.login_password | mask }}/{{ a.money_password | mask }}</td>
+      <td>
+        {% if a.verified %}
+          <a name="status" href="#">
+            资金: {{a.money.usable | strformat('{:4.2f}') }} &nbsp;
+            市值: {{a.money_position | strformat('{:4.2f}') }}({{a.position | length}})
+          </a>
+        {% else %}
+          {{ a.verify_message }}
+        {% endif %}
+      </td>
+      <td>
+        <button name="edit" class="btn btn-xs btn-default">修改</button>
+        <button name="delete" class="btn btn-xs btn-default">删除</button>
+        <button name="update" class="btn btn-xs btn-default">更新</button>
+        <button name="more" class="btn btn-xs btn-default" disabled>更多</button>
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="7" class="text-center">暂无交易账号, 请在右边栏添加</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  <div class="col-md-3">
+   <div data-spy="affix" data-offset="120">
+    <h4 class="text-right">添加/编辑 账号&nbsp;</h4>
+    <hr>
+    <form class="form-horizontal">
+      <div class="form-group">
+        <label for="investor" class="col-sm-4 control-label">投资人</label>
+        <div class="col-sm-8">
+          <select class="form-control" id="investor" placeholder="投资人">
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="exchange" class="col-sm-4 control-label">交易所</label>
+        <div class="col-sm-8">
+          <select class="form-control" id="exchange" placeholder="交易所">
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="bank" class="col-sm-4 control-label">所绑银行</label>
+        <div class="col-sm-8">
+          <select class="form-control" id="bank" placeholder="所绑银行">
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="login_name" class="col-sm-4 control-label">登录ID</label>
+        <div class="col-sm-8">
+          <input type="text" class="form-control" id="login_name" placeholder="登录ID">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="login_password" class="col-sm-4 control-label">登录密码</label>
+        <div class="col-sm-8">
+          <input type="password" class="form-control" id="login_password" placeholder="登录密码">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="money_password" class="col-sm-4 control-label">资金密码</label>
+        <div class="col-sm-8">
+          <input type="password" class="form-control" id="money_password" placeholder="资金密码">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-offset-4 col-sm-8">
+          <button type="submit" name="save" class="btn btn-primary">添加/修改</button>
+        </div>
+      </div>
+    </form>
+   </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+  {% if config.DEBUG %}
+    <script src="{{ url_for('static', filename='js/sifter.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/microplugin.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/selectize.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap-table.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap-table-zh-CN.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/tableExport.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap-table-export.js') }}"></script>
+  {% else %}
+    {% assets filters="jsmin", output="assets/trade_account.js",
+              "js/tableExport.min.js",
+              "js/sifter.min.js",
+              "js/microplugin.js",
+              "js/selectize.min.js",
+              "js/bootstrap-table.min.js",
+              "js/bootstrap-table-zh-CN.min.js",
+              "js/bootstrap-table-export.js" %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+  {% endif %}
+
+<script>
+  // filtering
+  $('#filter').on('click', '#cancel-exchange', function() {
+    var investor = "{{ investor._id if investor else ''}}";
+    var bank = "{{ bank }}";
+    location.href = "{{ url_for('user.trade_account') }}" + '?investor=' + investor + '&bank=' + bank;
+  });
+  $('#filter').on('click', '#cancel-bank', function() {
+    var exchange = "{{ exchange.abbr if exchange else ''}}";
+    var investor = "{{ investor._id if investor else ''}}";
+    location.href = "{{ url_for('user.trade_account') }}" + '?exchange=' + exchange + '&investor=' + investor;
+  });
+  $('#filter').on('click', '#cancel-investor', function() {
+    var exchange = "{{ exchange.abbr if exchange else ''}}";
+    var bank = "{{ bank }}";
+    location.href = "{{ url_for('user.trade_account') }}" + '?exchange=' + exchange + '&bank=' + bank;
+  });
+
+  // selects
+  var investor_banks = {{ investor_banks | safe }};
+  var exchange_banks = {{ exchange_banks | safe }};
+  var investor_exchanges = {{ investor_exchanges | safe }};
+  
+  var $investor_selectize, investor_selectize;
+  var $exchange_selectize, exchange_selectize;
+  var $bank_selectize, bank_selectize;
+  var exchange_list = {{ exchange_list | safe }};
+  var investor_list = {{ investor_list | safe }};
+
+  $investor_selectize = $('#investor').selectize({
+    options: investor_list,
+    onChange: function(value) {
+      if (value) {
+        exchange_selectize.clearOptions();
+        bank_selectize.clearOptions();
+        var exchanges = investor_exchanges[value];
+        for (var i=0; i<exchanges.length; i++) {
+          exchange_selectize.addOption({text: exchanges[i], value: exchanges[i]})
+        }
+        bank_selectize.clearOptions();
+        var banks = investor_banks[value];
+        for (var i=0; i<banks.length; i++) {
+          bank_selectize.addOption({text: banks[i], value: banks[i]})
+        }
+      }
+    }
+  })
+  $exchange_selectize = $('#exchange').selectize({
+    options: exchange_list,
+    onChange: function(value) {
+      if (value) {
+        bank_selectize.clearOptions();
+        var banks1 = investor_banks[$('#investor').val()];
+        var banks2 = exchange_banks[value];
+        var banks = banks1.filter(function(n) {
+          return banks2.indexOf(n) != -1
+        });
+        for (var i=0; i<banks.length; i++) {
+          bank_selectize.addOption({text: banks[i], value: banks[i]});
+        }
+      }
+    }
+  })
+  $bank_selectize = $('#bank').selectize({})
+  investor_selectize = $investor_selectize[0].selectize;
+  exchange_selectize = $exchange_selectize[0].selectize;
+  bank_selectize = $bank_selectize[0].selectize;
+
+  // save
+  $('[name=save]').on('click', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    var data = {
+      investor: $('#investor').val(),
+      exchange: $('#exchange').val(),
+      bank: $('#bank').val(),
+      login_name: $('#login_name').val(),
+      login_password: $('#login_password').val(),
+      money_password: $('#money_password').val(),
+    }
+    if (data.investor && data.exchange && data.bank && data.login_name) {
+      $.post(
+        "{{ url_for('user.trade_account_edit') }}",
+        data,
+        function (r){
+          if (r.status == 200) {
+            location.href = location.href;
+          } else {
+            alert(r.reason);
+          }
+        })
+    }
+  })
+
+  // checkboxes
+  var select_all = false;
+  $('#select-all').on('click', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    select_all = !select_all
+    $('input[type=checkbox]').prop('checked', select_all);
+    update_batchop_status();
+  })
+
+  $('table').on('change', 'input[name=check-account]', function(e) {
+    var total_checked = $('input[name=check-account]:checked').length;
+    var total = $('input[name=check-account]').length;
+    if (total > total_checked) {
+      select_all = false;
+      $('#select-all input').prop('checked', false);
+    } else {
+      select_all = true;
+      $('#select-all input').prop('checked', true);
+    }
+    update_batchop_status();
+  })
+
+  function update_batchop_status() {
+    if ($('input[type=checkbox]:checked').length > 0) {
+      $('#delete-selected').prop('disabled', false);
+      $('#update-selected').prop('disabled', false);
+    } else {
+      $('#delete-selected').prop('disabled', true);
+      $('#update-selected').prop('disabled', true);
+    }
+  }
+
+  // status
+  var account_positions = {{ account_positions | safe }};
+  var account_moneys = {{ account_moneys | safe }};
+
+  setTimeout(function() {
+    $('[name=status]').each(function(i, e) {
+      $div = $(this);
+      var cb = $div.parent().parent().children().first().children().first()
+      var position = account_positions[cb.data('id')];
+      var money = account_moneys[cb.data('id')];
+
+      var html_status = '';
+      var total_profit = 0;
+      var total_mv = 0;
+      for (var i=0; i<position.length; i++) {
+        total_profit += position[i].profit;
+        total_mv += position[i].price * position[i].quantity;
+      }
+      total_mv = Math.round(total_mv * 100) / 100;
+      total_profit = Math.round(total_profit * 100) / 100;
+      var html_money = '<p><span style="padding: 0px 5px;">可用资金: ' + money.usable + '元</span>' +
+        '<span style="padding: 0px 5px;">可取现金: ' + 
+        money.withdrawable + '元</span>' + 
+        '<span style="padding: 0px 5px;">总市值: ' + 
+        total_mv + '元</span>' + 
+        '<span style="padding: 0px 5px;">总盈利: ' + 
+        total_profit + '元</span>' + 
+        '</p>';
+
+      var html_position = '<table class="table table-condensed table-bordered">' + 
+            '<thead><tr>' + 
+            '<th style="padding:5px;">简称</th>' + 
+            '<th style="padding:5px;">代码</th>' + 
+            '<th class="text-right" style="padding:5px;">买入价</th>' +
+            '<th class="text-right" style="padding:5px;">数量</th>' + 
+            '<th class="text-right" style="padding:5px;">盈利</th>' + 
+            '<th class="text-right" style="padding:5px;">涨幅</th>' + 
+            '</tr></thead>' + 
+            '<tbody>';
+      for (var i = 0; i < position.length; i++) {
+        var d = position[i];
+        html_position += '<tr><td>' + d.name + '</td>' + 
+              '<td>' + d.symbol + '</td>' + 
+              '<td class="text-right" style="padding:5px;">' + ((Math.round(d.average_price * 100) / 100) || '-') + '元</td>' + 
+              '<td class="text-right" style="padding:5px;">' + d.quantity + 
+              '<td class="text-right" style="padding:5px;">' + ((Math.round(d.profit * 100) / 100) || '-') + '元</td>' + 
+              '<td class="text-right" style="padding:5px;">' + ((Math.round(d.profit / d.average_price / d.quantity * 10000) / 100) || '-') + '%</td></tr>';
+      }
+      html_position += '</tbody></table>'
+      $div.tooltip({
+              placement: 'top',
+              template: '<div class="popover" role="tooltip" style="min-width: 500px; font-size: 0.8em;">' + 
+                  '<div class="arrow"></div>' + 
+                  '<h3 class="popover-title">账户详情</h3>' + 
+                  '<div class="popover-content">' + 
+                    html_status +
+                    html_money + 
+                    html_position + 
+                  '</div>' + 
+                '</div>', 
+              html: true, 
+              title: 'x'
+            });
+    })
+  }, 300)
+
+  // edit 
+  $('table').on('click', '[name=edit]', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    var cb = $(this).parent().parent().children().first().children().first()
+    investor_selectize.setValue(cb.data('investor'));
+    setTimeout(function() {exchange_selectize.setValue(cb.data('exchange'));}, 5);
+    setTimeout(function() {bank_selectize.setValue(cb.data('bank'));}, 10);
+    $('#login_name').val(cb.data('login-name'));
+    $('#login_password').focus();
+  })
+
+  function delete_ids(ids) {
+      $.post(
+        "{{ url_for('user.trade_account_delete') }}",
+        {ids: ids},
+        function (r) {
+          if (r.status == 200) {
+            location.href=location.href;
+          } else {
+            alert('删除失败: '+r.reason);
+          }
+        })    
+  }
+
+  // delete
+  $('table').on('click', '[name=delete]', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    var cb = $(this).parent().parent().children().first().children().first()
+    if (confirm('确认要删除[' + cb.data('exchange') + ']的[' + cb.data('investor') + ']的账号[' + cb.data('login-name') + ']?')) {
+      delete_ids([cb.data('id')]);
+    }
+  })
+
+  $('#delete-selected').on('click', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    var ids = [];
+    $('[name=check-account]:checked').each(function(i, v) {ids.push($(v).data('id'))});
+    if ((ids.length > 0) && 
+      confirm('确认要删除选中的' + ids.length + '个账号吗?')) {
+      delete_ids(ids);
+    }
+  })
+
+  // update
+  function display_loading() {
+    $('#loading').show(500);
+    $('#main').css({opacity: 0.5});
+  }
+  function hide_loading() {
+    $('#main').css({opacity: 1})
+    $('#loading').hide();
+  }
+
+  function update_ids(ids) {
+    setTimeout(display_loading, 0);
+    $.post(
+      "{{ url_for('user.trade_account_update') }}",
+      {ids: ids},
+      function (r) {
+        hide_loading();
+        if (r.status != 200) {
+          alert('更新失败: '+r.reason);
+        }
+        location.href=location.href;
+      })
+  }
+
+  $('table').on('click', '[name=update]', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    var cb = $(this).parent().parent().children().first().children().first()
+    update_ids([cb.data('id')]);
+  })
+
+  $('#update-selected').on('click', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    var ids = [];
+    $('[name=check-account]:checked').each(function(i, v) {ids.push($(v).data('id'))});
+    update_ids(ids);
+  })
+
+
+  // add_investor && add_exchange
+  {% if add_investor %}
+    investor_selectize.setValue("{{ add_investor }}");
+  {% endif %}
+  {% if add_exchange %}
+    exchange_selectize.setValue("{{ add_exchange }}");
+  {% endif %}
+</script>
+{% endblock %}

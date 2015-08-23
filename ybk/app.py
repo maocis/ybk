@@ -99,6 +99,14 @@ def configure_template_filters(app):
         if t:
             return (t + timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')
 
+    @app.template_filter()
+    def mask(v):
+        v = str(v)
+        if len(v) <= 2:
+            return v
+        else:
+            return v[0] + '*' * (len(v) - 2) + v[-1]
+
 
 def configure_error_handlers(app):
     @app.errorhandler(403)

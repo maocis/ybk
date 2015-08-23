@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block main %}
+
+  <div class="right-tabs clearfix">
+  <ul class="nav nav-tabs" style="font-size: 1.5em; margin-bottom: 10px;">
+    <li role="presentation" {% if nav == "accounts" %}class="active"{% endif %}><a href="{{ url_for('user.accounts') }}">账户中心</a></li>
+    <li role="presentation" {% if nav == "position" %}class="active"{% endif %}><a href="{{ url_for('user.position') }}">持仓管理</a></li>
+  </ul>
+  </div>
+
+  {% block submain %}
+  {% endblock %}
+
+{% endblock %}

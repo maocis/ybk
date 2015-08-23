@@ -1,0 +1,19 @@
+{% extends "user/layout.html" %}
+{% block submain %}
+
+<div class="row" style="margin-top: 5px;">
+    <div style="width:120px; margin-left:15px; float: left; margin-top:10px;">
+        <div class="list-group">
+          <a href="{{ url_for('user.personal_info') }}" class="list-group-item {% if tab == 'personal_info' %}active{% endif %}">
+            个人信息 &raquo;
+          </a>
+          <a href="{{ url_for('user.investor_info') }}" class="list-group-item {% if tab == 'investor_info' %}active{% endif %}">投资人信息 &raquo;</a>
+          <a href="{{ url_for('user.trade_account') }}" class="list-group-item {% if tab == 'trade_account' %}active{% endif %}">交易账号 &raquo;</a>
+        </div>
+    </div>
+    <div style="width:1000px; margin: 10px 15px; float: left;">
+    {% block detail %}
+    {% endblock %}
+    </div>
+</div>
+{% endblock %}

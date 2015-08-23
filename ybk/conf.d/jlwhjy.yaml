@@ -36,9 +36,9 @@ result:
 opening:
     url: http://www.jlwhjy.com/kh/
     guide: http://www.jlwhjy.com/web/about/14.html
-    bank: [工商银行]
-    code: [-]
-    name: [金陵文化产权交易中心]
+    bank: [工商银行, 农业银行]
+    code: [-, -]
+    name: [金陵文化产权交易中心, -]
     download: http://www.jlwhjy.com/web/about/33.html
 quote:
     realtime:

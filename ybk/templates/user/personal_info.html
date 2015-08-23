@@ -1,0 +1,48 @@
+{% extends "user/accounts.html" %}
+{% block detail %}
+
+<div class="panel panel-info" style="zoom: 0.8;">
+  <div class="panel-heading">
+    <h3 class="panel-title">基本信息</h3>
+  </div>
+  <div class="panel-body">
+    用户名: {{ current_user.username }} <p>注册时间: {{ current_user.created_at | bjtime }}</p>
+  </div>
+</div>
+
+<div class="panel panel-info" style="zoom: 0.8;">
+  <div class="panel-heading">
+    <h3 class="panel-title">交易账号矩阵</h3>
+  </div>
+  <div class="panel-body" style="overflow:scroll;">
+    <table class="table table-condensed table-bordered">
+      <thead><tr>
+        <th style="min-width: 120px;">交易所\投资人</th>
+        {% for i in investors %}
+        <th style="min-width: 120px;">{{ i.name }}</th>
+        {% else %}
+        <th style="padding-left: 100px;">还没有投资人, 去<a href="{{ url_for('user.investor_info') }}">添加</a>吧</th>
+        {% endfor %}
+      </tr></thead>
+      <tbody>
+        {% for ex, trade_accounts in account_table.items() %}
+        <tr>
+          <td>{{ ex }}</td>
+          {% for ta in trade_accounts %}
+          {% if ta %}
+          <td style="font-size: 0.8em; margin: 0px; padding: 10px 5px;">{{ ta.bank }}/{{ ta.login_name }}</td>
+          {% else %}
+          <td><a class="btn btn-xs btn-default" href="{{ url_for('user.trade_account', add_investor=investors[loop.index-1].name, add_exchange=ex) }}">&plus;添加交易账号</a></td>
+          {% endif %}
+          {% endfor %}
+        </tr>
+        {% else %}
+        <tr><td style="padding-left: 200px;" colspan="{{ colspan }}">还没有交易账号, 去<a href="{{ url_for('user.trade_account') }}">添加</a>吧</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>    
+  </div>
+</div>
+
+</div>
+{% endblock %}

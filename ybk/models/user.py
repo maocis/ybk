@@ -5,10 +5,15 @@ from datetime import datetime, timedelta
 import bcrypt
 
 from yamo import (
-    Document, IDFormatter, Index,
+    Document, EmbeddedDocument, IDFormatter, Index,
     BooleanField,
     StringField,
+    BinaryField,
+    ListField,
+    IntField,
+    FloatField,
     DateTimeField,
+    EmbeddedField,
 )
 
 
@@ -75,6 +80,8 @@ class User(Document):
     username = StringField()
     password = StringField()    # bcrypt hashed
     invited_by = StringField()  # 邀请人id
+    ymoney = IntField(default=1000)  # Y币
+    reserved_ymoney = IntField(default=0)  # 预扣Y币
     created_at = DateTimeField(created=True)
     last_login_at = DateTimeField(modified=True)
 
@@ -143,3 +150,110 @@ class User(Document):
             if bcrypt.hashpw(password, hashed) == hashed:
                 return u
         return None
+
+
+class BankAccount(EmbeddedDocument):
+
+    """ 银行账号 """
+
+    bank = StringField(required=True)  # 建设银行/...
+    number = StringField(required=True)
+    front = BinaryField()
+    back = BinaryField()
+
+
+class Investor(Document):
+
+    """ 投资人 """
+
+    class Meta:
+        idf = IDFormatter('{id_number}')
+        idx1 = Index(['user', 'order'], unique=True)
+
+    user = StringField(required=True)  # 用户
+    order = IntField(required=True)  # 顺序
+    name = StringField(required=True)
+    id_type = StringField(required=True)  # 身份证/..
+    id_number = StringField(required=True)  # 号码
+    id_front = BinaryField()  # 照片
+    id_back = BinaryField()
+    mobile = StringField(required=True)
+    province = StringField(required=True)
+    city = StringField(required=True)
+    address = StringField(required=True)
+    bank_accounts = ListField(EmbeddedField(BankAccount))
+
+    @classmethod
+    def get_user_order(cls, user):
+        i = cls.query_one({'user': user}, sort=[('order', -1)], limit=1)
+        if not i:
+            return 1
+        else:
+            return i.order + 1
+
+    @classmethod
+    def user_investors(cls, user):
+        return list(cls.query({'user': user}, sort=[('order', 1)]))
+
+
+class MyPosition(EmbeddedDocument):
+
+    """ 持仓 """
+    name = StringField(required=True)
+    symbol = StringField(required=True)
+    average_price = FloatField(required=True)
+    quantity = IntField(required=True)
+    price = FloatField(required=True)
+    sellable = IntField()
+    profit = FloatField()
+
+
+class MyMoney(EmbeddedDocument):
+
+    """ 资金 """
+    usable = FloatField(required=True)
+    withdrawable = FloatField(required=True)
+
+
+class TradeAccount(Document):
+
+    """ 交易账号 """
+
+    class Meta:
+        idf = IDFormatter('{exchange}_{login_name}')
+        idx1 = Index(['investor', 'exchange'], unique=True)
+        idx2 = Index(['exchange', 'login_name'], unique=True)
+        idx3 = Index('user')
+
+    user = StringField(required=True)  # 所属用户
+    investor = StringField(required=True)  # 投资人
+    bank = StringField(required=True)  # 工商银行/...
+    exchange = StringField(required=True)  # 交易所简称
+    login_name = StringField(required=True)  # 账号
+    login_password = StringField(required=False)  # 密码
+    money_password = StringField(required=False)  # 资金密码
+
+    verify_message = StringField(default='请先更新状态', required=False)  # 验证失败的原因
+    verified = BooleanField(default=False)  # 验证通过
+    grab_buy_on = BooleanField(default=False)  # 抢单买
+    grab_sell_on = BooleanField(default=False)  # 抢单卖
+
+    position = ListField(EmbeddedField(MyPosition), default=[])
+    money = EmbeddedField(MyMoney, default={})
+
+    @classmethod
+    def user_accounts(cls, user):
+        return list(cls.query({'user': user}))
+
+    @property
+    def investor_name(self):
+        investors = list(Investor.cached(5).query({'user': self.user}))
+        for i in investors:
+            if i._id == self.investor:
+                return i.name
+        else:
+            return '未找到'
+
+    @property
+    def money_position(self):
+        return sum(p.price * p.quantity for p in self.position)
