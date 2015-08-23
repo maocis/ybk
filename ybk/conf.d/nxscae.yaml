@@ -30,9 +30,9 @@ result:
 opening:
     url: http://222.185.140.167:9004/SelfOpenAccount/index.jsp?brokerId=8001
     guide: http://www.nxscae.com/zn/lc/2015-03-21/74.html
-    bank: [交通银行]
-    code: [SPMS000025]
-    name: [宁夏文化艺术品产权交易中心有限公司]
+    bank: [交通银行, 建设银行]
+    code: [SPMS000025, -]
+    name: [宁夏文化艺术品产权交易中心有限公司, 宁夏文化艺术品产权交易中心有限公司]
     download: http://www.nxscae.com/zn/xz/
 quote:
     realtime:

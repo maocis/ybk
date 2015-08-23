@@ -19,7 +19,7 @@ class UserProtocol(object):
         assert r['@name'] == 'logon'
         rc = int(r['RESULT']['RETCODE'])
         if rc < 0:
-            log.error('登录失败:{}'.format(r['RESULT']['MESSAGE']))
+            self.error('登录失败:{}'.format(r['RESULT']['MESSAGE']))
             return False
         else:
             self.sid = rc
@@ -40,7 +40,7 @@ class UserProtocol(object):
         if self.check_user(module, mode):
             self.module_in_use = module
         else:
-            log.error('无法使用交易模块')
+            self.error('无法使用交易模块')
 
     def check_user(self, module=99, mode='front'):
         d = self.request_xml('check_user', {'USER_ID': self.uid,
@@ -55,7 +55,7 @@ class UserProtocol(object):
             log.info('用户模块检查通过')
             return True
         else:
-            log.error('用户模块检查失败:{}'.format(r['MESSAGE']))
+            self.error('用户模块检查失败:{}'.format(r['MESSAGE']))
             return False
 
     def keep_alive(self):
@@ -75,7 +75,7 @@ class UserProtocol(object):
             self.mid = r['RESULTLIST']['REC']['MA_I']
             return r['RESULTLIST']['REC']
         else:
-            log.error('市场查询失败: {}'.format(r['RESULT']['MESSAGE']))
+            self.error('市场查询失败: {}'.format(r['RESULT']['MESSAGE']))
 
 
     def sync_server_time(self):
@@ -91,7 +91,7 @@ class UserProtocol(object):
             log.info('服务器时间差: {}毫秒'.format(self.time_offset*1000))
             log.info('服务器延迟: {}毫秒'.format(self.latency*1000))
         else:
-            log.error('同步时间失败: {}'.format(r['MESSAGE']))
+            self.error('同步时间失败: {}'.format(r['MESSAGE']))
 
 
     def change_password(self, password):
@@ -106,4 +106,4 @@ class UserProtocol(object):
             self.password = password
             log.info('密码已修改为{}'.format(password))
         else:
-            log.error('修改密码失败: {}'.format(r['MESSAGE']))
+            self.error('修改密码失败: {}'.format(r['MESSAGE']))

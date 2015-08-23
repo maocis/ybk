@@ -36,6 +36,12 @@ class Trader(object):
                              tradeweb_url=d['tradeweb_url'])
         self.client.login(username, password)
 
+    def __getattr__(self, key):
+        if key in self.__dict__:
+            return self.__dict__[key]
+        else:
+            return getattr(self.client, key)
+
     @property
     def server_time(self):
         t0 = time.time()

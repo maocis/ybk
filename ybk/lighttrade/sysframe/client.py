@@ -35,6 +35,11 @@ class Client(UserProtocol, TradeProtocol):
         self.password = None
         self.latency = None
         self.time_offset = None
+        self.last_error = ''
+
+    def error(self, msg):
+        self.last_error = msg
+        log.error(msg)
 
     @property
     def is_logged_in(self):

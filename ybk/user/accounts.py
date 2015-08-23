@@ -4,6 +4,8 @@ import base64
 from flask import render_template, redirect, request, jsonify
 from flask.ext.login import login_required, current_user
 
+from ybk.settings import CONFS
+from ybk.trade import update_trade_account
 from ybk.models import Investor, TradeAccount, Exchange
 
 from .views import user
@@ -126,9 +128,112 @@ def trade_account():
     tab = 'trade_account'
     investor = request.args.get('investor', '')
     exchange = request.args.get('exchange', '')
+    add_investor = request.args.get('add_investor', '')
+    add_exchange = request.args.get('add_exchange', '')
+    bank = request.args.get('bank', '')
     investor = Investor.query_one({'_id': investor})
     exchange = Exchange.query_one({'abbr': exchange})
     user = current_user._id
+    trade_accounts = TradeAccount.user_accounts(user)
+    if investor:
+        trade_accounts = [ta for ta in trade_accounts
+                          if ta.investor == investor._id]
+    if exchange:
+        trade_accounts = [ta for ta in trade_accounts
+                          if ta.exchange == exchange.abbr]
+    if bank:
+        trade_accounts = [ta for ta in trade_accounts
+                          if ta.bank == bank]
+
     investors = Investor.user_investors(user)
     exchanges = sorted(list(Exchange.query()), key=lambda x: x.abbr)
+
+    exchange_list = [{'text': e.abbr, 'value': e.abbr} for e in exchanges]
+    investor_list = [{'text': i.name, 'value': i.name} for i in investors]
+
+    investor_banks = {i.name: sorted([ba.bank for ba in i.bank_accounts])
+                      for i in investors}
+    exchange_banks = {conf['abbr']: sorted(conf['opening']['bank'])
+                      for conf in CONFS}
+    bank_exchanges = {}
+    for ex, banks in exchange_banks.items():
+        for b in banks:
+            if b not in bank_exchanges:
+                bank_exchanges[b] = []
+            bank_exchanges[b].append(ex)
+    investor_exchanges = {
+        invesotr: sorted(set(sum(
+            [bank_exchanges[b] for b in banks], [])))
+        for invesotr, banks in investor_banks.items()
+    }
+
+    avail_investors = set(ta.investor for ta in trade_accounts)
+    avail_exchanges = set(ta.exchange for ta in trade_accounts)
+    avail_banks = set(ta.bank for ta in trade_accounts)
+    investors = [i for i in investors if i._id in avail_investors]
+    exchanges = [e for e in exchanges if e.abbr in avail_exchanges]
+
+    thebanks = sorted(list(avail_banks))
+
+    account_positions = {ta._id: [p.to_dict() for p in ta.position]
+                         for ta in trade_accounts}
+    account_moneys = {ta._id: ta.money.to_dict() if ta.money else {}
+                      for ta in trade_accounts}
+
     return render_template('user/trade_account.html', **locals())
+
+
+@user.route('/user/trade_account/edit', methods=['POST'])
+def trade_account_edit():
+    investor_name = request.form.get('investor')
+    i = Investor.query_one({'name': investor_name})
+    if not i:
+        return jsonify(
+            status=404,
+            reason='投资人name={}未找到'.format(investor_name))
+    user = current_user._id
+
+    ta = {
+        'user': user,
+        'investor': i._id,
+        'exchange': request.form.get('exchange'),
+        'bank': request.form.get('bank'),
+        'login_name': request.form.get('login_name'),
+        'login_password': request.form.get('login_password'),
+        'money_password': request.form.get('money_password'),
+    }
+    try:
+        TradeAccount(ta).upsert()
+    except Exception as e:
+        TradeAccount.delete_one({'investor': ta['investor'],
+                                 'exchange': ta['exchange']})
+        try:
+            TradeAccount(ta).upsert()
+        except Exception as e:
+            return jsonify(status=500, reason=str(e))
+
+    return jsonify(status=200, reason='')
+
+
+@user.route('/user/trade_account/delete', methods=['POST'])
+def trade_account_delete():
+    ids = request.form.getlist('ids[]')
+    try:
+        TradeAccount.delete_many({'_id': {'$in': ids}})
+    except Exception as e:
+        return jsonify(status=500, reason=str(e))
+
+    return jsonify(status=200, reason='')
+
+
+@user.route('/user/trade_account/update', methods=['POST'])
+def trade_account_update():
+    ids = request.form.getlist('ids[]')
+    try:
+        trade_accounts = TradeAccount.query({'_id': {'$in': ids}})
+        for ta in trade_accounts:
+            update_trade_account(ta)
+    except Exception as e:
+        return jsonify(status=500, reason=str(e))
+
+    return jsonify(status=200, reason='')

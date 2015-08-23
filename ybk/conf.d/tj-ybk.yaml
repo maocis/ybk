@@ -33,9 +33,9 @@ result:
 opening:
     url: 
     guide: 
-    bank: []
-    code: []
-    name: []
+    bank: [建设银行]
+    code: [-]
+    name: [-]
     download: 
 quote:
     realtime:

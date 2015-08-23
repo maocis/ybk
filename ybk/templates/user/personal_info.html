@@ -30,9 +30,9 @@
           <td>{{ ex }}</td>
           {% for ta in trade_accounts %}
           {% if ta %}
-          <td>{{ ta.username }}({{ ta.bank }})</td>
+          <td style="font-size: 0.8em; margin: 0px; padding: 10px 5px;">{{ ta.bank }}/{{ ta.login_name }}</td>
           {% else %}
-          <td><button class="btn btn-xs btn-default">&plus;添加交易账号</button></td>
+          <td><a class="btn btn-xs btn-default" href="{{ url_for('user.trade_account', add_investor=investors[loop.index-1].name, add_exchange=ex) }}">&plus;添加交易账号</a></td>
           {% endif %}
           {% endfor %}
         </tr>
