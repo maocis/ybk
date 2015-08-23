@@ -12,8 +12,11 @@ log = logging.getLogger('trader')
 
 configfile = open(os.path.join(os.path.dirname(__file__), 'trading.yaml'))
 config = yaml.load(configfile)
-accountfile = open(os.path.join(os.path.dirname(__file__), 'accounts.yaml'))
-account = yaml.load(accountfile)
+try:
+    accountfile = open(os.path.join(os.path.dirname(__file__), 'accounts.yaml'))
+    account = yaml.load(accountfile)
+except:
+    account = {}
 
 class Trader(object):
     """ 交易调度 """
