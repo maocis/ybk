@@ -3,7 +3,7 @@
 from flask import request, jsonify, current_app
 import requests
 
-from ybk.models import User, Code
+from ybk.models import Code
 from ybk.log import serve_log as log
 
 from .views import api
@@ -13,15 +13,16 @@ from .views import api
 def send_code():
     mobile = request.form.get('mobile')
     type_ = request.form.get('type')
-    cc, reason = Code.can_create(mobile, type_)
-    if not cc:
-        return jsonify(status=400, reason=reason)
-    else:
-        c = Code.create_code(mobile)
-        r = send_sms(c.mobile, c.text)
-        if r['status'] != 200:
-            c.delete()
-        return jsonify(**r)
+    if type_ == 'register':
+        cc, reason = Code.can_create(mobile, type_)
+        if not cc:
+            return jsonify(status=400, reason=reason)
+
+    c = Code.create_code(mobile)
+    r = send_sms(c.mobile, c.text)
+    if r['status'] != 200:
+        c.delete()
+    return jsonify(**r)
 
 
 @api.route('/api/verify_code/', methods=['POST'])

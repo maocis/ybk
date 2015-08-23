@@ -141,6 +141,10 @@ class User(Document):
         return bcrypt.hashpw(password.encode('utf-8'),
                              bcrypt.gensalt()).decode('utf-8')
 
+    def change_password(self, password):
+        self.password = self.create_password(password)
+        self.upsert()
+
     @classmethod
     def check_login(cls, mobile, password):
         u = cls.query_one({'mobile': mobile})
