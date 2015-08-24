@@ -43,8 +43,8 @@ opening:
     download: http://qbyp.gzcmex.com/web/news/news_detail.jsp?parentid=56&classid=77&infoid=199
 quote:
     realtime:
-        url: 
+        url: http://qbyp.gzcmex.com:16920/tradeweb/hq/getHqV_lbData.jsp
         type: getHqV_lbData
     history:
-        url:  
+        url: http://qbyp.gzcmex.com:16934
         type: sysframe

@@ -131,7 +131,7 @@
     quote_http: http://qbyp.gzcmex.com:16934
     quote_tcp: tcp://qbyp.gzcmex.com:16933
     system: sysframe
-    tradeweb_url: http://qbyp.gzcmex.com:16935/issue_tradeweb/httpXmlServlet
+    tradeweb_url: http://qbyp.gzcmex.com:16925/issue_tradeweb/httpXmlServlet
 黄金屋:
     front_url: http://58.19.228.224:16922/common_front/checkneedless/user/logon/logon.action
     index_url: http://58.19.228.224:16922/common_front/front/frame/index_PC.jsp
