@@ -14,6 +14,7 @@ setup(
     package_data={'': ['LICENSE']},
     license=open('LICENSE').read(),
     install_requires=[
+        'pymongo>=3',
         'requests>=2.5',
         'flask>=0.10',
         'flask-login',
