@@ -146,11 +146,11 @@ class TradeProtocol(object):
 
     def buy(self, *args, **kwargs):
         kwargs['type_'] = 1
-        self.order(*args, **kwargs)
+        return self.order(*args, **kwargs)
 
     def sell(self, *args, **kwargs):
         kwargs['type_'] = 2
-        self.order(*args, **kwargs)
+        return self.order(*args, **kwargs)
 
     def order_status(self, order=None):
         """ 委托查询 """
