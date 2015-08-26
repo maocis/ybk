@@ -1,0 +1,46 @@
+url: http://www.china-jsysp.com/
+name: 中国艺交所金属艺术品交易中心
+abbr: 中艺金属所
+notrade: 6
+cashout: 2
+stock:
+    index: 
+        - http://www.china-jsysp.com/web/news/news.jsp?parentid=46&classid=67 
+    relative: http://www.china-jsysp.com
+    detail: <a[^>]*href="([^"]+)"[^>]*><img[^>]*>([^<]*(征集|托管|入库)[^<]*)</a></li>\s*<li[^>]*>(\d+/\d+/\d+)
+    fields: [url, title, _, published_at]
+    encoding: gb18030
+    page: 
+    maxpage: 1
+offer:
+    index: 
+        - http://www.china-jsysp.com/web/news/news.jsp?parentid=46&classid=67 
+    relative: http://www.china-jsysp.com
+    detail: <a[^>]*href="([^"]+)"[^>]*><img[^>]*>([^<]*(挂牌交易|申购公告)[^<]*)</a></li>\s*<li[^>]*>(\d+/\d+/\d+)
+    fields: [url, title, _, published_at]
+    encoding: gb18030
+    page: 
+    maxpage: 1
+result:
+    index: 
+        - http://www.china-jsysp.com/web/news/news.jsp?parentid=46&classid=67 
+    relative: http://www.china-jsysp.com
+    detail: <a[^>]*href="([^"]+)"[^>]*><img[^>]*>([^<]*(中签)[^<]*)</a></li>\s*<li[^>]*>(\d+/\d+/\d+)
+    fields: [url, title, _, published_at]
+    encoding: gb18030
+    page: 
+    maxpage: 1
+opening:
+    url: 
+    guide: 
+    bank: []
+    code: []
+    name: []
+    download: 
+quote:
+    realtime:
+        url: 
+        type: getHqV_lbData
+    history:
+        url:  
+        type: sysframe
