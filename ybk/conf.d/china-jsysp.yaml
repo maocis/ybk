@@ -31,16 +31,16 @@ result:
     page: 
     maxpage: 1
 opening:
-    url: 
-    guide: 
-    bank: []
-    code: []
-    name: []
+    url: http://www.china-jsysp.com/web/news/OpenAccount.jsp?parentid=45&classid=75
+    guide: http://www.china-jsysp.com/web/news/news_detail.jsp?parentid=47&classid=53&infoid=83
+    bank: [农业银行, 平安银行]
+    code: [-, -]
+    name: [-, -]
     download: 
 quote:
     realtime:
         url: 
         type: getHqV_lbData
     history:
-        url:  
+        url: http://118.145.4.146:16914
         type: sysframe

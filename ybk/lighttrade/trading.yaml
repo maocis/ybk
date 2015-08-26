@@ -146,3 +146,10 @@
     quote_tcp: tcp://175.102.34.84:16983
     system: sysframe
     tradeweb_url: http://175.102.34.84:16985/issue_tradeweb/httpXmlServlet
+中艺金属所:
+    front_url: http://118.145.4.146:16926/common_front/checkneedless/user/logon/logon.action
+    index_url: http://118.145.4.146:16926/common_front/front/frame/index_PC.jsp
+    quote_http: http://118.145.4.146:16914
+    quote_tcp: tcp://118.145.4.146:16913
+    system: sysframe
+    tradeweb_url: http://118.145.4.146:16915/issue_tradeweb/httpXmlServlet
