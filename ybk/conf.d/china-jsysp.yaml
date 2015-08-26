@@ -2,7 +2,7 @@ url: http://www.china-jsysp.com/
 name: 中国艺交所金属艺术品交易中心
 abbr: 中艺金属所
 notrade: 6
-cashout: 2
+cashout: 1
 stock:
     index: 
         - http://www.china-jsysp.com/web/news/news.jsp?parentid=46&classid=67 
