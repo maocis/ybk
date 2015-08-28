@@ -39,7 +39,7 @@ opening:
     download: 
 quote:
     realtime:
-        url: 
+        url: http://118.145.4.146:16922/tradeweb/hq/getHqV_lbData.jsp
         type: getHqV_lbData
     history:
         url: http://118.145.4.146:16914
