@@ -7,6 +7,7 @@ from flask.ext.login import login_required, current_user
 from ybk.settings import CONFS
 from ybk.trade import update_trade_account
 from ybk.models import Investor, TradeAccount, Exchange
+from ybk.lighttrade import Trader
 
 from .views import user
 
@@ -237,3 +238,31 @@ def trade_account_update():
         return jsonify(status=500, reason=str(e))
 
     return jsonify(status=200, reason='')
+
+
+@user.route('/user/trade_account/change_password', methods=['POST'])
+def trade_account_change_password():
+    exchanges = request.form.getlist('exchanges[]')
+    login_names = request.form.getlist('login_names[]')
+    new_login_password = request.form.get('new_login_password')
+    # TODO: add new_money_password support
+    errors = []
+    for ex, name in zip(exchanges, login_names):
+        ta = TradeAccount.query_one({'exchange': ex,
+                                     'login_name': name})
+        pwd = ta.login_password
+        print(ex, name, pwd)
+        t = Trader(ex, name, pwd)
+        print(new_login_password)
+        t.change_password(new_login_password)
+        if t.last_error:
+            errors.append([ex, name, t.last_error])
+        else:
+            ta.login_password = new_login_password
+            ta.upsert()
+    if errors:
+        return jsonify(status=500,
+                       reason='部分账号修改失败',
+                       details=errors)
+    else:
+        return jsonify(status=200, reason='')

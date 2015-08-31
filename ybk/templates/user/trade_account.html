@@ -17,8 +17,35 @@
 {% block detail %}
 
 
-<div id="loading" style="display: none; position: absolute; z-index: 1; left: 500px; top: 300px;">
+<div id="loading" style="display: none; position: absolute; z-index: 1000; left: 500px; top: 300px;">
   <img src="{{ url_for('static', filename='img/pie.svg') }}" width="50">
+</div>
+
+<div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="exampleModalLabel">修改密码</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="recipient-name" class="control-label">新登陆密码:</label>
+            <input type="password" class="form-control" id="new_login_password">
+          </div>
+          <div class="form-group">
+            <label for="recipient-name" class="control-label">新资金密码:</label>
+            <input type="password" class="form-control" id="new_money_password" disabled placeholder="API未完工">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button id="change-password" type="button" class="btn btn-primary">修改</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div id="main" class="row" style="zoom: 0.8;">
@@ -122,7 +149,7 @@
     <button class="btn btn-xs btn-default" disabled>批量卖出</button>
     <button class="btn btn-xs btn-default" disabled>批量清仓</button>
     <button class="btn btn-xs btn-default" disabled>批量转账</button>
-    <button class="btn btn-xs btn-default" disabled>批量修改密码</button>
+    <button id="change-password-selected" class="btn btn-xs btn-default">批量修改密码</button>
   </div>
   <!-- table -->
 
@@ -526,6 +553,46 @@
     update_ids(ids);
   })
 
+  // change login password
+  function change_password(exchanges, login_names, new_login_password) {
+    setTimeout(display_loading, 0);
+    $.post(
+      "{{ url_for('user.trade_account_change_password') }}",
+      {
+        exchanges: exchanges,
+        login_names: login_names,
+        new_login_password: new_login_password
+      },
+      function (r) {
+        hide_loading();
+        if (r.status != 200) {
+          alert('密码修改失败:'+r.reason);
+          alert(r.details);
+        } else {
+          alert('密码全部修改成功')
+          location.href = location.href;
+        }
+      })
+  }
+  $('#change-password-selected').on('click', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    $('#changePasswordModal').modal();
+  })
+
+  $('#change-password').on('click', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    var exchanges = [];
+    var login_names = [];
+    var new_login_password = $('#new_login_password').val();
+    $('[name=check-account]:checked').each(function(i, v) {
+      exchanges.push($(v).data('exchange'));
+      login_names.push($(v).data('login-name'));
+    });
+    // console.log(exchanges, login_names, new_login_password);
+    change_password(exchanges, login_names, new_login_password);
+  })
 
   // add_investor && add_exchange
   {% if add_investor %}
