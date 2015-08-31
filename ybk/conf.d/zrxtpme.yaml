@@ -32,8 +32,8 @@ result:
 opening: 
     url: http://www.zrxtpme.com/kaihu.asp
     guide: http://www.zrxtpme.com/downs/87.html
-    bank: [农业银行]
-    code: [""]
+    bank: [农业银行, 建设银行]
+    code: ["", ""]
     download: http://www.zrxtpme.com/downs/87.html
 quote:
     realtime:
