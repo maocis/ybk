@@ -156,4 +156,8 @@
     quote_http: http://118.145.4.146:16914
     quote_tcp: tcp://118.145.4.146:16913
     system: sysframe
-    tradeweb_url: http://118.145.4.146:16915/issue_tradeweb/httpXmlServlet
+    tradeweb_url: 
+        - http://118.145.4.146:16915/issue_tradeweb/httpXmlServlet
+        - http://118.145.4.146:16925/issue_tradeweb/httpXmlServlet
+        - http://115.182.221.24:16915/issue_tradeweb/httpXmlServlet
+        - http://115.182.221.24:16925/issue_tradeweb/httpXmlServlet
