@@ -11,7 +11,11 @@
     quote_http: http://180.235.68.100:20004
     quote_tcp: tcp://180.235.68.100:20003
     system: sysframe
-    tradeweb_url: http://180.235.68.100:10005/issue_tradeweb/httpXmlServlet
+    tradeweb_url: 
+        - http://180.235.68.100:10005/issue_tradeweb/httpXmlServlet
+        - http://180.235.68.101:10105/issue_tradeweb/httpXmlServlet
+        - http://112.65.240.204:10005/issue_tradeweb/httpXmlServlet
+        - http://112.65.240.205:10105/issue_tradeweb/httpXmlServlet
 中艺邮币卡:
     front_url: http://jy.cacecybk.com.cn:16922/common_front/checkneedless/user/logon/logon.action
     index_url: http://jy.cacecybk.com.cn:16922/common_front/front/frame/index_PC.jsp

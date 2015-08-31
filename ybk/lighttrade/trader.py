@@ -34,6 +34,9 @@ class Trader(object):
         if d.get('disabled'):
             raise ValueError('该交易所被禁止')
 
+        if not isinstance(d['tradeweb_url'], list):
+            d['tradeweb_url'] = [d['tradeweb_url']]
+
         self.client = Client(front_url=d['front_url'],
                              tradeweb_url=d['tradeweb_url'])
         self.client.login(username, password)

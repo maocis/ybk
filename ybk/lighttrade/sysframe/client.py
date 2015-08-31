@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import random
 import logging
 import requests
 import xmltodict
@@ -21,6 +22,8 @@ class Client(UserProtocol, TradeProtocol):
         self.front_url = front_url
         self.tradeweb_url = tradeweb_url
         self.session = requests.Session()
+        adapter = requests.adapters.HTTPAdapter(pool_connections=100, pool_maxsize=100)
+        self.session.mount('http://', adapter)
         self.session.headers = {
             'Content-Type': 'application/x-www-form-urlencoded',
         }
@@ -59,13 +62,16 @@ class Client(UserProtocol, TradeProtocol):
         - 解析返回的请求
         """
         if mode == 'tradeweb':
-            url = self.tradeweb_url
+            url = random.choice(self.tradeweb_url)
         elif mode == 'front':
             url = self.front_url
 
         xml = self._create_xml(protocol, params)
         log.debug('发送请求 {}: {}'.format(url, xml))
-        r = self.session.post(url, headers=headers, data=xml, verify=False)
+        try:
+            r = self.session.post(url, headers=headers, data=xml, verify=False, timeout=(1, 1))
+        except requests.exceptions.RequestException:
+            return self.request_xml(protocol, params, mode, headers)  
         result = r.content.decode('gb18030', 'ignore')
         log.debug('收到返回 {}'.format(result))
         if len(result) > 0:
