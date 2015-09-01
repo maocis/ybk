@@ -4,25 +4,25 @@ import random
 import logging
 import requests
 import xmltodict
-from .protocol import UserProtocol, TradeProtocol
+from .protocol import UserProtocol, TradeProtocol, MoneyProtocol
 
 requests.packages.urllib3.disable_warnings()
 
 log = logging.getLogger('sysframe')
 
-class Client(UserProtocol, TradeProtocol):
+class Client(UserProtocol, TradeProtocol, MoneyProtocol):
     def __init__(self,
                  front_url,
                  tradeweb_url):
         """
-        :param front_url: http://HOST:PORT/ \
-                common_front/checkneedless/user/logon/logon.action
+        :param front_url: http://HOST:PORT
         :param tradeweb_url: http://HOST:PORT/issue_tradeweb/httpXmlServlet
         """
         self.front_url = front_url
         self.tradeweb_url = tradeweb_url
         self.session = requests.Session()
-        adapter = requests.adapters.HTTPAdapter(pool_connections=100, pool_maxsize=100)
+        adapter = requests.adapters.HTTPAdapter(pool_connections=100,
+                                                pool_maxsize=100)
         self.session.mount('http://', adapter)
         self.session.headers = {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -64,14 +64,15 @@ class Client(UserProtocol, TradeProtocol):
         if mode == 'tradeweb':
             url = random.choice(self.tradeweb_url)
         elif mode == 'front':
-            url = self.front_url
+            url = self.front_url + \
+                '/common_front/checkneedless/user/logon/logon.action'
 
         xml = self._create_xml(protocol, params)
         log.debug('发送请求 {}: {}'.format(url, xml))
         try:
             r = self.session.post(url, headers=headers, data=xml, verify=False, timeout=(1, 1))
         except requests.exceptions.RequestException:
-            return self.request_xml(protocol, params, mode, headers)  
+            return self.request_xml(protocol, params, mode, headers)
         result = r.content.decode('gb18030', 'ignore')
         log.debug('收到返回 {}'.format(result))
         if len(result) > 0:

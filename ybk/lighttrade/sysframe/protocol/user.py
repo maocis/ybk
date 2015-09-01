@@ -43,12 +43,17 @@ class UserProtocol(object):
             self.error('无法使用交易模块')
 
     def check_user(self, module=99, mode='front'):
+        ftype = 'pc' if mode == 'front' else ''
+        if mode == 'front':
+            headers = {'Content-Type': 'text/html'}
+        else:
+            headers = {}
         d = self.request_xml('check_user', {'USER_ID': self.uid,
                                             'SESSION_ID': self.sid,
                                             'MODULE_ID': module,
-                                            'F_LOGONTYPE': '',
+                                            'F_LOGONTYPE': ftype,
                                             'LOGONTYPE': 'pc'},
-                             headers={},
+                             headers=headers,
                              mode=mode)
         r = d['GNNT']['REP']['RESULT']
         if r['RETCODE'] == '0':

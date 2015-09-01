@@ -39,6 +39,7 @@ class Trader(object):
 
         self.client = Client(front_url=d['front_url'],
                              tradeweb_url=d['tradeweb_url'])
+        # setattr(self.client, 'exchange', exchange)
         self.client.login(username, password)
 
     def __getattr__(self, key):
