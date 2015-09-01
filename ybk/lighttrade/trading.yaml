@@ -34,7 +34,7 @@
     system: sysframe
     tradeweb_url: http://114.247.118.103:16915/issue_tradeweb/httpXmlServlet
 华中文交所:
-    front_url: http://trade.hbcpre.com:16902
+    front_url: https://trade.hbcpre.com:16902
     quote_http: http://61.183.138.62:19914
     quote_tcp: tcp://61.183.138.62:19913
     system: sysframe
@@ -52,7 +52,7 @@
     system: sysframe
     tradeweb_url: http://180.96.50.179:16925/tradeweb/httpXmlServlet
 南京文交所:
-    index_url: http://180.97.2.67:19999
+    front_url: http://180.97.2.67:19999
     quote_http: http://180.97.2.67:19914
     quote_tcp: tcp://180.97.2.67:19913
     system: sysframe
@@ -82,22 +82,19 @@
     system: sysframe
     tradeweb_url: https://jyqz.jinmajia.com:16915/issue_tradeweb/httpXmlServlet
 南方文交所:
-    front_url:
-    index_url: 
+    front_url: 
     quote_http: http://183.6.187.34:19914
     quote_tcp: tcp://183.6.187.34:19913
     system: sysframe
     tradeweb_url: https://183.6.187.34:19915/tradeweb/httpXmlServlet
 江苏文交所:
-    front_url:
-    index_url: 
+    front_url: 
     quote_http: http://180.96.20.219:16844
     quote_tcp: tcp://180.96.20.219:16843
     system: sysframe
     tradeweb_url: https://180.96.20.219:16824/tradeweb/httpXmlServlet
 福丽特:
-    front_url:
-    index_url: 
+    front_url: 
     quote_http: http://tradeweb1.dzp.wjybk.com:16974
     quote_tcp: tcp://tradeweb1.dzp.wjybk.com:16973
     system: sysframe
@@ -105,7 +102,6 @@
 西部文交所:
     disabled: True
     front_url:
-    index_url: 
     quote_http: http://118.145.4.50:10104
     quote_tcp: tcp://118.145.4.50:10103
     system: sysframe

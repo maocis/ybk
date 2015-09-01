@@ -16,10 +16,13 @@ class Client(UserProtocol, TradeProtocol, MoneyProtocol):
                  tradeweb_url):
         """
         :param front_url: http://HOST:PORT
-        :param tradeweb_url: http://HOST:PORT/issue_tradeweb/httpXmlServlet
+        :param tradeweb_url: [http://HOST:PORT/issue_tradeweb/httpXmlServlet]
         """
         self.front_url = front_url
-        self.tradeweb_url = tradeweb_url
+        self.tradeweb_url = random.choice(tradeweb_url)
+        for url in tradeweb_url:
+            if url.startswith(front_url):
+                self.front_url = self.tradeweb_url.rsplit('/', 2)[0]
         self.session = requests.Session()
         adapter = requests.adapters.HTTPAdapter(pool_connections=100,
                                                 pool_maxsize=100)
@@ -62,7 +65,7 @@ class Client(UserProtocol, TradeProtocol, MoneyProtocol):
         - 解析返回的请求
         """
         if mode == 'tradeweb':
-            url = random.choice(self.tradeweb_url)
+            url = self.tradeweb_url
         elif mode == 'front':
             url = self.front_url + \
                 '/common_front/checkneedless/user/logon/logon.action'
