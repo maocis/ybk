@@ -31,5 +31,7 @@ def update_trade_account(trade_account):
                         p['name'] = Collection.get_name(
                             ta.exchange, p['symbol']) or ''
                     ta.position = position
+                else:
+                    ta.position = []
 
     ta.upsert()
