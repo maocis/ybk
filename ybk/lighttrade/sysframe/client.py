@@ -24,8 +24,8 @@ class Client(UserProtocol, TradeProtocol, MoneyProtocol):
             if url.startswith(front_url):
                 self.front_url = self.tradeweb_url.rsplit('/', 2)[0]
         self.session = requests.Session()
-        adapter = requests.adapters.HTTPAdapter(pool_connections=100,
-                                                pool_maxsize=100)
+        adapter = requests.adapters.HTTPAdapter(pool_connections=10,
+                                                pool_maxsize=10)
         self.session.mount('http://', adapter)
         self.session.headers = {
             'Content-Type': 'application/x-www-form-urlencoded',
