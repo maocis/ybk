@@ -4,6 +4,33 @@ from ybk.models import Collection
 from ybk.lighttrade import Trader
 
 
+def withdraw(trade_account, order):
+    ta = trade_account
+    t = Trader(ta.exchange, ta.login_name, ta.login_password)
+    r = t.withdraw(order)
+    return r, t.last_error
+
+
+def order(trade_account, type_, symbol, price, quantity):
+    ta = trade_account
+    t = Trader(ta.exchange, ta.login_name, ta.login_password)
+    if type_ == 'buy':
+        r = t.buy(symbol, price, quantity)
+    else:
+        r = t.sell(symbol, price, quantity)
+    return r, t.last_error
+
+
+def quote_detail(trade_account, symbol):
+    ta = trade_account
+    t = Trader(ta.exchange, ta.login_name, ta.login_password)
+    qd = t.quote_detail(symbol)
+    ci = t.list_collection(symbol)[0]
+    qd['highest'] = ci['highest']
+    qd['lowest'] = ci['lowest']
+    return qd
+
+
 def update_trade_account(trade_account):
     ta = trade_account
     if not ta.login_password:

@@ -204,6 +204,7 @@ class TradeProtocol(object):
         r = d['GNNT']['REP']
         if r['RESULT']['RETCODE'] == '0':
             log.info('委托单号{}撤单成功'.format(order))
+            return True
         else:
             self.error('撤单失败: {}'.format(r['RESULT']['MESSAGE']))
 

@@ -5,7 +5,7 @@ from flask import render_template, redirect, request, jsonify
 from flask.ext.login import login_required, current_user
 
 from ybk.settings import CONFS
-from ybk.trade import update_trade_account
+from ybk.trade import update_trade_account, quote_detail, order, withdraw
 from ybk.models import Investor, TradeAccount, Exchange
 from ybk.lighttrade import Trader
 
@@ -308,3 +308,68 @@ def trade_account_refresh_status():
     else:
         return jsonify(status=500,
                        reason='账号未找到')
+
+
+@user.route('/user/trade_account/update_quote', methods=['POST'])
+@login_required
+def trade_account_update_quote():
+    account_id = request.form.get('account_id')
+    symbol = request.form.get('symbol')
+    ta = TradeAccount.query_one({'_id': account_id})
+    if ta:
+        try:
+            qd = quote_detail(ta, symbol)
+        except Exception as e:
+            return jsonify(status=500, reason=str(e))
+        else:
+            return jsonify(status=200,
+                           price=qd['price'],
+                           highest=qd['highest'],
+                           lowest=qd['lowest'],
+                           asks=qd['asks'],
+                           bids=qd['bids'])
+    else:
+        return jsonify(status=500, reason='账号未找到')
+
+
+@user.route('/user/trade_account/order', methods=['POST'])
+@login_required
+def trade_account_order():
+    account_id = request.form.get('account_id')
+    ta = TradeAccount.query_one({'_id': account_id})
+    if ta:
+        type_ = request.form.get('type_')
+        symbol = request.form.get('symbol')
+        price = float(request.form.get('price'))
+        quantity = int(request.form.get('quantity'))
+        try:
+            r, err = order(ta, type_, symbol, price, quantity)
+        except Exception as e:
+            return jsonify(status=500, reason=str(e))
+        else:
+            if r:
+                return jsonify(status=200, reason='下单成功')
+            else:
+                return jsonify(status=400, reason=err)
+    else:
+        return jsonify(status=500, reason='账号未找到')
+
+
+@user.route('/user/trade_account/withdraw', methods=['POST'])
+@login_required
+def trade_account_withdraw():
+    account_id = request.form.get('account_id')
+    order = request.form.get('order')
+    ta = TradeAccount.query_one({'_id': account_id})
+    if ta:
+        try:
+            r, err = withdraw(ta, order)
+        except Exception as e:
+            return jsonify(status=500, reason=str(e))
+        else:
+            if r:
+                return jsonify(status=200, reason='撤单成功')
+            else:
+                return jsonify(status=400, reason=err)
+    else:
+        return jsonify(status=500, reason='账号未找到')

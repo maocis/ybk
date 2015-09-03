@@ -53,8 +53,8 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="exampleModalLabel">账号状态
-        <a id="refresh-status" href="#"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></a>
+        <h4 class="modal-title" id="exampleModalLabel">账号: <span id="account_id"></span> 
+        <a id="refresh-status" class="btn btn-default" href="#"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>&nbsp;刷新</a>
         </h4>
         
       </div>
@@ -62,10 +62,12 @@
         <div>
           <div id="common" style="padding: 10px;">common</div>
           <!-- Nav tabs -->
-          <ul class="nav nav-tabs" role="tablist">
+          <ul id="status_tab" class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active"><a href="#position" aria-controls="position" role="tab" data-toggle="tab">持仓</a></li>
             <li role="presentation"><a href="#order_status" aria-controls="order_status" role="tab" data-toggle="tab">委托</a></li>
             <li role="presentation"><a href="#orders" aria-controls="orders" role="tab" data-toggle="tab">成交</a></li>
+            <li role="presentation"><a href="#order" aria-controls="order" role="tab" data-toggle="tab">下单</a></li>
+            <li role="presentation"><a href="#transfer" aria-controls="transfer" role="tab" data-toggle="tab">出入金</a></li>
           </ul>
 
           <!-- Tab panes -->
@@ -73,6 +75,90 @@
             <div role="tabpanel" class="tab-pane active" id="position">position</div>
             <div role="tabpanel" class="tab-pane" id="order_status">order_status</div>
             <div role="tabpanel" class="tab-pane" id="orders">orders</div>
+            <div role="tabpanel" class="tab-pane" id="order">              
+              <div class="row">
+                <div class="col-md-4"> 
+                  <h4>委买</h4>
+                  <form class="form-horizontal">
+                    <div class="form-group">
+                      <label for="buy_symbol" class="col-sm-4 control-label">代码</label>
+                      <div class="col-sm-8">
+                        <select class="form-control" id="buy_symbol" placeholder="代码">
+                        </select>
+                      </div>
+                    </div>
+                    <div class="text-right" id="buy_price_limit"></div>
+                    <div class="form-group">
+                      <label for="buy_price" class="col-sm-4 control-label">买价</label>
+                      <div class="col-sm-8">
+                        <input id="buy_price" type="text" class="form-control" placeholder="买价">
+                      </div>
+                    </div>
+                    <div class="text-right"  id="buy_quantity_limit"></div>
+                    <div class="form-group">
+                      <label for="buy_quantity" class="col-sm-4 control-label">买量</label>
+                      <div class="col-sm-8">
+                        <input id="buy_quantity" type="text" class="form-control" placeholder="买量">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="col-sm-offset-6 col-sm-6">
+                        <button type="submit" name="buy" class="btn btn-primary">下单买入</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div class="col-md-4">
+                  <h4>委卖</h4>
+                  <form class="form-horizontal">
+                    <div class="form-group">
+                      <label for="sell_symbol" class="col-sm-4 control-label">代码</label>
+                      <div class="col-sm-8">
+                        <select class="form-control" id="sell_symbol" placeholder="代码">
+                        </select>
+                      </div>
+                    </div>
+                    <div class="text-right"  id="sell_price_limit"></div>
+                    <div class="form-group">
+                      <label for="sell_price" class="col-sm-4 control-label">卖价</label>
+                      <div class="col-sm-8">
+                        <input id="sell_price" type="text" class="form-control" placeholder="卖价">
+                      </div>
+                    </div>
+                    <div class="text-right"  id="sell_quantity_limit"></div>
+                    <div class="form-group">
+                      <label for="sell_quantity" class="col-sm-4 control-label">卖量</label>
+                      <div class="col-sm-8">
+                        <input id="sell_quantity" type="text" class="form-control" placeholder="卖量">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="col-sm-offset-6 col-sm-6">
+                        <button type="submit" name="sell" class="btn btn-primary">下单卖出</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div class="col-md-4">
+                  <h4>盘口<small>(每隔3秒刷新)</small></h4>
+                  <table class="table table-bordered">
+                    <tbody id="quote_detail">
+                      <tr><td style="width: 50px;">卖五</td><td>-</td><td>0</td></tr>
+                      <tr><td style="width: 50px;">卖四</td><td>-</td><td>0</td></tr>
+                      <tr><td style="width: 50px;">卖三</td><td>-</td><td>0</td></tr>
+                      <tr><td style="width: 50px;">卖二</td><td>-</td><td>0</td></tr>
+                      <tr><td style="width: 50px;">卖一</td><td>-</td><td>0</td></tr>
+                      <tr><td style="width: 50px;">买一</td><td>-</td><td>0</td></tr>
+                      <tr><td style="width: 50px;">买二</td><td>-</td><td>0</td></tr>
+                      <tr><td style="width: 50px;">买三</td><td>-</td><td>0</td></tr>
+                      <tr><td style="width: 50px;">买四</td><td>-</td><td>0</td></tr>
+                      <tr><td style="width: 50px;">买五</td><td>-</td><td>0</td></tr>
+                    </tbody>
+                  </table> 
+                </div>
+              </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="transfer">transfer</div>
           </div>
 
         </div>
@@ -225,7 +311,6 @@
         <button name="edit" class="btn btn-xs btn-default">修改</button>
         <button name="delete" class="btn btn-xs btn-default">删除</button>
         <button name="update" class="btn btn-xs btn-default">更新</button>
-        <button name="more" class="btn btn-xs btn-default" disabled>更多</button>
       </td>
     </tr>
     {% else %}
@@ -440,6 +525,13 @@
 
   // status
   var account_id;
+  var exchange;
+  var usable_money;
+  var symbol;
+  var price;
+  var quantity;
+  var bids;
+  var asks;
   var account_positions = {{ account_positions | safe }};
   var account_moneys = {{ account_moneys | safe }};
   var account_orders = {{ account_orders | safe }};
@@ -490,7 +582,8 @@
           '<th class="text-right" style="padding:5px;">买入价</th>' +
           '<th class="text-right" style="padding:5px;">数量</th>' + 
           '<th class="text-right" style="padding:5px;">盈利</th>' + 
-          '<th class="text-right" style="padding:5px;">涨幅</th>' + 
+          '<th class="text-right" style="padding:5px;">涨幅</th>' +
+          '<th class="text-right" style="padding:5px;">操作</th>' + 
           '</tr></thead>' + 
           '<tbody>';
     for (var i = 0; i < position.length; i++) {
@@ -500,7 +593,9 @@
             '<td class="text-right" style="padding:5px;">' + ((Math.round(d.average_price * 100) / 100) || '-') + '元</td>' + 
             '<td class="text-right" style="padding:5px;">' + d.quantity + 
             '<td class="text-right" style="padding:5px;">' + ((Math.round(d.profit * 100) / 100) || '-') + '元</td>' + 
-            '<td class="text-right" style="padding:5px;">' + ((Math.round(d.profit / d.average_price / d.quantity * 10000) / 100) || '-') + '%</td></tr>';
+            '<td class="text-right" style="padding:5px;">' + ((Math.round(d.profit / d.average_price / d.quantity * 10000) / 100) || '-') + '%</td>' +
+            '<td class="text-right"><button class="btn btn-xs btn-default" id="buy_now" data-symbol="' + d.symbol + '">买入</button><button class="btn btn-xs btn-default" id="sell_now" data-symbol="' + d.symbol + '">卖出</button></td>' + 
+            '</tr>';
     }
     html_position += '</tbody></table>'
 
@@ -536,7 +631,7 @@
             '<td class="text-right" style="padding:5px;">' + d.quantity + '</td>' + 
             '<td class="text-right" style="padding:5px;">' + d.pending_quantity + '</td>' + 
             '<td>' + d.status + '</td>' + 
-            '<td><button class="btn btn-xs" disabled>撤单</button></td>' + 
+            '<td><button name="withdraw" class="btn btn-xs btn-default" data-order="' + d.order + '">撤单</button></td>' + 
             '</tr>';
     }
     html += '</tbody></table>';
@@ -570,12 +665,140 @@
     $('#orders').html(html);    
   };
 
+  function load_symbols(value){
+    return function(callback){
+      $.ajax({
+        url: "{{ url_for('api.load_symbols') }}",
+        data: {exchange: value},
+        type: 'GET',
+        error: function() {
+          callback();
+        },
+        success: function(data) {
+          callback(data.result);
+        }
+      })
+    }
+  }
+
+  var quote_updater; 
+  function update_quote(symbol) {
+    // 定时刷新盘口信息
+    if (symbol) {
+      $.post(
+        "{{ url_for('user.trade_account_update_quote') }}",
+        {account_id: account_id,
+        symbol:symbol},
+        function (r) {
+          price = r.price;
+          bids = r.bids;
+          asks = r.asks;
+          $('#quote_detail tr').each(function(i, v) {
+            var d;
+            if (i >= 5) {
+              d = r.bids[i - 5];
+            } else {
+              d = r.asks[4 - i];
+            }
+            var tds = $(v).children();
+            $(tds[1]).text(d.price);
+            $(tds[2]).text(d.quantity);
+          })
+
+          // 更新可买卖状态
+          $('#buy_price_limit').text('范围: ' + r.lowest + '-' + r.highest)
+          $('#sell_price_limit').text('范围: ' + r.lowest + '-' + r.highest)
+          if (bids[0].quantity == 0 && asks[0].quantity == 0) {
+            // 没开盘, 设为涨停价
+            buy_price = r.highest;
+            sell_price = r.highest;
+          } else {
+            if (bids[0].quantity == 0) {
+              // 无买单, 应该是跌停
+              sell_price = asks[0].price;
+            } else {
+              sell_price = bids[0].price;
+            }
+            if (asks[0].quantity == 0) {
+              // 无卖单, 应该是涨停
+              buy_price = bids[0].price;
+            } else {
+              buy_price = asks[0].price;
+            }
+          }
+
+          if (!$('#buy_price').val()) {
+            $('#buy_price').val(buy_price);
+          }
+          if (!$('#sell_price').val()) {
+            $('#sell_price').val(sell_price);
+          }
+
+          var buy_quantity = Math.floor(usable_money / buy_price / 1.01);
+          var sell_quantity = 0;
+          var position = account_positions[account_id];
+          for (var i=0; i<position.length; i++) {
+            var d = position[i];
+            if (d.symbol == symbol) {
+              sell_quantity = d.sellable;
+            }
+          }
+          $('#buy_quantity_limit').text('范围: 0-' + buy_quantity);
+          $('#sell_quantity_limit').text('范围: 0-' + sell_quantity);
+        })
+    }
+  }
+
+  $('#statusModal').on('hidden.bs.modal', function () {
+    // do something…
+    clearInterval(quote_updater);
+  })
+
+  function update_buy_sell(value) {
+    // 更新可买卖状态
+    symbol = value;
+    update_quote(symbol);
+  }
+
+  var select_buy_symbol, select_sell_symbol;
+  var $select_buy_symbol = $('#buy_symbol').selectize({
+    options: [],
+    create: false,
+    onChange: function(value) {
+      if (select_sell_symbol.getValue() != value) {
+        select_sell_symbol.setValue(value);
+        update_buy_sell(value);
+      }
+    }
+  })
+  var select_buy_symbol = $select_buy_symbol[0].selectize;
+
+  var $select_sell_symbol = $('#sell_symbol').selectize({
+    options: [],
+    create: false,
+    onChange: function(value) {
+      if (select_buy_symbol.getValue() != value) {
+        select_buy_symbol.setValue(value);
+        update_buy_sell(value);
+      }
+    }
+  })
+  select_sell_symbol = $select_sell_symbol[0].selectize;
+
+  function render_order(account_id) {
+    select_buy_symbol.load(load_symbols(exchange));
+    select_sell_symbol.load(load_symbols(exchange));
+  }
+
   function reload_status(account_id) {
+    usable_money = account_moneys[account_id].usable;
     render_common(account_id);
     render_position(account_id);
     render_order_status(account_id);
     render_orders(account_id);
+    render_order(account_id);
   }
+
 
   setTimeout(function() {
       $('a[name=status]').on('click', function(e) {
@@ -584,8 +807,11 @@
         $div = $(this);
         var cb = $div.parent().parent().children().first().children().first();
         account_id = cb.data('id');
+        $('#account_id').text(account_id);
+        exchange = cb.data('exchange');
         reload_status(account_id);
         $('#statusModal').modal();
+        quote_updater = setInterval(update_quote, 3000)
       });
     },
     300)
@@ -610,6 +836,67 @@
         hide_loading();
       })
   })
+
+  $('body').on('click', '#buy_now', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    select_buy_symbol.setValue($(this).data('symbol'));
+    $('#status_tab li:eq(3) a').tab('show');
+  })
+
+  $('body').on('click', '#sell_now', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    select_sell_symbol.setValue($(this).data('symbol'));
+    $('#status_tab li:eq(3) a').tab('show');
+  })
+
+  function order(type_) {
+    var params = {
+      account_id: account_id,
+      type_ : type_,
+      symbol: symbol,
+      price: type_ == 'buy' && $('#buy_price').val() || $('#sell_price').val(),
+      quantity: type_ == 'buy' && $('#buy_quantity').val() || $('#sell_quantity').val()
+    }
+    setTimeout(display_loading, 0);
+    $.post(
+      "{{ url_for('user.trade_account_order') }}",
+      params,
+      function (r) {
+        hide_loading();
+        alert(r.reason);
+      })
+  }
+  $('body').on('click', '[name=buy]', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    order('buy');
+  })
+
+  $('body').on('click', '[name=sell]', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    order('sell');
+  })
+
+  $('body').on('click', '[name=withdraw]', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    var params = {
+      account_id: account_id,
+      order: $(this).data('order')
+    }
+    setTimeout(display_loading, 0);
+    $.post(
+      "{{ url_for('user.trade_account_withdraw') }}",
+      params,
+      function (r) {
+        hide_loading();
+        alert(r.reason);
+      })    
+  })
+   
 
   // edit 
   $('table').on('click', '[name=edit]', function(e) {
@@ -661,9 +948,11 @@
   function display_loading() {
     $('#loading').show(500);
     $('#main').css({opacity: 0.5});
+    $('.modal').css({opacity: 0.5});
   }
   function hide_loading() {
     $('#main').css({opacity: 1})
+    $('.modal').css({opacity: 1});
     $('#loading').hide();
   }
 
