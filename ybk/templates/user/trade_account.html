@@ -57,6 +57,7 @@
       </div>
       <div class="modal-body">
         <div>
+          <div id="common" style="padding: 10px;">common</div>
           <!-- Nav tabs -->
           <ul class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active"><a href="#position" aria-controls="position" role="tab" data-toggle="tab">持仓</a></li>
@@ -440,28 +441,43 @@
   var account_orders = {{ account_orders | safe }};
   var account_order_status = {{ account_order_status | safe }};
 
+  function render_common(account_id) {
+      var position = account_positions[account_id];
+      var money = account_moneys[account_id]
+      var order_status = account_order_status[account_id];
+
+      var total_profit = 0;
+      var total_mv = 0;
+      var total_ordered = 0;
+      for (var i=0; i<position.length; i++) {
+        total_profit += position[i].profit;
+        total_mv += position[i].price * position[i].quantity;
+      }
+      for (var i=0; i<order_status.length; i++) {
+        var d = order_status[i];
+        if (d.type_ == 'buy') {
+          total_ordered += d.price * d.pending_quantity
+        }
+      }
+      total_mv = Math.round(total_mv * 100) / 100;
+      total_profit = Math.round(total_profit * 100) / 100;
+      total_ordered = Math.round(total_ordered * 100) / 100;
+      var html = '<p><span style="padding: 0px 5px;">可用资金: ' + money.usable + '元</span>' +
+        '<span style="padding: 0px 5px;">可取现金: ' + 
+        money.withdrawable + '元</span>' + 
+        '<span style="padding: 0px 5px;">总市值: ' + 
+        total_mv + '元</span>' + 
+        '<span style="padding: 0px 5px;">总挂单: ' + 
+        total_ordered + '元</span>' + 
+        '<span style="padding: 0px 5px;">总盈利: ' + 
+        total_profit + '元</span>' + 
+        '</p>';
+
+      $('#common').html(html);
+  };
 
   function render_position(account_id) {
     var position = account_positions[account_id];
-    var money = account_moneys[account_id];
-
-    var html_status = '';
-    var total_profit = 0;
-    var total_mv = 0;
-    for (var i=0; i<position.length; i++) {
-      total_profit += position[i].profit;
-      total_mv += position[i].price * position[i].quantity;
-    }
-    total_mv = Math.round(total_mv * 100) / 100;
-    total_profit = Math.round(total_profit * 100) / 100;
-    var html_money = '<p><span style="padding: 0px 5px;">可用资金: ' + money.usable + '元</span>' +
-      '<span style="padding: 0px 5px;">可取现金: ' + 
-      money.withdrawable + '元</span>' + 
-      '<span style="padding: 0px 5px;">总市值: ' + 
-      total_mv + '元</span>' + 
-      '<span style="padding: 0px 5px;">总盈利: ' + 
-      total_profit + '元</span>' + 
-      '</p>';
 
     var html_position = '<table class="table table-condensed table-bordered">' + 
           '<thead><tr>' + 
@@ -484,7 +500,7 @@
     }
     html_position += '</tbody></table>'
 
-    html = html_status + html_money + html_position;
+    html = html_position;
 
     $('#position').html(html);
   };
@@ -516,7 +532,7 @@
             '<td class="text-right" style="padding:5px;">' + d.quantity + '</td>' + 
             '<td class="text-right" style="padding:5px;">' + d.pending_quantity + '</td>' + 
             '<td>' + d.status + '</td>' + 
-            '<td><button class="btn btn-sm" disabled>撤单</button></td>' + 
+            '<td><button class="btn btn-xs" disabled>撤单</button></td>' + 
             '</tr>';
     }
     html += '</tbody></table>';
@@ -557,6 +573,8 @@
         $div = $(this);
         var cb = $div.parent().parent().children().first().children().first();
         var account_id = cb.data('id');
+           var money = account_moneys[account_id];
+        render_common(account_id);
         render_position(account_id);
         render_order_status(account_id);
         render_orders(account_id);

@@ -176,13 +176,17 @@ def trade_account():
 
     thebanks = sorted(list(avail_banks))
 
-    account_positions = {ta._id: [p.to_dict() for p in ta.position]
+    account_positions = {ta._id: sorted([p.to_dict() for p in ta.position],
+                                        key=lambda p: p['symbol'])
                          for ta in trade_accounts}
     account_moneys = {ta._id: ta.money.to_dict() if ta.money else {}
                       for ta in trade_accounts}
-    account_order_status = {ta._id: [o.to_dict() for o in ta.order_status]
+    account_order_status = {ta._id: sorted([o.to_dict()
+                                            for o in ta.order_status],
+                                           key=lambda o: o['order'])
                             for ta in trade_accounts}
-    account_orders = {ta._id: [o.to_dict() for o in ta.orders]
+    account_orders = {ta._id: sorted([o.to_dict() for o in ta.orders],
+                                     key=lambda o: o['symbol'])
                       for ta in trade_accounts}
 
     return render_template('user/trade_account.html', **locals())
