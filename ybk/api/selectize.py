@@ -8,6 +8,7 @@ from .views import api
 def load_symbols():
     exchange = request.args.get('exchange', '')
     query = request.args.get('query', '')
+    exclude = request.args.get('exclude', '')
     cond = {'$or': [{'name': {'$regex': query}},
                     {'symbol': {'$regex': query}}]}
     if exchange:
@@ -18,4 +19,6 @@ def load_symbols():
         for c in Collection.query(
             cond,
             {'name': 1, 'symbol': 1})]
+    if exclude:
+        result = [r for r in result if exclude not in r['text']]
     return jsonify(result=result)

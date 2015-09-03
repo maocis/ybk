@@ -704,7 +704,7 @@
     return function(callback){
       $.ajax({
         url: "{{ url_for('api.load_symbols') }}",
-        data: {exchange: value},
+        data: {exchange: value, exclude: '指数'},
         type: 'GET',
         error: function() {
           callback();
@@ -821,6 +821,8 @@
   select_sell_symbol = $select_sell_symbol[0].selectize;
 
   function render_order(account_id) {
+    select_buy_symbol.clearOptions();
+    select_sell_symbol.clearOptions();
     select_buy_symbol.load(load_symbols(exchange));
     select_sell_symbol.load(load_symbols(exchange));
   }
