@@ -17,7 +17,7 @@
 {% block detail %}
 
 
-<div id="loading" style="display: none; position: absolute; z-index: 1000; left: 500px; top: 300px;">
+<div id="loading" style="display: none; position: absolute; z-index: 10000; left: 620px; top: 380px;">
   <img src="{{ url_for('static', filename='img/pie.svg') }}" width="50">
 </div>
 
@@ -53,7 +53,10 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="exampleModalLabel">账号状态</h4>
+        <h4 class="modal-title" id="exampleModalLabel">账号状态
+        <a id="refresh-status" href="#"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></a>
+        </h4>
+        
       </div>
       <div class="modal-body">
         <div>
@@ -436,6 +439,7 @@
   }
 
   // status
+  var account_id;
   var account_positions = {{ account_positions | safe }};
   var account_moneys = {{ account_moneys | safe }};
   var account_orders = {{ account_orders | safe }};
@@ -566,22 +570,46 @@
     $('#orders').html(html);    
   };
 
+  function reload_status(account_id) {
+    render_common(account_id);
+    render_position(account_id);
+    render_order_status(account_id);
+    render_orders(account_id);
+  }
+
   setTimeout(function() {
       $('a[name=status]').on('click', function(e) {
         e.preventDefault();
         e.target.blur();
         $div = $(this);
         var cb = $div.parent().parent().children().first().children().first();
-        var account_id = cb.data('id');
-           var money = account_moneys[account_id];
-        render_common(account_id);
-        render_position(account_id);
-        render_order_status(account_id);
-        render_orders(account_id);
+        account_id = cb.data('id');
+        reload_status(account_id);
         $('#statusModal').modal();
       });
     },
     300)
+
+  $('#refresh-status').on('click', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    setTimeout(display_loading, 0);
+    $.post(
+      "{{ url_for('user.trade_account_refresh_status') }}",
+      {account_id: account_id},
+      function (r) {
+        if (r.status != 200) {
+          alert(r.reason);
+        } else {
+          account_positions[account_id] = r.position;
+          account_moneys[account_id] = r.money;
+          account_orders[account_id] = r.orders;
+          account_order_status[account_id] = r.order_status;
+          reload_status(account_id);
+        }
+        hide_loading();
+      })
+  })
 
   // edit 
   $('table').on('click', '[name=edit]', function(e) {

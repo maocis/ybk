@@ -50,6 +50,7 @@ def investor_info():
 
 
 @user.route('/user/investor/upsert.ajax', methods=['POST'])
+@login_required
 def investor_upsert():
     def extract_image(src):
         if src:
@@ -88,6 +89,7 @@ def investor_upsert():
 
 
 @user.route('/user/investor/edit.ajax')
+@login_required
 def investor_edit():
     def pack_image(b):
         if b:
@@ -108,6 +110,7 @@ def investor_edit():
 
 
 @user.route('/user/investor/delete.ajax', methods=['POST'])
+@login_required
 def investor_delete():
     _id = request.form.get('id')
     i = Investor.query_one({'_id': _id})
@@ -193,6 +196,7 @@ def trade_account():
 
 
 @user.route('/user/trade_account/edit', methods=['POST'])
+@login_required
 def trade_account_edit():
     investor_name = request.form.get('investor')
     i = Investor.query_one({'name': investor_name})
@@ -225,6 +229,7 @@ def trade_account_edit():
 
 
 @user.route('/user/trade_account/delete', methods=['POST'])
+@login_required
 def trade_account_delete():
     ids = request.form.getlist('ids[]')
     try:
@@ -236,6 +241,7 @@ def trade_account_delete():
 
 
 @user.route('/user/trade_account/update', methods=['POST'])
+@login_required
 def trade_account_update():
     ids = request.form.getlist('ids[]')
     try:
@@ -249,6 +255,7 @@ def trade_account_update():
 
 
 @user.route('/user/trade_account/change_password', methods=['POST'])
+@login_required
 def trade_account_change_password():
     exchanges = request.form.getlist('exchanges[]')
     login_names = request.form.getlist('login_names[]')
@@ -274,3 +281,30 @@ def trade_account_change_password():
                        details=errors)
     else:
         return jsonify(status=200, reason='')
+
+
+@user.route('/user/trade_account/refresh_status', methods=['POST'])
+@login_required
+def trade_account_refresh_status():
+    account_id = request.form.get('account_id')
+    ta = TradeAccount.query_one({'_id': account_id})
+    if ta:
+        try:
+            update_trade_account(ta)
+        except Exception as e:
+            return jsonify(status=500,
+                           reason=str(e))
+
+        return jsonify(status=200,
+                       position=sorted([p.to_dict() for p in ta.position],
+                                       key=lambda p: p['symbol']),
+                       money=ta.money.to_dict(),
+                       orders=sorted([o.to_dict() for o in ta.orders],
+                                     key=lambda o: o['symbol']),
+                       order_status=sorted([o.to_dict()
+                                            for o in ta.order_status],
+                                           key=lambda o: o['symbol']),
+                       )
+    else:
+        return jsonify(status=500,
+                       reason='账号未找到')
