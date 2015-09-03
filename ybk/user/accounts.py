@@ -180,6 +180,10 @@ def trade_account():
                          for ta in trade_accounts}
     account_moneys = {ta._id: ta.money.to_dict() if ta.money else {}
                       for ta in trade_accounts}
+    account_order_status = {ta._id: [o.to_dict() for o in ta.order_status]
+                            for ta in trade_accounts}
+    account_orders = {ta._id: [o.to_dict() for o in ta.orders]
+                      for ta in trade_accounts}
 
     return render_template('user/trade_account.html', **locals())
 

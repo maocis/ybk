@@ -21,8 +21,8 @@
   <img src="{{ url_for('static', filename='img/pie.svg') }}" width="50">
 </div>
 
-<div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
-  <div class="modal-dialog" role="document">
+<div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog " role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -43,6 +43,38 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
         <button id="change-password" type="button" class="btn btn-primary">修改</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="statusModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="exampleModalLabel">账号状态</h4>
+      </div>
+      <div class="modal-body">
+        <div>
+          <!-- Nav tabs -->
+          <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#position" aria-controls="position" role="tab" data-toggle="tab">持仓</a></li>
+            <li role="presentation"><a href="#order_status" aria-controls="order_status" role="tab" data-toggle="tab">委托</a></li>
+            <li role="presentation"><a href="#orders" aria-controls="orders" role="tab" data-toggle="tab">成交</a></li>
+          </ul>
+
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="position">position</div>
+            <div role="tabpanel" class="tab-pane" id="order_status">order_status</div>
+            <div role="tabpanel" class="tab-pane" id="orders">orders</div>
+          </div>
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
       </div>
     </div>
   </div>
@@ -405,68 +437,133 @@
   // status
   var account_positions = {{ account_positions | safe }};
   var account_moneys = {{ account_moneys | safe }};
+  var account_orders = {{ account_orders | safe }};
+  var account_order_status = {{ account_order_status | safe }};
+
+
+  function render_position(account_id) {
+    var position = account_positions[account_id];
+    var money = account_moneys[account_id];
+
+    var html_status = '';
+    var total_profit = 0;
+    var total_mv = 0;
+    for (var i=0; i<position.length; i++) {
+      total_profit += position[i].profit;
+      total_mv += position[i].price * position[i].quantity;
+    }
+    total_mv = Math.round(total_mv * 100) / 100;
+    total_profit = Math.round(total_profit * 100) / 100;
+    var html_money = '<p><span style="padding: 0px 5px;">可用资金: ' + money.usable + '元</span>' +
+      '<span style="padding: 0px 5px;">可取现金: ' + 
+      money.withdrawable + '元</span>' + 
+      '<span style="padding: 0px 5px;">总市值: ' + 
+      total_mv + '元</span>' + 
+      '<span style="padding: 0px 5px;">总盈利: ' + 
+      total_profit + '元</span>' + 
+      '</p>';
+
+    var html_position = '<table class="table table-condensed table-bordered">' + 
+          '<thead><tr>' + 
+          '<th style="padding:5px;">简称</th>' + 
+          '<th style="padding:5px;">代码</th>' + 
+          '<th class="text-right" style="padding:5px;">买入价</th>' +
+          '<th class="text-right" style="padding:5px;">数量</th>' + 
+          '<th class="text-right" style="padding:5px;">盈利</th>' + 
+          '<th class="text-right" style="padding:5px;">涨幅</th>' + 
+          '</tr></thead>' + 
+          '<tbody>';
+    for (var i = 0; i < position.length; i++) {
+      var d = position[i];
+      html_position += '<tr><td>' + d.name + '</td>' + 
+            '<td>' + d.symbol + '</td>' + 
+            '<td class="text-right" style="padding:5px;">' + ((Math.round(d.average_price * 100) / 100) || '-') + '元</td>' + 
+            '<td class="text-right" style="padding:5px;">' + d.quantity + 
+            '<td class="text-right" style="padding:5px;">' + ((Math.round(d.profit * 100) / 100) || '-') + '元</td>' + 
+            '<td class="text-right" style="padding:5px;">' + ((Math.round(d.profit / d.average_price / d.quantity * 10000) / 100) || '-') + '%</td></tr>';
+    }
+    html_position += '</tbody></table>'
+
+    html = html_status + html_money + html_position;
+
+    $('#position').html(html);
+  };
+
+  function render_order_status(account_id) {
+    var order_status = account_order_status[account_id];
+    var html = '<table class="table table-condensed table-bordered">' + 
+          '<thead><tr>' + 
+          '<th style="padding:5px;">单号</th>' + 
+          '<th style="padding:5px;">时间</th>' + 
+          '<th style="padding:5px;">买/卖</th>' + 
+          '<th style="padding:5px;">名称</th>' + 
+          '<th class="text-right" style="padding:5px;">代码</th>' +
+          '<th class="text-right" style="padding:5px;">价格</th>' + 
+          '<th class="text-right" style="padding:5px;">数量</th>' + 
+          '<th class="text-right" style="padding:5px;">未成交</th>' + 
+          '<th style="padding:5px;">状态</th>' + 
+          '<th style="padding:5px;">操作</th>' + 
+          '</tr></thead>' + 
+          '<tbody>';
+    for (var i = 0; i < order_status.length; i++) {
+      var d = order_status[i];
+      html += '<tr><td>' + d.order + '</td>' + 
+            '<td>' + d.order_at + '</td>' + 
+            '<td>' + d.type_ + '</td>' + 
+            '<td>' + d.name + '</td>' + 
+            '<td>' + d.symbol + '</td>' + 
+            '<td class="text-right" style="padding:5px;">' + ((Math.round(d.price * 100) / 100) || '-') + '元</td>' + 
+            '<td class="text-right" style="padding:5px;">' + d.quantity + '</td>' + 
+            '<td class="text-right" style="padding:5px;">' + d.pending_quantity + '</td>' + 
+            '<td>' + d.status + '</td>' + 
+            '<td><button class="btn btn-sm" disabled>撤单</button></td>' + 
+            '</tr>';
+    }
+    html += '</tbody></table>';
+    $('#order_status').html(html);
+  };
+
+  function render_orders(account_id) {
+    var orders = account_orders[account_id];
+    var html = '<table class="table table-condensed table-bordered">' + 
+          '<thead><tr>' +  
+          '<th style="padding:5px;">名称</th>' + 
+          '<th class="text-right" style="padding:5px;">代码</th>' +
+          '<th class="text-right" style="padding:5px;">买/卖</th>' +
+          '<th class="text-right" style="padding:5px;">价格</th>' +
+          '<th class="text-right" style="padding:5px;">现价</th>' + 
+          '<th class="text-right" style="padding:5px;">数量</th>' + 
+          '</tr></thead>' + 
+          '<tbody>';
+    for (var i = 0; i < orders.length; i++) {
+      var d = orders[i];
+      html += '<tr>' +  
+            '<td>' + d.name + '</td>' + 
+            '<td class="text-right" style="padding:5px;">' + d.symbol + '</td>' + 
+            '<td class="text-right" style="padding:5px;">' + d.type_ + '</td>' +
+            '<td class="text-right" style="padding:5px;">' + ((Math.round(d.price * 100) / 100) || '-') + '元</td>' + 
+            '<td class="text-right" style="padding:5px;">' + ((Math.round(d.current_price * 100) / 100) || '-') + '元</td>' + 
+            '<td class="text-right" style="padding:5px;">' + d.quantity + '</td>' + 
+            '</tr>';
+    }
+    html += '</tbody></table>';
+    $('#orders').html(html);    
+  };
 
   setTimeout(function() {
-    $('[name=status]').each(function(i, e) {
-      $div = $(this);
-      var cb = $div.parent().parent().children().first().children().first()
-      var position = account_positions[cb.data('id')];
-      var money = account_moneys[cb.data('id')];
-
-      var html_status = '';
-      var total_profit = 0;
-      var total_mv = 0;
-      for (var i=0; i<position.length; i++) {
-        total_profit += position[i].profit;
-        total_mv += position[i].price * position[i].quantity;
-      }
-      total_mv = Math.round(total_mv * 100) / 100;
-      total_profit = Math.round(total_profit * 100) / 100;
-      var html_money = '<p><span style="padding: 0px 5px;">可用资金: ' + money.usable + '元</span>' +
-        '<span style="padding: 0px 5px;">可取现金: ' + 
-        money.withdrawable + '元</span>' + 
-        '<span style="padding: 0px 5px;">总市值: ' + 
-        total_mv + '元</span>' + 
-        '<span style="padding: 0px 5px;">总盈利: ' + 
-        total_profit + '元</span>' + 
-        '</p>';
-
-      var html_position = '<table class="table table-condensed table-bordered">' + 
-            '<thead><tr>' + 
-            '<th style="padding:5px;">简称</th>' + 
-            '<th style="padding:5px;">代码</th>' + 
-            '<th class="text-right" style="padding:5px;">买入价</th>' +
-            '<th class="text-right" style="padding:5px;">数量</th>' + 
-            '<th class="text-right" style="padding:5px;">盈利</th>' + 
-            '<th class="text-right" style="padding:5px;">涨幅</th>' + 
-            '</tr></thead>' + 
-            '<tbody>';
-      for (var i = 0; i < position.length; i++) {
-        var d = position[i];
-        html_position += '<tr><td>' + d.name + '</td>' + 
-              '<td>' + d.symbol + '</td>' + 
-              '<td class="text-right" style="padding:5px;">' + ((Math.round(d.average_price * 100) / 100) || '-') + '元</td>' + 
-              '<td class="text-right" style="padding:5px;">' + d.quantity + 
-              '<td class="text-right" style="padding:5px;">' + ((Math.round(d.profit * 100) / 100) || '-') + '元</td>' + 
-              '<td class="text-right" style="padding:5px;">' + ((Math.round(d.profit / d.average_price / d.quantity * 10000) / 100) || '-') + '%</td></tr>';
-      }
-      html_position += '</tbody></table>'
-      $div.tooltip({
-              placement: 'top',
-              template: '<div class="popover" role="tooltip" style="min-width: 500px; font-size: 0.8em;">' + 
-                  '<div class="arrow"></div>' + 
-                  '<h3 class="popover-title">账户详情</h3>' + 
-                  '<div class="popover-content">' + 
-                    html_status +
-                    html_money + 
-                    html_position + 
-                  '</div>' + 
-                '</div>', 
-              html: true, 
-              title: 'x'
-            });
-    })
-  }, 300)
+      $('a[name=status]').on('click', function(e) {
+        e.preventDefault();
+        e.target.blur();
+        $div = $(this);
+        var cb = $div.parent().parent().children().first().children().first();
+        var account_id = cb.data('id');
+        render_position(account_id);
+        render_order_status(account_id);
+        render_orders(account_id);
+        $('#statusModal').modal();
+      });
+    },
+    300)
 
   // edit 
   $('table').on('click', '[name=edit]', function(e) {

@@ -24,12 +24,43 @@ def update_trade_account(trade_account):
                 ta.verify_message = t.last_error
             else:
                 ta.verified = True
+
+                # update money
                 ta.money = t.money()
-                position = t.position()
-                if position:
-                    for p in position:
-                        p['name'] = Collection.get_name(
-                            ta.exchange, p['symbol']) or ''
-                    ta.position = position
+
+                # update position
+                position = t.position() or []
+                for p in position:
+                    p['name'] = Collection.get_name(
+                        ta.exchange, p['symbol']) or ''
+                ta.position = position
+
+                # update orders
+                orders = t.orders()
+                aggorders = {}
+                for o in orders:
+                    o['name'] = Collection.get_name(
+                        ta.exchange, o['symbol']) or ''
+                    st = (o['symbol'], o['type_'])
+                    if st not in aggorders:
+                        aggorders[st] = o
+                    else:
+                        # 把成交汇总一下
+                        oo = aggorders[st]
+                        amount = oo['price'] * oo['quantity'] + \
+                            o['price'] * o['quantity']
+                        oo['quantity'] += o['quantity']
+                        oo['price'] = amount / oo['quantity']
+
+                orders = aggorders.values()
+
+                ta.orders = orders
+
+                # update order_status
+                order_status = t.order_status()
+                for o in order_status:
+                    o['name'] = Collection.get_name(
+                        ta.exchange, o['symbol']) or ''
+                ta.order_status = order_status
 
     ta.upsert()

@@ -174,8 +174,12 @@ class TradeProtocol(object):
             log.info('本周有{}笔委托, 返回最新的{}笔'
                      ''.format(r['RESULT']['TTLREC'],
                                len(r['RESULTLIST']['REC'])))
+
+            recs = r['RESULTLIST']['REC']
+            if not isinstance(recs, list):
+                recs = [recs]
             return [{'order': rec['OR_N'],
-                     'orderd_at': rec['TIME'],
+                     'order_at': rec['TIME'],
                      'status': {'1': 'ordered',
                                 '2': 'partailly_done',
                                 '3': 'all_done',
@@ -185,10 +189,12 @@ class TradeProtocol(object):
                      'symbol': rec['CO_I'][len(self.mid):],
                      'price': float(rec['PRI']),
                      'quantity': int(rec['QTY']),
-                     } for rec in r['RESULTLIST']['REC']]
+                     'pending_quantity': int(rec['BAL']),
+                     } for rec in recs]
 
         else:
             self.error('委托查询失败: {}'.format(r['RESULT']['MESSAGE']))
+            return []
 
     def withdraw(self, order):
         """ 撤单 """
@@ -214,14 +220,15 @@ class TradeProtocol(object):
                 recs = [recs]
             return [{
                 'order': rec['OR_N'],
-                'time': rec['TI'],
+                'order_at': rec['TI'],
                 'type_': {'1': 'buy', '2': 'sell'}.get(rec['TY']),
                 'symbol': rec['CO_I'][len(self.mid):],
-                'price': rec['PR'],
-                'quantity': rec['QTY'],
-                'order_price': rec['O_PR'],
-                'profit': rec['LIQPL'],
-                'commision': rec['COMM'],
+                'current_price': float(rec['PR']),
+                'quantity': int(rec['QTY']),
+                'price': float(rec['O_PR']),
+                'profit': float(rec['LIQPL']),
+                'commision': float(rec['COMM']),
             } for rec in recs]
         else:
             self.error('成交查询失败: {}'.format(r['RESULT']['MESSAGE']))
+            return []

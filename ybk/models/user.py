@@ -219,6 +219,34 @@ class MyMoney(EmbeddedDocument):
     withdrawable = FloatField(required=True)
 
 
+class Order(EmbeddedDocument):
+
+    """ 成交订单汇总 """
+    type_ = StringField(required=True)
+    name = StringField(required=True)
+    symbol = StringField(required=True)
+    price = FloatField(required=True)
+    current_price = FloatField(required=True)
+    quantity = IntField(required=True)
+    commision = FloatField(required=True)
+    profit = FloatField(required=True)
+
+
+class OrderStatus(EmbeddedDocument):
+
+    """ 委托单信息 """
+
+    order = StringField(required=True)
+    order_at = StringField(required=True)
+    type_ = StringField(required=True)
+    name = StringField(required=True)
+    symbol = StringField(required=True)
+    price = FloatField(required=True)
+    quantity = IntField(required=True)
+    pending_quantity = IntField(required=True)
+    status = StringField(required=True)
+
+
 class TradeAccount(Document):
 
     """ 交易账号 """
@@ -244,6 +272,8 @@ class TradeAccount(Document):
 
     position = ListField(EmbeddedField(MyPosition), default=[])
     money = EmbeddedField(MyMoney, default={})
+    orders = ListField(EmbeddedField(Order), default=[])
+    order_status = ListField(EmbeddedField(OrderStatus), default=[])
 
     @classmethod
     def user_accounts(cls, user):
