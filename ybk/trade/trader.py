@@ -27,7 +27,6 @@ def update_trade_account(trade_account):
 
                 # update money
                 ta.money = t.money()
-
                 # update position
                 position = t.position() or []
                 for p in position:
