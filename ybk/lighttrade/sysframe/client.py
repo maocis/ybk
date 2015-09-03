@@ -20,7 +20,7 @@ class Client(UserProtocol, TradeProtocol, MoneyProtocol):
         :param front_url: http://HOST:PORT
         :param tradeweb_url: [http://HOST:PORT/issue_tradeweb/httpXmlServlet]
         """
-        self.front_url = front_url
+        self.front_url = front_url or ''
         self.tradeweb_url = random.choice(tradeweb_url)
         for url in tradeweb_url:
             if url.startswith(front_url):
