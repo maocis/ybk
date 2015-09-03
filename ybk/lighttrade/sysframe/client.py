@@ -23,8 +23,9 @@ class Client(UserProtocol, TradeProtocol, MoneyProtocol):
         self.front_url = front_url or ''
         self.tradeweb_url = random.choice(tradeweb_url)
         for url in tradeweb_url:
-            if url.startswith(front_url):
+            if url.startswith(self.front_url):
                 self.front_url = self.tradeweb_url.rsplit('/', 2)[0]
+                break
         self.session = requests.Session()
         adapter = requests.adapters.HTTPAdapter(pool_connections=10,
                                                 pool_maxsize=10)
