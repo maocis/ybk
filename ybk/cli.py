@@ -9,6 +9,7 @@ from ybk.config import setup_config
 from ybk.crawlers import crawl, crawl_all
 from ybk.parsers import parse, parse_all
 from ybk.quotes import realtime, realtime_all, history, history_all
+from ybk.trade import trade_account_all
 from ybk.models import ProfitLog
 from ybk.log import crawl_log
 
@@ -50,6 +51,11 @@ def do_cron(parser, args):
         with doing():
             if now.hour == 6 and now.minute < 5:
                 history_all()
+
+        with doing():
+            # 更新所有交易账号的状态
+            if 10 <= now.hour <= 21 and 30 <= now.minute <= 35:
+                trade_account_all()
 
         with doing():
             if 9 <= now.hour <= 20:

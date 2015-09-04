@@ -1,15 +1,69 @@
 {% extends "user/accounts.html" %}
 {% block detail %}
 
-<div class="panel panel-info" style="zoom: 0.8;">
-  <div class="panel-heading">
-    <h3 class="panel-title">基本信息</h3>
-  </div>
-  <div class="panel-body">
-    用户名: {{ current_user.username }} <p>注册时间: {{ current_user.created_at | bjtime }}</p>
-  </div>
+<div class="col-md-6">
+    <div class="panel panel-info" style="zoom: 0.8;">
+      <div class="panel-heading">
+        <h3 class="panel-title">基本信息</h3>
+      </div>
+      <div class="panel-body">
+        <p>用户名: {{ current_user.username }} </p>
+        <p>注册时间: {{ current_user.created_at | bjtime }}</p>
+        <p>上次访问时间: {{ current_user.last_login_at | bjtime }}</p>
+        <p>Y币余额: {{ current_user.ymoney }} &nbsp; <a class="btn btn-default btn-xs" href="#">充值</a> | <a class="btn btn-default btn-xs" href="#">帮助</a></p>
+      </div>
+    </div>
 </div>
-
+<div class="col-md-6">
+    <div class="panel panel-info" style="zoom: 0.8;">
+      <div class="panel-heading">
+        <h3 class="panel-title">基本设置</h3>
+      </div>
+      <div class="panel-body">
+        <form class="form-horizontal">
+            <div class="form-group">
+              <label for="inout" class="col-sm-4 control-label">交易账号自动记账</label>
+              <div class="col-sm-8">
+                <div class="btn-group" data-toggle="buttons">
+                  <label class="btn btn-default {% if current_user.auto_accounting%}active{% endif %}">
+                    <input type="radio" name="auto_accounting" value="on" autocomplete="off" {% if current_user.auto_accounting%}checked{% endif %}> 开启
+                  </label>
+                  <label class="btn btn-default  {% if not current_user.auto_accounting%}active{% endif %}">
+                    <input type="radio" name="auto_accounting" value="off" autocomplete="off" {% if not current_user.auto_accounting%}checked{% endif %}> 关闭
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-4 col-sm-8">
+                <button type="submit" name="save" class="btn btn-default">保存</button>
+              </div>
+            </div>
+          </form>
+      </div>
+    </div>
 
 </div>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+    $('[name=save]').on('click', function(e) {
+        e.preventDefault();
+        e.target.blur();
+        var params = {
+            auto_accounting: $('[name=auto_accounting]:checked').val(),
+        }
+        $.post(
+            "{{ url_for('user.update_settings') }}",
+            params,
+            function (r) {
+                if (r.status != 200) {
+                    alert(r.reason);
+                } else {
+                    location.href = location.href;
+                }
+            })
+    })
+</script>
 {% endblock %}

@@ -84,6 +84,7 @@ class User(Document):
     reserved_ymoney = IntField(default=0)  # 预扣Y币
     created_at = DateTimeField(created=True)
     last_login_at = DateTimeField(modified=True)
+    auto_accounting = BooleanField(default=False)
 
     _is_active = BooleanField(default=False)  # 通过验证
     _is_admin = BooleanField(default=False)

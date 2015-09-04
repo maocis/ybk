@@ -132,7 +132,7 @@ def position_op(type_):
         })
         t.save()
         if not Position.do_op(t):
-            t.delete()
+            t.remove()
         return jsonify(status=200)
     except Exception as e:
         log.exception('')

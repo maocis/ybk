@@ -1,7 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from ybk.models import Collection
+from datetime import datetime, timedelta
+
+from ybk.models import Collection, TradeAccount, User, Position, Transaction
 from ybk.lighttrade import Trader
+
+
+def trade_account_all():
+    """ 更新全部账户 """
+    for ta in TradeAccount.query():
+        update_trade_account(ta)
 
 
 def transfer(trade_account, inout, amount):
@@ -102,3 +110,56 @@ def update_trade_account(trade_account):
                 ta.order_status = order_status
 
     ta.upsert()
+    accounting(ta)
+
+
+def accounting(trade_account):
+    """ 对账号进行自动记账(如果用户已配置) """
+    ta = trade_account
+    user = User.query_one({'_id': ta.user})
+    exchange = ta.exchange
+    operated_at = datetime.utcnow() + timedelta(hours=8)
+
+    def add_transaction(type_, symbol, price, quantity):
+        t = Transaction({
+            'user': user._id,
+            'type_': type_,
+            'operated_at': operated_at,
+            'exchange': exchange,
+            'symbol': symbol,
+            'price': price,
+            'quantity': quantity,
+        })
+        t.save()
+        if not Position.do_op(t):
+            t.remove()
+
+    if user.auto_accounting:
+        op = Position.user_position(user._id)
+        np = ta.position
+
+        p1symbols = {p1['symbol']: p1 for p1 in op}
+        p2symbols = {p2.symbol: p2 for p2 in np}
+        # 检查更改项
+        for p1 in op:
+            symbol = p1['symbol']
+            if symbol in p2symbols:
+                p2 = p2symbols[symbol]
+                quantity = p2.quantity - p1['quantity']
+                if quantity != 0:
+                    type_ = 'buy' if quantity > 0 else 'sell'
+                    price = (p2.average_price * p2.quantity -
+                             p1['avg_buy_price'] * p1['quantity']) / quantity
+                    price = int(price * 100) / 100.
+                    add_transaction(type_, symbol, price, abs(quantity))
+            else:
+                # 按现价计算已卖出
+                price = int(p1['latest_price'] * 100) / 100.
+                add_transaction(
+                    'sell', symbol, price, p1['quantity'])
+        # 检查新增项
+        for p2 in np:
+            symbol = p2.symbol
+            if symbol not in p1symbols:
+                price = int(p2.average_price * 100) / 100.
+                add_transaction('buy', symbol, price, p2.quantity)

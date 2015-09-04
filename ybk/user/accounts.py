@@ -50,6 +50,17 @@ def investor_info():
     return render_template('user/investor_info.html', **locals())
 
 
+@user.route('/user/update_settings/', methods=['POST'])
+@login_required
+def update_settings():
+    user = current_user
+    auto_accounting = request.form.get('auto_accounting', '') == 'on'
+    user.auto_accounting = auto_accounting
+    user.upsert()
+    return jsonify(status=200,
+                   reason='')
+
+
 @user.route('/user/investor/upsert.ajax', methods=['POST'])
 @login_required
 def investor_upsert():
