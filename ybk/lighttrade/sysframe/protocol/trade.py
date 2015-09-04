@@ -113,7 +113,6 @@ class TradeProtocol(object):
                                ))
             return pos
         else:
-            return []
             self.error('持仓查询失败: {}'.format(r['RESULT']['MESSAGE']))
 
     def order(self, symbol, price, quantity, type_=1):
