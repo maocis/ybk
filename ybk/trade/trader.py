@@ -110,17 +110,15 @@ def update_trade_account(trade_account):
                 ta.order_status = order_status
 
     ta.upsert()
-    accounting(ta)
-
-
-def accounting(trade_account):
-    """ 对账号进行自动记账(如果用户已配置) """
-    ta = trade_account
     user = User.query_one({'_id': ta.user})
-    exchange = ta.exchange
+    accounting(user)
+
+
+def accounting(user):
+    """ 对账号进行自动记账(如果用户已配置) """
     operated_at = datetime.utcnow() + timedelta(hours=8)
 
-    def add_transaction(type_, symbol, price, quantity):
+    def add_transaction(type_, exchange, symbol, price, quantity):
         t = Transaction({
             'user': user._id,
             'type_': type_,
@@ -136,31 +134,41 @@ def accounting(trade_account):
 
     if user.auto_accounting:
         op = Position.user_position(user._id)
-        np = ta.position
-
-        p1symbols = {p1['symbol']: p1 for p1 in op}
-        p2symbols = {p2.symbol: p2 for p2 in np}
+        p2pairs = {}
+        for ta in TradeAccount.query({'user': user._id}):
+            for p in ta.position or []:
+                pair = (ta.exchange, p.symbol)
+                if pair not in p2pairs:
+                    p2pairs[pair] = p
+                else:
+                    pp = p2pairs[pair]
+                    amount = p.average_price * p.quantity + \
+                        pp.average_price * pp.quantity
+                    p.quantity += pp.quantity
+                    p.average_price = amount / p.quantity
+                    p2pairs[pair] = p
+        p1pairs = {(p1['exchange'], p1['symbol']): p1 for p1 in op}
         # 检查更改项
         for p1 in op:
-            symbol = p1['symbol']
-            if symbol in p2symbols:
-                p2 = p2symbols[symbol]
+            pair = p1['exchange'], p1['symbol']
+            if pair in p2pairs:
+                p2 = p2pairs[pair]
                 quantity = p2.quantity - p1['quantity']
                 if quantity != 0:
                     type_ = 'buy' if quantity > 0 else 'sell'
                     price = (p2.average_price * p2.quantity -
                              p1['avg_buy_price'] * p1['quantity']) / quantity
                     price = int(price * 100) / 100.
-                    add_transaction(type_, symbol, price, abs(quantity))
+                    add_transaction(
+                        type_, pair[0], pair[1], price, abs(quantity))
             else:
                 # 按现价计算已卖出
                 if p1['quantity'] > 0:
                     price = int(p1['latest_price'] * 100) / 100.
                     add_transaction(
-                        'sell', symbol, price, p1['quantity'])
+                        'sell', pair[0], pair[1], price, p1['quantity'])
         # 检查新增项
-        for p2 in np:
-            symbol = p2.symbol
-            if symbol not in p1symbols and p2.quantity > 0:
+        for pair, p2 in p2pairs.items():
+            if pair not in p1pairs and p2.quantity > 0:
                 price = int(p2.average_price * 100) / 100.
-                add_transaction('buy', symbol, price, p2.quantity)
+                add_transaction('buy', pair[0], pair[1], price, p2.quantity)
