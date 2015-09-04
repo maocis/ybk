@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import logging
 from datetime import datetime, timedelta
 
 from ybk.models import Collection, TradeAccount, User, Position, Transaction
 from ybk.lighttrade import Trader
+
+log = logging.getLogger('trade')
 
 
 def trade_account_all():
@@ -53,6 +56,7 @@ def quote_detail(trade_account, symbol):
 
 def update_trade_account(trade_account):
     ta = trade_account
+    log.info('更新账号{}的信息'.format(ta._id))
     if not ta.login_password:
         ta.verified = False
         ta.verify_message = '没有密码不能登录'
