@@ -154,12 +154,13 @@ def accounting(trade_account):
                     add_transaction(type_, symbol, price, abs(quantity))
             else:
                 # 按现价计算已卖出
-                price = int(p1['latest_price'] * 100) / 100.
-                add_transaction(
-                    'sell', symbol, price, p1['quantity'])
+                if p1['quantity'] > 0:
+                    price = int(p1['latest_price'] * 100) / 100.
+                    add_transaction(
+                        'sell', symbol, price, p1['quantity'])
         # 检查新增项
         for p2 in np:
             symbol = p2.symbol
-            if symbol not in p1symbols:
+            if symbol not in p1symbols and p2.quantity > 0:
                 price = int(p2.average_price * 100) / 100.
                 add_transaction('buy', symbol, price, p2.quantity)
