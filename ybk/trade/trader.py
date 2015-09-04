@@ -79,11 +79,12 @@ def update_trade_account(trade_account):
                 # update money
                 ta.money = t.money()
                 # update position
-                position = t.position() or []
-                for p in position:
-                    p['name'] = Collection.get_name(
-                        ta.exchange, p['symbol']) or ''
-                ta.position = position
+                position = t.position()
+                if position is not None:
+                    for p in position:
+                        p['name'] = Collection.get_name(
+                            ta.exchange, p['symbol']) or ''
+                    ta.position = position
 
                 # update orders
                 orders = t.orders()
@@ -155,6 +156,9 @@ def accounting(user):
         # 检查更改项
         for p1 in op:
             pair = p1['exchange'], p1['symbol']
+            if pair[0] in ['湖南文交所', '海西文交所', '上海邮币卡',
+                           '上海文交所', '中俄邮币卡']:
+                continue
             if pair in p2pairs:
                 p2 = p2pairs[pair]
                 quantity = p2.quantity - p1['quantity']
@@ -173,6 +177,9 @@ def accounting(user):
                         'sell', pair[0], pair[1], price, p1['quantity'])
         # 检查新增项
         for pair, p2 in p2pairs.items():
+            if pair[0] in ['湖南文交所', '海西文交所', '上海邮币卡',
+                           '上海文交所', '中俄邮币卡']:
+                continue
             if pair not in p1pairs and p2.quantity > 0:
                 price = int(p2.average_price * 100) / 100.
                 add_transaction('buy', pair[0], pair[1], price, p2.quantity)
