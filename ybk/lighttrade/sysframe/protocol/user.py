@@ -7,6 +7,7 @@ log = logging.getLogger('sysframe')
 
 
 class UserProtocol(object):
+
     def login(self, username, password):
         params = {
             'USER_ID': username,
@@ -82,7 +83,6 @@ class UserProtocol(object):
         else:
             self.error('市场查询失败: {}'.format(r['RESULT']['MESSAGE']))
 
-
     def sync_server_time(self):
         t0 = time.time()
         d = self.request_tradeweb('sys_time_query', {'USER_ID': self.uid,
@@ -93,11 +93,10 @@ class UserProtocol(object):
         r = d['GNNT']['REP']['RESULT']
         if r['RETCODE'] == '0':
             self.time_offset = int(r['TV_U']) / 1000. - t0
-            log.info('服务器时间差: {}毫秒'.format(self.time_offset*1000))
-            log.info('服务器延迟: {}毫秒'.format(self.latency*1000))
+            log.info('服务器时间差: {}毫秒'.format(self.time_offset * 1000))
+            log.info('服务器延迟: {}毫秒'.format(self.latency * 1000))
         else:
             self.error('同步时间失败: {}'.format(r['MESSAGE']))
-
 
     def change_password(self, password):
         d = self.request_tradeweb('change_password',

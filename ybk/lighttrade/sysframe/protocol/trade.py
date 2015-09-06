@@ -76,10 +76,14 @@ class TradeProtocol(object):
         else:
             self.error('盘口数据查询失败: {}'.format(r['RESULT']['MESSAGE']))
 
-    def position(self):
+    def position(self, symbol=None):
         """ 持仓查询 """
+        if not symbol:
+            symbol = ''
+        else:
+            symbol = self.mid + symbol
         d = self.request_tradeweb('holding_query', {'USER_ID': self.uid,
-                                                    'COMMODITY_ID': '',
+                                                    'COMMODITY_ID': symbol,
                                                     'STARTNUM': 0,
                                                     'RECCNT': 0,
                                                     'SESSION_ID': self.sid,
