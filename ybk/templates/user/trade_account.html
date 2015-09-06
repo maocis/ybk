@@ -68,6 +68,7 @@
             <li role="presentation"><a href="#orders" aria-controls="orders" role="tab" data-toggle="tab">成交</a></li>
             <li role="presentation"><a href="#order" aria-controls="order" role="tab" data-toggle="tab">下单</a></li>
             <li role="presentation"><a href="#transfer" aria-controls="transfer" role="tab" data-toggle="tab">出入金</a></li>
+            <li role="presentation"><a href="#apply" aria-controls="apply" role="tab" data-toggle="tab">申购</a></li>
             <li role="presentation"><a href="#grab" aria-controls="grab" role="tab" data-toggle="tab">抢单</a></li>
             <li role="presentation"><a href="#oplog" aria-controls="oplog" role="tab" data-toggle="tab">操作日志</a></li>
           </ul>
@@ -159,7 +160,8 @@
                   </table> 
                 </div>
               </div>
-            </div>
+            </div> <!-- trade -->
+
             <div role="tabpanel" class="tab-pane" id="transfer">
               <br>
               <form class="form-horizontal">
@@ -189,7 +191,52 @@
                   </div>
                 </div>
               </form>
-            </div>
+            </div> <!-- transfer -->
+            
+            <div role="tabpanel" class="tab-pane" id="apply">
+              <div>
+                <h3>可申购品种</h3>
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>品名</th>
+                      <th>代码</th>
+                      <th>申购价</th>
+                      <th>总量</th>
+                      <th>Min</th>
+                      <th>Max</th>
+                      <th>Unit</th>
+                      <th>可申购量</th>
+                      <th>申购</th>
+                    </tr>
+                  </thead>
+                  <tbody id="list_offer">
+                  </tbody>
+                </table>
+              </div>
+              <div>
+                <h3>申购记录</h3>
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>单号</th>
+                      <th>品名</th>
+                      <th>代码</th>
+                      <th>时间</th>
+                      <th>状态</th>
+                      <th>价格</th>
+                      <th>数量</th>
+                      <th>开始序号</th>
+                      <th>结束序号</th>
+                      <th>取消</th>
+                    </tr>
+                  </thead>
+                  <tbody id="apply_status">
+                  </tbody>
+                </table>
+              </div>
+            </div> <!-- apply -->
+            
             <div role="tabpanel" class="tab-pane" id="grab">施工中...</div>
             <div role="tabpanel" class="tab-pane" id="oplog">施工中...</div>
           </div>
@@ -558,7 +605,7 @@
     }
   }
 
-  // status
+  // 持仓/委托/成交
   var account_id;
   var exchange;
   var usable_money;
@@ -700,6 +747,8 @@
     $('#orders').html(html);    
   };
 
+  // 交易
+
   function load_symbols(value){
     return function(callback){
       $.ajax({
@@ -834,6 +883,8 @@
     render_order_status(account_id);
     render_orders(account_id);
     render_order(account_id);
+    update_list_offers();
+    update_apply_status();
   }
 
 
@@ -933,7 +984,9 @@
         alert(r.reason);
       })    
   })
-   
+  
+  // 出入金
+
   $('body').on('click', '[name=transfer]', function(e) {
     e.preventDefault();
     e.target.blur();
@@ -952,6 +1005,98 @@
       })
   })
 
+  // 申购
+  function update_list_offers() {
+    $.post(
+      "{{ url_for('user.trade_account_list_offers') }}",
+      {account_id: account_id},
+      function (r) {
+        if (r.status != 200) {
+          alert(r.reason);
+        } else {
+          html = '';
+          for (var i=0; i < r.offers.length; i++) {
+            var d = r.offers[i];
+            html += '<tr>' + 
+              '<td>' + d.name + '</td>' +
+              '<td>' + d.symbol + '</td>' + 
+              '<td>' + d.price + '</td>' +
+              '<td>' + d.quantity + '</td>' +
+              '<td>' + d.min_quantity + '</td>' +
+              '<td>' + d.max_quantity + '</td>' +
+              '<td>' + d.min_change + '</td>' +
+              '<td>' + d.can_apply + '</td>' +
+              '<td><input type="text" name="apply_quantity">&nbsp;<button name="apply_offer" class="btn btn-xs btn-default" data-symbol="' + d.symbol + '">申购</button></td>' +
+              '</tr>'
+          }
+          $('#list_offer').html(html);
+        }
+      })
+  }
+
+  function update_apply_status() {
+    $.post(
+      "{{ url_for('user.trade_account_apply_status') }}",
+      {account_id: account_id},
+      function (r) {
+        if (r.status != 200) {
+          alert(r.reason);
+        } else {
+          html = '';
+          for (var i=0; i < r.apply_status.length; i++) {
+            var d = r.apply_status[i];
+            html += '<tr>' + 
+              '<td>' + d.id + '</td>' +
+              '<td>' + d.name + '</td>' +
+              '<td>' + d.symbol + '</td>' + 
+              '<td>' + d.apply_date + '</td>' +
+              '<td>' + d.status + '</td>' + 
+              '<td>' + d.price + '</td>' +
+              '<td>' + d.quantity + '</td>' +
+              '<td>' + d.sequence_begin + '</td>' +
+              '<td>' + d.sequence_end + '</td>' +
+              '<td><button name="withdraw_apply" class="btn btn-xs btn-default" data-applyid="' + d.id + '">撤单</button></td>' +
+              '</tr>'
+          }
+          $('#apply_status').html(html);
+        }
+      })
+  }
+
+  $('body').on('click', '[name=apply_offer]', function (e) {
+    e.preventDefault();
+    e.target.blur();
+    var params = {
+      account_id: account_id,
+      symbol: $(this).data('symbol'),
+      quantity: $(this).prev().val(),
+    }
+    $.post(
+      "{{ url_for('user.trade_account_apply_offer') }}",
+      params,
+      function (r) {
+        update_list_offers();
+        update_apply_status();
+        alert(r.reason);
+      })
+  })
+
+  $('body').on('click', '[name=withdraw_apply]', function (e) {
+    e.preventDefault();
+    e.target.blur();
+    var params = {
+      account_id: account_id,
+      applyid: $(this).data('applyid'),
+    }
+    $.post(
+      "{{ url_for('user.trade_account_withdraw_apply') }}",
+      params,
+      function (r) {
+        update_list_offers();
+        update_apply_status();
+        alert(r.reason);
+      })
+  })
 
   // edit 
   $('table').on('click', '[name=edit]', function(e) {

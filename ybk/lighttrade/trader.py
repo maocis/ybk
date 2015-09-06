@@ -22,8 +22,10 @@ except:
 class Trader(object):
 
     """ 交易调度 """
+    traders = {}
 
     def __init__(self, exchange, username=None, password=None):
+        """ 登陆并缓存Trader Object """
         d = config[exchange]
         if d['system'] == 'sysframe':
             Client = SysframeClient
@@ -38,13 +40,20 @@ class Trader(object):
         if d.get('disabled'):
             raise ValueError('该交易所被禁止')
 
-        if not isinstance(d['tradeweb_url'], list):
-            d['tradeweb_url'] = [d['tradeweb_url']]
+        signature = (exchange, username, password)
+        if signature not in self.traders:
+            if not isinstance(d['tradeweb_url'], list):
+                d['tradeweb_url'] = [d['tradeweb_url']]
 
-        self.client = Client(front_url=d['front_url'],
-                             tradeweb_url=d['tradeweb_url'])
-        setattr(self.client, 'exchange', exchange)
-        self.client.login(username, password)
+            self.client = Client(front_url=d['front_url'],
+                                 tradeweb_url=d['tradeweb_url'])
+            setattr(self.client, 'exchange', exchange)
+            self.client.login(username, password)
+            self.traders[signature] = self
+        else:
+            old = self.traders[signature]
+            self.client = old.client
+            self.client.keep_alive()
 
     def __getattr__(self, key):
         if key in self.__dict__:

@@ -15,6 +15,32 @@ def trade_account_all():
         update_trade_account(ta)
 
 
+def list_offers(trade_account):
+    ta = trade_account
+    t = Trader(ta.exchange, ta.login_name, ta.login_password)
+    return t.list_offer_details()
+
+
+def apply_status(trade_account):
+    ta = trade_account
+    t = Trader(ta.exchange, ta.login_name, ta.login_password)
+    return t.apply_status()
+
+
+def apply_offer(trade_account, symbol, quantity):
+    ta = trade_account
+    t = Trader(ta.exchange, ta.login_name, ta.login_password)
+    r = t.apply(symbol, quantity)
+    err = t.last_error
+    return r, err
+
+
+def withdraw_apply(trade_account, applyid):
+    ta = trade_account
+    t = Trader(ta.exchange, ta.login_name, ta.login_password)
+    return t.withdraw_apply(applyid)
+
+
 def transfer(trade_account, inout, amount):
     ta = trade_account
     if not ta.money_password:

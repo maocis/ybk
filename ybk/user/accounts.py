@@ -6,7 +6,9 @@ from flask.ext.login import login_required, current_user
 
 from ybk.settings import CONFS
 from ybk.trade import (update_trade_account, quote_detail,
-                       order, withdraw, transfer)
+                       order, withdraw, transfer,
+                       list_offers, apply_status,
+                       apply_offer, withdraw_apply)
 from ybk.models import Investor, TradeAccount, Exchange
 from ybk.lighttrade import Trader
 
@@ -404,5 +406,72 @@ def trade_account_transfer():
                 return jsonify(status=200, reason='出入金已提交')
             else:
                 return jsonify(status=400, reason=err)
+    else:
+        return jsonify(status=500, reason='账号未找到')
+
+
+@user.route('/user/trade_account/list_offers', methods=['POST'])
+@login_required
+def trade_account_list_offers():
+    account_id = request.form.get('account_id')
+    ta = TradeAccount.query_one({'_id': account_id})
+    if ta:
+        try:
+            offers = list_offers(ta)
+        except Exception as e:
+            return jsonify(status=500, reason=str(e))
+        else:
+            return jsonify(status=200, offers=offers)
+    else:
+        return jsonify(status=500, reason='账号未找到')
+
+
+@user.route('/user/trade_account/apply_status', methods=['POST'])
+@login_required
+def trade_account_apply_status():
+    account_id = request.form.get('account_id')
+    ta = TradeAccount.query_one({'_id': account_id})
+    if ta:
+        try:
+            result = apply_status(ta)
+        except Exception as e:
+            return jsonify(status=500, reason=str(e))
+        else:
+            return jsonify(status=200, apply_status=result)
+    else:
+        return jsonify(status=500, reason='账号未找到')
+
+
+@user.route('/user/trade_account/apply_offer', methods=['POST'])
+@login_required
+def trade_account_apply_offer():
+    account_id = request.form.get('account_id')
+    symbol = request.form.get('symbol')
+    quantity = int(request.form.get('quantity'))
+    ta = TradeAccount.query_one({'_id': account_id})
+    if ta:
+        try:
+            r, err = apply_offer(ta, symbol, quantity)
+        except Exception as e:
+            return jsonify(status=500, reason=str(e))
+        else:
+            return jsonify(status=200, reason=str(err))
+    else:
+        return jsonify(status=500, reason='账号未找到')
+
+
+@user.route('/user/trade_account/withdraw_apply', methods=['POST'])
+@login_required
+def trade_account_withdraw_apply():
+    account_id = request.form.get('account_id')
+    applyid = request.form.get('applyid')
+    ta = TradeAccount.query_one({'_id': account_id})
+    if ta:
+        try:
+            withdraw_apply(ta, applyid)
+        except Exception as e:
+            return jsonify(status=500, reason=str(e))
+        else:
+            return jsonify(status=200, reason='撤单已提交')
     else:
         return jsonify(status=500, reason='账号未找到')

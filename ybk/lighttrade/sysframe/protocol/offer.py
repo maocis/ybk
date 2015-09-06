@@ -170,7 +170,7 @@ class OfferProtocol(object):
                 'apply_date': tds[10].text,
                 'close_date': tds[11].text,
                 'sequence_begin': tds[12].text,
-                'sequecne_end': tds[13].text,
+                'sequence_end': tds[13].text,
             })
         return result
 
