@@ -54,7 +54,7 @@ def do_cron(parser, args):
 
         with doing():
             # 更新所有交易账号的状态
-            if 10 <= now.hour <= 21 and 30 <= now.minute <= 35:
+            if now.hour == 22 and 30 <= now.minute <= 35:
                 trade_account_all()
 
         with doing():
