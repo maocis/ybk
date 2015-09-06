@@ -164,7 +164,7 @@ def accounting(user):
                 quantity = p2.quantity - p1['quantity']
                 if quantity != 0:
                     type_ = 'buy' if quantity > 0 else 'sell'
-                    price = (p2.average_price * p2.quantity -
+                    price = (p2.price * p2.quantity -
                              p1['avg_buy_price'] * p1['quantity']) / quantity
                     price = int(price * 100) / 100.
                     add_transaction(
