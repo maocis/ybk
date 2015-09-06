@@ -16,7 +16,7 @@ class MoneyProtocol(object):
         else:
             return 'new'
 
-    def html_login(self):
+    def html_login(self, module=18):
         if not self.front_url:
             self.error('front_url未配置')
             return False
@@ -32,8 +32,14 @@ class MoneyProtocol(object):
         headers = {
             'x-requested-with': 'XMLHttpRequest',
         }
-        url = self.front_url + \
-            '/finance_front/checkneedless/communications/sessionGetUser.action'
+        if module == 18:
+            mname = '/finance'
+        elif module == 11:
+            mname = '/issue'
+        else:
+            raise NotImplementedError
+        url = self.front_url + mname + \
+            '_front/checkneedless/communications/sessionGetUser.action'
         params = {
             'sessionID': self.sid,
             'userID': self.uid,
@@ -68,7 +74,8 @@ class MoneyProtocol(object):
             text = self.session.get(url).text
         else:
             # 新版银行信息
-            url = self.front_url + '/bank_front/bank/money/gotoMoneyPage.action'
+            url = self.front_url + \
+                '/bank_front/bank/money/gotoMoneyPage.action'
             params = {
                 'sessionID': self.sid,
                 'userID': self.uid,
@@ -93,11 +100,12 @@ class MoneyProtocol(object):
 
         params = {
             'inoutMoney': type_,
-            'bankID': t.xpath('.//select[@id="bankID"]/option')[-1].get('value'),
+            'bankID': t.xpath('.//select[@id="bankID"]/option')
+            [-1].get('value'),
             'money': amount,
             'password': password,
             'cardType': t.xpath('.//input[@name="cardType"]')[0].get('value'),
-            'inOutStart': '0', # 本行入金
+            'inOutStart': '0',  # 本行入金
         }
 
         text = self.session.post(surl, params=params).text

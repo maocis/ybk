@@ -4,14 +4,15 @@ import random
 import logging
 import requests
 import xmltodict
-from .protocol import UserProtocol, TradeProtocol, MoneyProtocol
+from .protocol import (UserProtocol, TradeProtocol,
+                       MoneyProtocol, OfferProtocol)
 
 requests.packages.urllib3.disable_warnings()
 
 log = logging.getLogger('sysframe')
 
 
-class Client(UserProtocol, TradeProtocol, MoneyProtocol):
+class Client(UserProtocol, TradeProtocol, MoneyProtocol, OfferProtocol):
 
     def __init__(self,
                  front_url,
