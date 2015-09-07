@@ -111,3 +111,19 @@ class UserProtocol(object):
             log.info('密码已修改为{}'.format(password))
         else:
             self.error('修改密码失败: {}'.format(r['MESSAGE']))
+
+    def investor_info(self):
+        d = self.request_tradeweb('investor_info',
+                                  {'USER_ID': self.uid,
+                                   'SESSION_ID': self.sid})
+
+        r = d['GNNT']['REP']['RESULT']
+        if r['RETCODE'] == '0':
+            return {
+                'username': r['ACCOUNT'],
+                'name': r['NAME'],
+                'mobile': r['PHONE'],
+                'id_number': r['IDNUM'],
+            }
+        else:
+            self.error('投资人信息获取失败: {}'.format(r['MESSAGE']))
