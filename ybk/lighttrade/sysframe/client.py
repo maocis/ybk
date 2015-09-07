@@ -22,6 +22,7 @@ class Client(UserProtocol, TradeProtocol, MoneyProtocol, OfferProtocol):
         :param tradeweb_url: [http://HOST:PORT/issue_tradeweb/httpXmlServlet]
         """
         self.front_url = front_url or ''
+        self.tradeweb_urls = tradeweb_url
         self.tradeweb_url = random.choice(tradeweb_url)
         for url in tradeweb_url:
             if url.startswith(self.front_url):
@@ -80,6 +81,7 @@ class Client(UserProtocol, TradeProtocol, MoneyProtocol, OfferProtocol):
             r = self.session.post(
                 url, headers=headers, data=xml, verify=False, timeout=(1, 1))
         except requests.exceptions.RequestException:
+            self.tradeweb_url = random.choice(self.tradeweb_urls)
             return self.request_xml(protocol, params, mode, headers)
         result = r.content.decode('gb18030', 'ignore')
         log.debug('收到返回 {}'.format(result))
