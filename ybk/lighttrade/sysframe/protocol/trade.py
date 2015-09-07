@@ -155,15 +155,19 @@ class TradeProtocol(object):
         kwargs['type_'] = 2
         return self.order(*args, **kwargs)
 
-    def order_status(self, order=None):
+    def order_status(self, order=None, symbol=None):
         """ 委托查询 """
         if not order:
             order = 0
+        if not symbol:
+            symbol = ''
+        else:
+            symbol = self.mid + symbol
         d = self.request_tradeweb('my_weekorder_query',
                                   {'USER_ID': self.uid,
                                    'BUY_SELL': 0,
                                    'ORDER_NO': order,
-                                   'COMMODITY_ID': '',
+                                   'COMMODITY_ID': symbol,
                                    'STARTNUM': 0,
                                    'RECCNT': 0,
                                    'UT': 0,

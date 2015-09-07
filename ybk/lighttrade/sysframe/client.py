@@ -40,7 +40,7 @@ class Client(UserProtocol, TradeProtocol, MoneyProtocol, OfferProtocol):
         self.cid = None  # customer_id
         self.uid = None  # user_id
         self.sid = None  # session_id
-        self.mid = None  # market_id
+        self.mid = '99'  # market_id
         self.username = None
         self.password = None
         self.latency = None
