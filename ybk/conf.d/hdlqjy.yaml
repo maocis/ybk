@@ -1,0 +1,38 @@
+url: http://sc.hdlqjy.com/
+name: 华东林业产权交易所
+abbr: 华东林业所
+notrade: 5
+cashout: 2
+stock:
+offer:
+    index: 
+        - http://sc.hdlqjy.com/xxpl/sggg.shtml
+    relative: http://sc.hdlqjy.com 
+    detail: <a[^>]*href="([^"]+)"[^>]*>([^<]*(挂牌交易|申购公告)[^<]*)</a></td>\s*<td[^>]*>(\d+-\d+-\d+)
+    fields: [url, title, _, published_at]
+    encoding: utf-8
+    page: 
+    maxpage: 1
+result:
+    index: 
+        - http://sc.hdlqjy.com/xxpl/sggg.shtml
+    relative: http://sc.hdlqjy.com 
+    detail: <a[^>]*href="([^"]+)"[^>]*>([^<]*(中签)[^<]*)</a></td>\s*<td[^>]*>(\d+-\d+-\d+)
+    fields: [url, title, _, published_at]
+    encoding: utf-8
+    page: 
+    maxpage: 1
+opening:
+    url: http://sc.hdlqjy.com/khzx.shtml
+    guide: http://sc.hdlqjy.com/jyzn/khlc/91.shtml
+    bank: [建设银行]
+    code: [-]
+    name: [-]
+    download: http://sc.hdlqjy.com/top/xzzx/jyrj.shtml
+quote:
+    realtime:
+        url: 
+        type: getHqV_lbData
+    history:
+        url:  
+        type: sysframe
