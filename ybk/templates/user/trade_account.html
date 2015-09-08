@@ -836,6 +836,7 @@
   $('#statusModal').on('hidden.bs.modal', function () {
     // do something…
     clearInterval(quote_updater);
+    quote_updater = undefined;
   })
 
   function update_buy_sell(value) {
@@ -851,7 +852,10 @@
     onChange: function(value) {
       if (select_sell_symbol.getValue() != value) {
         select_sell_symbol.setValue(value);
-        update_buy_sell(value);
+        if (!quote_updater) {
+          update_buy_sell(value);
+          quote_updater = setInterval(function() { update_quote(value) }, 3000);
+        }
       }
     }
   })
@@ -863,7 +867,10 @@
     onChange: function(value) {
       if (select_buy_symbol.getValue() != value) {
         select_buy_symbol.setValue(value);
-        update_buy_sell(value);
+        if (!quote_updater) {
+          update_buy_sell(value);
+          quote_updater = setInterval(function() { update_quote(value) }, 3000);
+        }
       }
     }
   })
@@ -899,7 +906,6 @@
         exchange = cb.data('exchange');
         reload_status(account_id);
         $('#statusModal').modal();
-        quote_updater = setInterval(update_quote, 3000)
       });
     },
     300)
