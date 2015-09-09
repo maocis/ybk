@@ -178,13 +178,15 @@ class TradeProtocol(object):
 
         if repeat * len(requests) <= 90:
             results = self.request_ff(
-                requests, interval=interval, repeat=repeat)
+                requests, interval=interval, repeat=repeat, 
+                response=response)
         else:
             # cut and execute request_ff multiple times
             rp = 90 // len(requests)
             results = []
             for _ in range(repeat // rp):
-                r = self.request_ff(requests, interval=interval, repeat=rp)
+                r = self.request_ff(requests, interval=interval, 
+                                    repeat=rp, response=response)
                 if r:
                     results.extend(r)
 
