@@ -1,9 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import time
 import random
 import logging
+
+from concurrent.futures import ThreadPoolExecutor
+
 import requests
+from requests.packages.urllib3.util import is_connection_dropped
+
 import xmltodict
+
 from .protocol import (UserProtocol, TradeProtocol,
                        MoneyProtocol, OfferProtocol)
 
@@ -29,12 +36,14 @@ class Client(UserProtocol, TradeProtocol, MoneyProtocol, OfferProtocol):
                 self.front_url = self.tradeweb_url.rsplit('/', 2)[0]
                 break
         self.session = requests.Session()
-        adapter = requests.adapters.HTTPAdapter(pool_connections=10,
+        adapter = requests.adapters.HTTPAdapter(pool_connections=5,
                                                 pool_maxsize=10)
         self.session.mount('http://', adapter)
         self.session.headers = {
             'Content-Type': 'application/x-www-form-urlencoded',
         }
+        self.executor = ThreadPoolExecutor(2)
+        self.executor.submit(self.warmup)
         self._reset()
 
     def _reset(self):
@@ -89,6 +98,103 @@ class Client(UserProtocol, TradeProtocol, MoneyProtocol, OfferProtocol):
             return xmltodict.parse(result)
         else:
             raise ValueError('请求出错, 请检查请求格式/网络连接')
+
+    def warmup(self, size=5):
+        """ Warmup Connection Pools """
+        t0 = time.time()
+        url = self.tradeweb_url
+        a = self.session.get_adapter(url)
+        p = a.get_connection(url)
+        count = 0
+        conns = [p._get_conn() for _ in range(size)]
+        for c in conns:
+            if is_connection_dropped(c):
+                count += 1
+                c.connect()
+            p._put_conn(c)
+        p.pool.queue = list(reversed(p.pool.queue))
+        if count > 0:
+            log.info('重新连接{}个连接, 花费{}秒'
+                     ''.format(count, time.time() - t0))
+
+    def request_ff(self, requests, interval=0.001, repeat=1, response=False):
+        """ Fire and Forget Requests in Batch
+
+        :param requests: [(protocol, params), ...]
+        """
+        if len(requests) * repeat > 90:
+            repeat = 90 // len(requests)
+            log.warning('批量请求次数太多, 自动降频到重复{}次'.format(repeat))
+            if repeat < 1:
+                raise ValueError('单次批量请求太多, 请设置在90以下')
+        xmls = [self._create_xml(protocol, params)
+                for protocol, params in requests]
+        bxmls = [xml.encode('utf-8') for xml in xmls]
+
+        url = self.tradeweb_url
+
+        a = self.session.get_adapter(url)
+        p = a.get_connection(url)
+        c = p._get_conn()
+        if is_connection_dropped(c):
+            c.connect()
+
+        hu = url[url.find('//') + 2:]
+        host, uri = hu.split('/', 1)
+        jsid = self.session.cookies['JSESSIONID']
+
+        def build_request(bxml):
+            data = 'POST /{} HTTP/1.1\r\n'.format(uri) + \
+                'HOST: {}\r\n'.format(host) + \
+                'COOKIE: JSESSIONID={}\r\n'.format(jsid) + \
+                'Connection: Keep-Alive\r\n' + \
+                'Content-Length: {}\r\n'.format(len(bxml)) + \
+                '\r\n'
+            data = data.encode('gb18030') + bxml
+            return data
+
+        begin = time.time()
+        for _ in range(repeat):
+            for bxml in bxmls:
+                t0 = time.time()
+                data = build_request(bxml)
+                c.sock.sendall(data)
+                used = time.time() - t0
+                if used < interval:
+                    time.sleep(interval - used - 0.0002)
+        end = time.time()
+        log.info('批量请求发送完毕, {}秒内发送了{}个请求'
+                 ''.format(end - begin, len(bxmls) * repeat))
+
+        # Parsing Results
+        if response:
+            results = []
+            count = len(xmls) * repeat
+            f = c.sock.makefile('rb')
+            while count > 0:
+                count -= 1
+                length = 0
+                line = f.readline().strip()
+                if not line.startswith(b'HTTP/1.1'):
+                    break
+                while True:
+                    line = f.readline().strip()
+                    if not line:
+                        break
+                    key, value = line.split(b': ')
+                    if key == b'Content-Length':
+                        length = int(value)
+                content = f.read(length)
+                text = content.decode('gb18030', 'ignore')
+                results.append(xmltodict.parse(text))
+
+            p._put_conn(c)
+            return results
+        else:
+            # we are closing one connection, for performance consideration
+            # let's open another connection (if necessory) in background
+            self.executor.submit(self.warmup, 3)
+            c.close()
 
     def _create_xml(self, protocol, params):
         header = '<?xml version="1.0" encoding="gb2312"?>'

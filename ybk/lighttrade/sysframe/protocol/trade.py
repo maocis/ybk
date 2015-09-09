@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import logging
+from collections import Counter
 
 log = logging.getLogger('sysframe')
 
@@ -154,6 +155,61 @@ class TradeProtocol(object):
     def sell(self, *args, **kwargs):
         kwargs['type_'] = 2
         return self.order(*args, **kwargs)
+
+    def batch_order(self, pairs, type_=1, interval=0.001, repeat=1,
+                    response=False):
+        requests = []
+        for symbol, price, quantity in pairs:
+            cid = self.mid + str(symbol)
+            price = '{:.2f}'.format(price)
+            closemode = '0' if type_ == 1 else '1'
+            requests.append(('order', {'USER_ID': self.uid,
+                                       'CUSTOMER_ID': self.cid,
+                                       'SESSION_ID': self.sid,
+                                       'BUY_SELL': type_,
+                                       'COMMODITY_ID': cid,
+                                       'PRICE': price,
+                                       'QTY': str(quantity),
+                                       'SETTLE_BASIS': type_,
+                                       'CLOSEMODE': closemode,
+                                       'TIMEFLAG': '0',
+                                       'L_PRICE': '0',
+                                       'BILLTYPE': '0'}))
+
+        if repeat * len(requests) <= 90:
+            results = self.request_ff(
+                requests, interval=interval, repeat=repeat)
+        else:
+            # cut and execute request_ff multiple times
+            rp = 90 // len(requests)
+            results = []
+            for _ in range(repeat // rp):
+                r = self.request_ff(requests, interval=interval, repeat=rp)
+                if r:
+                    results.extend(r)
+
+        if response:
+            successes = 0
+            fails = 0
+            reasons = Counter()
+            for d in results:
+                r = d['GNNT']['REP']['RESULT']
+                if r['RETCODE'] == '0':
+                    successes += 1
+                else:
+                    fails += 1
+                    reasons[r['MESSAGE']] += 1
+            log.info('批量下单{}个成功, {}个失败, 失败原因为{}'
+                     ''.format(successes, fails, reasons))
+            return reasons
+
+    def batch_buy(self, *args, **kwargs):
+        kwargs['type_'] = 1
+        return self.batch_order(*args, **kwargs)
+
+    def batch_sell(self, *args, **kwargs):
+        kwargs['type_'] = 2
+        return self.batch_order(*args, **kwargs)
 
     def order_status(self, order=None, symbol=None):
         """ 委托查询 """
