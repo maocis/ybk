@@ -68,7 +68,7 @@ class Trader(object):
     @property
     def server_time(self):
         t0 = time.time()
-        return t0 + self.client.time_offset + self.client.latency
+        return t0 + self.client.time_offset + self.client.latency * 3
 
 if __name__ == '__main__':
     pass
