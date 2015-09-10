@@ -51,6 +51,7 @@ class Client(UserProtocol, TradeProtocol, MoneyProtocol, OfferProtocol):
         self.uid = None  # user_id
         self.sid = None  # session_id
         self.mid = '99'  # market_id
+        self.jsid = None # cookie
         self.username = None
         self.password = None
         self.latency = None
@@ -141,12 +142,11 @@ class Client(UserProtocol, TradeProtocol, MoneyProtocol, OfferProtocol):
 
         hu = url[url.find('//') + 2:]
         host, uri = hu.split('/', 1)
-        jsid = self.session.cookies['JSESSIONID']
 
         def build_request(bxml):
             data = 'POST /{} HTTP/1.1\r\n'.format(uri) + \
                 'HOST: {}\r\n'.format(host) + \
-                'COOKIE: JSESSIONID={}\r\n'.format(jsid) + \
+                'COOKIE: JSESSIONID={}\r\n'.format(self.jsid) + \
                 'Connection: Keep-Alive\r\n' + \
                 'Content-Length: {}\r\n'.format(len(bxml)) + \
                 '\r\n'

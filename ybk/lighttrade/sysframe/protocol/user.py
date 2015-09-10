@@ -32,6 +32,12 @@ class UserProtocol(object):
             self.cid = r['RESULT']['NAME'] + '00'
             self.username = username
             self.password = password
+            try:
+                self.jsid = self.session.cookies.get('JSESSIONID')
+            except:
+                # 服务器在多个线程多个连接的时候可能会有bug
+                # 给了不同的Cookies的Path, 导致出错, 用第一个即可
+                pass
             log.info('用户{}登陆成功'.format(username))
             self.market_query()
             self.sync_server_time()
