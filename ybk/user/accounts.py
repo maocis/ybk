@@ -1,5 +1,6 @@
 import json
 import base64
+import logging
 
 from flask import render_template, redirect, request, jsonify
 from flask.ext.login import login_required, current_user
@@ -13,6 +14,8 @@ from ybk.models import Investor, TradeAccount, Exchange
 from ybk.lighttrade import Trader
 
 from .views import user
+
+log = logging.getLogger('serve')
 
 
 @user.route('/user/accounts/')
@@ -98,6 +101,7 @@ def investor_upsert():
     try:
         Investor(i).upsert()
     except Exception as e:
+        log.exception(str(e))
         return jsonify(status=500, reason=str(e))
     return jsonify(status=200, reason='')
 
@@ -132,6 +136,7 @@ def investor_delete():
         try:
             i.remove()
         except Exception as e:
+            log.exception(str(e))
             return jsonify(status=500, reason=str(e))
         else:
             return jsonify(status=200, reason='')
@@ -237,6 +242,7 @@ def trade_account_edit():
         try:
             TradeAccount(ta).upsert()
         except Exception as e:
+            log.exception(str(e))
             return jsonify(status=500, reason=str(e))
 
     return jsonify(status=200, reason='')
@@ -249,6 +255,7 @@ def trade_account_delete():
     try:
         TradeAccount.delete_many({'_id': {'$in': ids}})
     except Exception as e:
+        log.exception(str(e))
         return jsonify(status=500, reason=str(e))
 
     return jsonify(status=200, reason='')
@@ -263,6 +270,7 @@ def trade_account_update():
         for ta in trade_accounts:
             update_trade_account(ta)
     except Exception as e:
+        log.exception(str(e))
         return jsonify(status=500, reason=str(e))
 
     return jsonify(status=200, reason='')
@@ -290,6 +298,7 @@ def trade_account_change_password():
             ta.login_password = new_login_password
             ta.upsert()
     if errors:
+        log.exception(str(e))
         return jsonify(status=500,
                        reason='部分账号修改失败',
                        details=errors)
@@ -306,6 +315,7 @@ def trade_account_refresh_status():
         try:
             update_trade_account(ta)
         except Exception as e:
+            log.exception(str(e))
             return jsonify(status=500,
                            reason=str(e))
 
@@ -334,6 +344,7 @@ def trade_account_update_quote():
         try:
             qd = quote_detail(ta, symbol)
         except Exception as e:
+            log.exception(str(e))
             return jsonify(status=500, reason=str(e))
         else:
             return jsonify(status=200,
@@ -359,6 +370,7 @@ def trade_account_order():
         try:
             r, err = order(ta, type_, symbol, price, quantity)
         except Exception as e:
+            log.exception(str(e))
             return jsonify(status=500, reason=str(e))
         else:
             if r:
@@ -379,6 +391,7 @@ def trade_account_withdraw():
         try:
             r, err = withdraw(ta, order)
         except Exception as e:
+            log.exception(str(e))
             return jsonify(status=500, reason=str(e))
         else:
             if r:
@@ -400,6 +413,7 @@ def trade_account_transfer():
         try:
             r, err = transfer(ta, inout, amount)
         except Exception as e:
+            log.exception(str(e))
             return jsonify(status=500, reason=str(e))
         else:
             if r:
@@ -419,6 +433,7 @@ def trade_account_list_offers():
         try:
             offers = list_offers(ta)
         except Exception as e:
+            log.exception(str(e))
             return jsonify(status=500, reason=str(e))
         else:
             return jsonify(status=200, offers=offers)
@@ -435,6 +450,7 @@ def trade_account_apply_status():
         try:
             result = apply_status(ta)
         except Exception as e:
+            log.exception(str(e))
             return jsonify(status=500, reason=str(e))
         else:
             return jsonify(status=200, apply_status=result)
@@ -453,6 +469,7 @@ def trade_account_apply_offer():
         try:
             r, err = apply_offer(ta, symbol, quantity)
         except Exception as e:
+            log.exception(str(e))
             return jsonify(status=500, reason=str(e))
         else:
             return jsonify(status=200, reason=str(err))
@@ -470,6 +487,7 @@ def trade_account_withdraw_apply():
         try:
             withdraw_apply(ta, applyid)
         except Exception as e:
+            log.exception(str(e))
             return jsonify(status=500, reason=str(e))
         else:
             return jsonify(status=200, reason='撤单已提交')

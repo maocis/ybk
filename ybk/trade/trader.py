@@ -124,10 +124,11 @@ def update_trade_account(trade_account):
                     else:
                         # 把成交汇总一下
                         oo = aggorders[st]
-                        amount = oo['price'] * oo['quantity'] + \
-                            o['price'] * o['quantity']
-                        oo['quantity'] += o['quantity']
-                        oo['price'] = amount / oo['quantity']
+                        if oo['quantity'] > 0:
+                            amount = oo['price'] * oo['quantity'] + \
+                                o['price'] * o['quantity']
+                            oo['quantity'] += o['quantity']
+                            oo['price'] = amount / oo['quantity']
 
                 orders = aggorders.values()
 
@@ -176,7 +177,8 @@ def accounting(user):
                     amount = p.average_price * p.quantity + \
                         pp.average_price * pp.quantity
                     p.quantity += pp.quantity
-                    p.average_price = amount / p.quantity
+                    if p.quantity > 0:
+                        p.average_price = amount / p.quantity
                     p2pairs[pair] = p
         p1pairs = {(p1['exchange'], p1['symbol']): p1 for p1 in op}
         # 检查更改项
