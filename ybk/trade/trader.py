@@ -3,7 +3,7 @@
 import logging
 from datetime import datetime, timedelta
 
-from ybk.models import Collection, TradeAccount, User, Position, Transaction
+from ybk.models import Collection, TradeAccount, User, Position, Transaction, Quote
 from ybk.lighttrade import Trader
 
 log = logging.getLogger('trade')
@@ -197,13 +197,16 @@ def accounting(user):
                                  p1['avg_buy_price'] * p1['quantity']) / quantity
                     else:
                         price = p2.price
+                    if price < 0.01:
+                        price = Quote.latest_price(p1['exchange'], p1['symbol'])
                     price = int(price * 100) / 100.
                     add_transaction(
                         type_, pair[0], pair[1], price, abs(quantity))
             else:
                 # 按现价计算已卖出
                 if p1['quantity'] > 0:
-                    price = Collection.latest_price(p1['exchange'], p1['symbol'])
+                    price = Quote.latest_price(p1['exchange'], p1['symbol'])
+                    price = int(price * 100) / 100.
                     add_transaction(
                         'sell', pair[0], pair[1], price, p1['quantity'])
         # 检查新增项
