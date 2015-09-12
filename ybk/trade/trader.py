@@ -203,7 +203,7 @@ def accounting(user):
             else:
                 # 按现价计算已卖出
                 if p1['quantity'] > 0:
-                    price = int(p1['latest_price'] * 100) / 100.
+                    price = Collection.latest_price(p1['exchange'], p1['symbol'])
                     add_transaction(
                         'sell', pair[0], pair[1], price, p1['quantity'])
         # 检查新增项
