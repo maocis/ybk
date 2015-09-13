@@ -34,9 +34,11 @@ class OfferProtocol(object):
             'LogonType': 'pc',
         }
         text = self.session.post(url, params).text
-        open('/tmp/text', 'w').write(text)
         t = lxml.html.fromstring(text)
-        t = t.xpath('.//div[@class="content"]/table')[0]
+        try:
+            t = t.xpath('.//div[@class="content"]/table')[0]
+        except:
+            return []
         trs = t.xpath('.//tr')
         offers = []
         for tr in trs[2:]:
@@ -151,7 +153,10 @@ class OfferProtocol(object):
         }
         text = self.session.post(url, params).text
         t = lxml.html.fromstring(text)
-        t = t.xpath('.//div[@class="content"]/table')[0]
+        try:
+            t = t.xpath('.//div[@class="content"]/table')[0]
+        except:
+            return []
         trs = t.xpath('.//tr')
         result = []
         for tr in trs[2:-2]:

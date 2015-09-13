@@ -3,7 +3,7 @@
 import logging
 from datetime import datetime, timedelta
 
-from ybk.models import Collection, TradeAccount, User, Position, Transaction
+from ybk.models import Collection, TradeAccount, User, Position, Transaction, Quote
 from ybk.lighttrade import Trader
 
 log = logging.getLogger('trade')
@@ -124,10 +124,11 @@ def update_trade_account(trade_account):
                     else:
                         # 把成交汇总一下
                         oo = aggorders[st]
-                        amount = oo['price'] * oo['quantity'] + \
-                            o['price'] * o['quantity']
-                        oo['quantity'] += o['quantity']
-                        oo['price'] = amount / oo['quantity']
+                        if oo['quantity'] > 0:
+                            amount = oo['price'] * oo['quantity'] + \
+                                o['price'] * o['quantity']
+                            oo['quantity'] += o['quantity']
+                            oo['price'] = amount / oo['quantity']
 
                 orders = aggorders.values()
 
@@ -176,7 +177,8 @@ def accounting(user):
                     amount = p.average_price * p.quantity + \
                         pp.average_price * pp.quantity
                     p.quantity += pp.quantity
-                    p.average_price = amount / p.quantity
+                    if p.quantity > 0:
+                        p.average_price = amount / p.quantity
                     p2pairs[pair] = p
         p1pairs = {(p1['exchange'], p1['symbol']): p1 for p1 in op}
         # 检查更改项
@@ -195,13 +197,16 @@ def accounting(user):
                                  p1['avg_buy_price'] * p1['quantity']) / quantity
                     else:
                         price = p2.price
+                    if price < 0.01:
+                        price = Quote.latest_price(p1['exchange'], p1['symbol'])
                     price = int(price * 100) / 100.
                     add_transaction(
                         type_, pair[0], pair[1], price, abs(quantity))
             else:
                 # 按现价计算已卖出
                 if p1['quantity'] > 0:
-                    price = int(p1['latest_price'] * 100) / 100.
+                    price = Quote.latest_price(p1['exchange'], p1['symbol'])
+                    price = int(price * 100) / 100.
                     add_transaction(
                         'sell', pair[0], pair[1], price, p1['quantity'])
         # 检查新增项

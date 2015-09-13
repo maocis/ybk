@@ -766,7 +766,7 @@
   }
 
   var quote_updater; 
-  function update_quote(symbol) {
+  function update_quote() {
     // 定时刷新盘口信息
     if (symbol) {
       $.post(
@@ -810,11 +810,13 @@
               buy_price = asks[0].price;
             }
           }
+          var old_buy_price = $('#buy_price').val() || 0;
+          var old_sell_price = $('#sell_price').val() || 0;
 
-          if (!$('#buy_price').val()) {
+          if (old_buy_price < r.lowest || old_buy_price > r.highest) {
             $('#buy_price').val(buy_price);
           }
-          if (!$('#sell_price').val()) {
+          if (old_sell_price < r.lowest || old_sell_price > r.highest) {
             $('#sell_price').val(sell_price);
           }
 
@@ -842,7 +844,7 @@
   function update_buy_sell(value) {
     // 更新可买卖状态
     symbol = value;
-    update_quote(symbol);
+    update_quote();
   }
 
   var select_buy_symbol, select_sell_symbol;
@@ -852,9 +854,9 @@
     onChange: function(value) {
       if (select_sell_symbol.getValue() != value) {
         select_sell_symbol.setValue(value);
+        update_buy_sell(value);
         if (!quote_updater) {
-          update_buy_sell(value);
-          quote_updater = setInterval(function() { update_quote(value) }, 3000);
+          quote_updater = setInterval(function() { update_quote() }, 3000);
         }
       }
     }
@@ -867,9 +869,9 @@
     onChange: function(value) {
       if (select_buy_symbol.getValue() != value) {
         select_buy_symbol.setValue(value);
+        update_buy_sell(value);
         if (!quote_updater) {
-          update_buy_sell(value);
-          quote_updater = setInterval(function() { update_quote(value) }, 3000);
+          quote_updater = setInterval(function() { update_quote() }, 3000);
         }
       }
     }
