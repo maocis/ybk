@@ -810,11 +810,13 @@
               buy_price = asks[0].price;
             }
           }
+          var old_buy_price = $('#buy_price').val() || 0;
+          var old_sell_price = $('#sell_price').val() || 0;
 
-          if (!$('#buy_price').val()) {
+          if (old_buy_price < r.lowest || old_buy_price > r.highest) {
             $('#buy_price').val(buy_price);
           }
-          if (!$('#sell_price').val()) {
+          if (old_sell_price < r.lowest || old_sell_price > r.highest) {
             $('#sell_price').val(sell_price);
           }
 
