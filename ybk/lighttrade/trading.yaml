@@ -68,7 +68,9 @@
     quote_http: http://222.185.140.166:9014
     quote_tcp: tcp://222.185.140.166:9013
     system: sysframe
-    tradeweb_url: http://222.185.140.166:9025/issue_tradeweb/httpXmlServlet
+    tradeweb_url: 
+        - http://222.185.140.166:9025/issue_tradeweb/httpXmlServlet
+        - http://122.96.106.44:9025/issue_tradeweb/httpXmlServlet
 成都文交所:
     front_url: http://118.145.4.144:16922
     quote_http: http://118.145.4.144:16914
