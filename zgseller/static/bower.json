@@ -1,0 +1,17 @@
+{
+  "name": "static",
+  "version": "0.1",
+  "authors": [
+    "jingchao <jingchaohu@gmail.com>"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.5"
+  }
+}
