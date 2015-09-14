@@ -154,14 +154,15 @@ class Client(UserProtocol, TradeProtocol, MoneyProtocol, OfferProtocol):
             return data
 
         begin = time.time()
+        sleep_overhead = 0.0002
         for _ in range(repeat):
             for bxml in bxmls:
                 t0 = time.time()
                 data = build_request(bxml)
                 c.sock.sendall(data)
                 used = time.time() - t0
-                if used < interval:
-                    time.sleep(interval - used - 0.0002)
+                if used < interval - sleep_overhead:
+                    time.sleep(interval - used - sleep_overhead)
         end = time.time()
         log.info('批量请求发送完毕, {}秒内发送了{}个请求'
                  ''.format(end - begin, len(bxmls) * repeat))

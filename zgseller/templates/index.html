@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+
+    <title>(中港)邮币卡集成交易系统(Beta)</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+      .page-header {
+        margin-top: 20px;
+        margin-bottom: 10px;
+      }
+      .symbols {
+        max-height: 450px;
+        overflow: scroll;
+      }
+      .summary {
+        margin-bottom: -15px;
+      }
+      #total-money, #total-quantity, #pending-buy-quantity, #pending-sell-quantity {
+        color: blue;
+        cursor: pointer;
+      }
+      .buy-sell-splitter {
+        margin: 10px -30px;
+        padding: 0px;
+      }
+      .border-left {
+        border-left: 1px solid #ccc;
+      }
+      .border-right {
+        border-right: 1px solid #ccc;
+      }
+      .quote-row {
+        line-height: 24px;
+      }
+      .panel, .panel-heading, .panel-body {
+        padding: 3px;
+      }
+      .eventlog {
+        zoom: 0.8;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+
+      <div class="page-header">
+        <h1 class="text-center">(中港)邮币卡集成交易系统</h1>
+      </div>
+
+      <div class="row">
+        <div class="col-md-2 symbols">
+          <ul class="nav nav-pills nav-stacked">
+          {% for sym, name in names.items() %}
+            <li role="presentation" {%if sym==symbol%}class="active"{%endif%}><a href="{{ url_for('index', symbol=sym) }}" data-symbol="{{sym}}">{{name}}({{sym}})</a></li>
+          {% endfor %}
+          </ul>
+        </div>
+        <div class="col-md-10">
+          <div class="summary">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <span class="col-md-2"><b>资金</b>: <span id="total-money">-万</span></span>
+                <span class="col-md-2"><b>仓位</b>: <span id="total-quantity">-手</span></span>
+                <span class="col-md-2"><b>挂买</b>: <span id="pending-buy-quantity">-手</span></span>
+                <span class="col-md-2"><b>挂卖</b>: <span id="pending-sell-quantity">-手</span></span>
+                <span class="col-md-4"><b>操作</b>: 
+                  <button name="withdraw-buy" class="btn btn-xs btn-default">撤买</button>
+                  <button name="withdraw-sell" class="btn btn-xs btn-default">撤卖</button>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="quote col-md-3 text-right">
+              <h4>盘口</h4>
+              <div class="top">
+              {% for order, name in [[4, '卖五'], [3, '卖四'], [2, '卖三'],
+                                     [1, '卖二'], [0, '卖一']] %}
+                <div class="quote-row">
+                  <span class="col-md-4">{{name}}</span>
+                  <span name="ask-price" data-order="{{order}}" class="col-md-4">-</span>
+                  <span name="ask-quantity" data-order="{{order}}" class="col-md-4">-</span>
+                </div>
+              {% endfor %}
+              </div>
+              <div class="col-md-12"><hr class="buy-sell-splitter"></div>
+              <div class="bottom">
+              {% for order, name in [[0, '买一'], [1, '买二'], [2, '买三'],
+                                     [3, '买四'], [4, '买五']] %}
+                <div class="quote-row">
+                  <span class="col-md-4">{{name}}</span>
+                  <span name="bid-price" data-order="{{order}}"  class="col-md-4">-</span>
+                  <span name="bid-quantity" data-order="{{order}}" class="col-md-4">-</span>
+                </div>
+              {% endfor %}
+              </div>
+            </div>
+            <div class="instant-trade col-md-3 border-right">
+              <h4>快买</h4>
+              <div class="top">
+              {% for order in range(4, -1, -1) %}
+                <div name="instant-buy" data-type="ask" data-order="{{order}}" class="quote-row">
+                  &nbsp;
+                </div>
+              {% endfor %}
+              </div>
+              <div class="col-md-12"><hr class="buy-sell-splitter"></div>
+              <div class="bottom">
+              {% for order in range(5) %}
+                <div name="instant-buy" data-type="bid" data-order="{{order}}" class="quote-row">
+                  &nbsp;
+                </div>
+              {% endfor %}
+              </div>
+            </div>
+            <div class="instant-trade col-md-3 text-right border-left">
+              <h4>快卖</h4>
+              <div class="top">
+              {% for order in range(4, -1, -1) %}
+                <div name="instant-sell" data-type="ask" data-order="{{order}}" class="quote-row">
+                  &nbsp;
+                </div>
+              {% endfor %}
+              </div>
+              <div class="col-md-12"><hr class="buy-sell-splitter"></div>
+              <div class="bottom">
+              {% for order in range(5) %}
+                <div name="instant-sell" data-type="bid" data-order="{{order}}" class="quote-row">
+                  &nbsp;
+                </div>
+              {% endfor %}
+              </div>
+            </div>
+            <div class="quote col-md-3">
+              <h4>盘口</h4>
+              <div class="top">
+              {% for order, name in [[4, '卖五'], [3, '卖四'], [2, '卖三'],
+                                     [1, '卖二'], [0, '卖一']] %}
+                <div class="quote-row">
+                  <span class="col-md-4">{{name}}</span>
+                  <span name="ask-price" data-order="{{order}}" class="col-md-4 text-right">-</span>
+                  <span name="ask-quantity" data-order="{{order}}" class="col-md-4 text-right">-</span>
+                </div>
+              {% endfor %}
+              </div>
+              <div class="col-md-12"><hr class="buy-sell-splitter"></div>
+              <div class="bottom">
+              {% for order, name in [[0, '买一'], [1, '买二'], [2, '买三'],
+                                     [3, '买四'], [4, '买五']] %}
+                <div class="quote-row">
+                  <span class="col-md-4">{{name}}</span>
+                  <span name="bid-price" data-order="{{order}}" class="col-md-4 text-right">-</span>
+                  <span name="bid-quantity" data-order="{{order}}" class="col-md-4 text-right">-</span>
+                </div>
+              {% endfor %}
+              </div>
+            </div>
+          </div>
+          <br />
+          <div class="manual-trade">
+            <div class="col-md-6">
+              <form class="form-horizontal">
+                <div class="col-md-5"><input type="text" name="buy-price" class="form-control"  placeholder="价格"></div>
+                <div class="col-md-3"><input type="text" name="buy-quantity" class="form-control"  placeholder="数量"></div>
+                <div class="col-md-3"><button name="buy" class="btn btn-default">买入</button></div>
+              </form>
+            </div>
+            <div class="col-md-6">
+              <form class="form-horizontal">
+                <div class="col-md-offset-1 col-md-5"><input type="text" name="sell-price" class="form-control"  placeholder="价格"></div>
+                <div class="col-md-3"><input type="text" name="sell-quantity" class="form-control"  placeholder="数量"></div>
+                <div class="col-md-3"><button name="sell" class="btn btn-default">卖出</button></div>
+              </form>            
+            </div>
+          </div>
+
+          <div class="clearfix"></div>
+          <br>
+          <div class="eventlog">
+            <!-- 事件日志 -->
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">日志</h3>
+              </div>
+              <div class="panel-body">
+                空
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div> <!-- /container -->
+
+
+    <script src="{{ url_for('static', filename='bower_components/jquery/dist/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+    <script>
+      function toFixed(value, precision) {
+        var power = Math.pow(10, precision || 0);
+        return String(Math.round(value * power) / power);
+      }
+      function formatPrice(value) {
+        return toFixed(value, 2);
+      }
+
+      // scroll top selected
+      $('.symbols').scrollTop($('li.active').position().top)
+
+
+      /* Updates */
+      var quote = {};
+      var symbol = "{{ symbol }}";
+      var namedict = {{ namedict | safe }};
+      function render_summary(r) {
+        $('#total-money').text(Math.round(r.total_money / 10000)+'万');
+        $('#total-quantity').text(r.total_quantity+'手/' + 
+            Math.round(r.quote.price * (r.total_quantity || 0) / 10000) + '万');
+        $('#pending-buy-quantity').text(r.pendings['buy']+'手');
+        $('#pending-sell-quantity').text(r.pendings['sell']+'手');
+      }
+
+      function render_quote(r) {
+        $('[name=ask-price]').each(function(i, t) {
+          var $t = $(t);
+          var order = $t.data('order');
+          $t.text(r.quote.asks[order].price);
+        });
+        $('[name=ask-quantity]').each(function(i, t) {
+          var $t = $(t);
+          var order = $t.data('order');
+          $t.text(r.quote.asks[order].quantity);
+        });
+        $('[name=bid-price]').each(function(i, t) {
+          var $t = $(t);
+          var order = $t.data('order');
+          $t.text(r.quote.bids[order].price);
+        });
+        $('[name=bid-quantity]').each(function(i, t) {
+          var $t = $(t);
+          var order = $t.data('order');
+          $t.text(r.quote.bids[order].quantity);
+        })
+      }
+
+      function render_splits(r) {
+        $('[name=instant-buy]').html('&nbsp;');
+        $('[name=instant-sell]').html('&nbsp;');
+
+        $('[name=instant-buy]').each(function(i, t) {
+          var $t = $(t);
+          var type = $t.data('type');
+          var order = $t.data('order');
+          var q;
+          if (type == 'bid') {
+            q = r.quote.bids[order];
+          } else {
+            q = r.quote.asks[order];
+          }
+          if (q.price) {
+            var qs = r.instant_quantities.buy;
+            for (var i=0; i<qs.length; i++) {
+              if (qs[i] > 0) {
+                $t.html($t.html() + 
+                  '<button class="btn btn-xs btn-default">+' + qs[i] + '</button>&nbsp;');
+              }
+            }
+          }
+        });
+
+        $('[name=instant-sell]').each(function(i, t) {
+          var $t = $(t);
+          var type = $t.data('type');
+          var order = $t.data('order');
+          var q;
+          if (type == 'bid') {
+            q = r.quote.bids[order];
+          } else {
+            q = r.quote.asks[order];
+          }
+          if (q.price) {
+            var qs = r.instant_quantities.sell;
+            for (var i=qs.length-1; i>=0; i--) {
+              if (qs[i] > 0) {
+                $t.html($t.html() + 
+                  '<button class="btn btn-xs btn-default">-' + qs[i] + '</button>&nbsp;');
+              }
+            }
+          }
+        })
+
+      }
+
+      function render_hl(r) {
+        var range = '价格: ' + r.lowest + '-' + r.highest;
+        $('[name=buy-price]').attr('placeholder', range);
+        $('[name=sell-price]').attr('placeholder', range);
+      }
+
+      function render_tooltip(r) {
+        var html_money = '';
+        for (var i=0; i<r.moneys.length; i++) {
+          var m = r.moneys[i];
+          html_money += '<b>' + namedict[m[0]] + ':</b>&nbsp;' +
+            toFixed(m[1], 2) + '元<br>';
+        }
+        var html_quantity = '';
+        for (var i=0; i<r.quantities.length; i++) {
+          var q = r.quantities[i];
+          html_quantity += '<b>' + namedict[q[0]] + ':</b>&nbsp;' +
+            q[1] + '手<br>';
+        }
+        var html_pending_buy_quantity = '';
+        for (var i=0; i<r.pendings.buys.length; i++) {
+          var p = r.pendings.buys[i];
+          html_pending_buy_quantity += '<b>' + namedict[p[0]] + ':</b>&nbsp;' +
+            p[1] + '手<br>';
+        }
+        var html_pending_sell_quantity = '';
+        for (var i=0; i<r.pendings.sells.length; i++) {
+          var p = r.pendings.sells[i];
+          html_pending_sell_quantity += '<b>' + namedict[p[0]] + ':</b>&nbsp;' +
+            p[1] + '手<br>';
+        }
+        // destroy all
+        $('#total-money').tooltip('destroy');
+        $('#total-quantity').tooltip('destroy');
+        $('#pending-buy-quantity').tooltip('destroy');
+        $('#pending-sell-quantity').tooltip('destroy');
+
+        $('#total-money').tooltip({
+            placement: 'bottom',
+            template: '<div class="popover" role="tooltip">' + 
+                '<div class="arrow"></div>' + 
+                '<h3 class="popover-title">资金详情</h3>' + 
+                '<div class="popover-content">' + 
+                  html_money + 
+                '</div>' + 
+              '</div>', 
+            html: true, 
+            title: 'x'
+          });
+        $('#total-quantity').tooltip({
+            placement: 'bottom',
+            template: '<div class="popover" role="tooltip">' + 
+                '<div class="arrow"></div>' + 
+                '<h3 class="popover-title">仓位详情</h3>' + 
+                '<div class="popover-content">' + 
+                  html_quantity + 
+                '</div>' + 
+              '</div>', 
+            html: true, 
+            title: 'x'
+          });
+        $('#pending-buy-quantity').tooltip({
+            placement: 'bottom',
+            template: '<div class="popover" role="tooltip">' + 
+                '<div class="arrow"></div>' + 
+                '<h3 class="popover-title">买单详情</h3>' + 
+                '<div class="popover-content">' + 
+                  html_pending_buy_quantity + 
+                '</div>' + 
+              '</div>', 
+            html: true, 
+            title: 'x'
+          });
+        $('#pending-sell-quantity').tooltip({
+            placement: 'bottom',
+            template: '<div class="popover" role="tooltip">' + 
+                '<div class="arrow"></div>' + 
+                '<h3 class="popover-title">卖单详情</h3>' + 
+                '<div class="popover-content">' + 
+                  html_pending_sell_quantity + 
+                '</div>' + 
+              '</div>', 
+            html: true, 
+            title: 'x'
+          });
+      }
+
+      function render_log(r) {
+        $body = $('.eventlog .panel-body');
+        $body.html('');
+        for (var i=r.logs.length-1; i > r.logs.length - 10; i--) {
+          if (r.logs[i]) {
+            $body.html($body.html() + 
+              r.logs[i] + '<br>')
+          }
+        }
+      }
+
+      function updater() {
+        $.get(
+          "{{ url_for('update') }}",
+          {symbol: symbol},
+          function (r) {
+            quote = r.quote;
+            render_summary(r);
+            render_quote(r);
+            render_splits(r);
+            render_hl(r);
+            render_tooltip(r);
+          })
+      }
+
+      function quoter() {
+        $.get(
+          "{{ url_for('quote') }}",
+          {symbol: symbol},
+          function (r) {
+            render_quote(r);
+          })
+      }
+
+      function logger() {
+        $.get(
+          "{{ url_for('log') }}",
+          {},
+          function (r) {
+            render_log(r);
+          })
+      }
+
+      updater();
+      logger();
+      quoter();
+
+      setInterval(updater, 30000);
+      setInterval(logger, 1000);
+      setInterval(quoter, 1000);
+
+      /* 点击事件 */
+      function instant_order(e, direction) {
+        e.preventDefault();
+        e.target.blur();
+        var $btn = $(e.target);
+        var type = $btn.parent().data('type');
+        var order = $btn.parent().data('order');
+        var q = quote[type+'s'][parseInt(order)];
+        var price = q.price;
+        var quantity = Math.abs($btn.text());
+        make_order(direction, price, quantity);
+      }
+
+      $('body').on('click', '[name=instant-buy] button', function(e) {
+        instant_order(e, 'buy');
+      })
+
+      $('body').on('click', '[name=instant-sell] button', function(e) {
+        instant_order(e, 'sell');
+      })
+
+      $('[name=buy]').on('click', function(e) {
+        e.preventDefault();
+        e.target.blur();
+        var price = $('[name=buy-price]').val();
+        var quantity = $('[name=buy-quantity').val();
+        if (price && quantity) {
+          make_order('buy', price, quantity);
+        }
+      })
+
+      $('[name=sell]').on('click', function(e) {
+        e.preventDefault();
+        e.target.blur();
+        var price = $('[name=sell-price]').val();
+        var quantity = $('[name=sell-quantity').val();
+        if (price && quantity) {
+          make_order('sell', price, quantity);
+        }
+      })
+
+      function make_order(direction, price, quantity) {
+        var params = {
+          type_: direction,
+          symbol: symbol,
+          price: price,
+          quantity: quantity,
+        }
+        $.post(
+          "{{ url_for('make_order') }}",
+          params,
+          function (r) {});
+        setTimeout(updater, 1000);
+      }
+
+      function withdraw(e, type_) {
+        e.preventDefault();
+        e.target.blur();
+        $.post(
+          "{{ url_for('withdraw') }}",
+          {symbol: symbol,
+           type_: type_},
+          function (r) {});
+        setTimeout(updater, 1000);
+      }
+
+      $('[name=withdraw-buy]').on('click', function(e) {
+        withdraw(e, 'buy')
+      })
+      $('[name=withdraw-sell]').on('click', function(e) {
+        withdraw(e, 'sell')
+      })
+
+    </script>
+  </body>
+</html>
