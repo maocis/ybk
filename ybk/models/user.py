@@ -226,8 +226,8 @@ class Order(EmbeddedDocument):
     type_ = StringField(required=True)
     name = StringField(required=True)
     symbol = StringField(required=True)
-    price = FloatField(required=True)
-    current_price = FloatField(required=True)
+    price = FloatField(required=True) # 成本价
+    current_price = FloatField(required=True) # 成交价
     quantity = IntField(required=True)
     commision = FloatField(required=True)
     profit = FloatField(required=True)
