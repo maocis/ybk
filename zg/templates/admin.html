@@ -1,18 +1,173 @@
 {% extends "layout.html" %}
 
+{% block css %}
+<style type="text/css">
+  .border-left {border-left: 1px solid #ccc;}
+  .border-right {border-right: 1px solid #ccc;}
+  .onethird {width: 32% !important;}
+</style>
+{% endblock %}
+
 {% block content %}
 
-      <div class="page-header">
-        <h1>中港抢单系统后台</h1>
+<div class="page-header">
+  <h1>中港抢单系统后台</h1>
+</div>
+
+<div class="row">
+  <div class="col-md-3 usernav">
+    <h3>用户列表</h3>
+    <ul class="nav">
+    {% for user in users %}
+      <li><a href="#{{ user.mobile }}_{{ user.username }}">{{ user.mobile }} / {{ user.username }}</a></li>
+    {% endfor %}
+    </ul>
+  </div>
+  <div class="col-md-9 userlist">
+    {% for user in users %}
+    <div id="{{ user.mobile }}_{{ user.username }}" class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ user.mobile }} / {{ user.username }}</h3>
       </div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-md-6 border-right">
+            <form class="form-inline">
+              <div class="form-group">
+                <input type="text" class="onethird form-control" name="mobile" placeholder="手机号" value="{{ user.mobile }}" disabled="">
+                <input type="text" class="onethird form-control" name="username" placeholder="本站用户名" value="{{ user.username }}">
+                <input type="text" class="onethird form-control" name="password" placeholder="本站密码" value="{{ user.password }}">
+              </div>
+            </form>
+            <br>
+            <div>
+              <button class="btn btn-default" data-id="{{ user._id }}" name="update-user">更新数据</button>
+              <button class="btn btn-default" data-id="{{ user._id }}" name="view-user">查看用户</button>
+            </div>
+          </div>
+          <div class="col-md-6 border-left">
+            <form class="form-inline">
 
-      <h3>Three equal columns</h3>
-      <p>Get three equal-width columns <strong>starting at desktops and scaling to large desktops</strong>. On mobile devices, tablets and below, the columns will automatically stack.</p>
-      <div class="row">
-        <div class="col-md-4">.col-md-4</div>
-        <div class="col-md-4">.col-md-4</div>
-        <div class="col-md-4">.col-md-4</div>
+            {% for a in accounts[user._id] %}
+              <div class="form-group">
+                <input type="text" class="onethird form-control" name="login_name" placeholder="中港账号" value="{{ a.login_name }}" disabled>
+                <input type="text" class="onethird form-control" name="login_password" placeholder="中港密码" value="{{ a.login_password }}" disabled>
+                <button class="btn btn-default" name="remove-account">&plus;删除</button>
+              </div>
+            {% endfor %}
+
+              <div class="form-group">
+                <input type="text" class="onethird form-control" name="login_name" placeholder="中港账号">
+                <input type="text" class="onethird form-control" name="login_password" placeholder="中港密码">
+                <button class="btn btn-default" name="add-account">&plus;添加</button>
+              </div>
+            </form>
+          </div>
+        </div>      
       </div>
+      <div class="panel-footer"><button class="btn btn-default" name="add-user">保存用户</button></div>
+    </div>
+    {% endfor %}
 
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">-/新用户</h3>
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-md-6 border-right">
+            <form class="form-inline">
+              <div class="form-group">
+                <input type="text" class="onethird form-control" name="mobile" placeholder="手机号">
+                <input type="text" class="onethird form-control" name="username" placeholder="本站用户名">
+                <input type="text" class="onethird form-control" name="password" placeholder="本站密码">
+              </div>
+            </form>
+          </div>
+          <div class="col-md-6 border-left">
+            <form class="form-inline">
+              <div class="form-group">
+                <input type="text" class="onethird form-control" name="login_name" placeholder="中港账号">
+                <input type="text" class="onethird form-control" name="login_password" placeholder="中港密码">
+                <button class="btn btn-default" name="add-account">&plus;添加</button>
+              </div>
+            </form>
+          </div>
+        </div>    
+      </div>
+      <div class="panel-footer"><button class="btn btn-default" name="add-user">添加新用户</button></div>
+    </div>
+  </div>
+</div>
 
+{% endblock %}
+
+{% block js %}
+<script>
+  $('body').on('click', '[name=add-account]', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    $panel = $(this).parent().parent();
+    
+    if ($panel.find('[name=login_name]').val() && 
+        $panel.find('[name=login_password]').val()) {
+      $form = $(this).parent();
+      $right = $form.parent();
+      $right.append($form.clone());
+      $(this).parent().children('input').prop('disabled', true);
+      $btn = $(this).parent().children('button');
+      $btn.attr('name', 'remove-account');
+      $btn.text('删除');
+    } else {
+        alert('请先输入账号和密码');
+    }
+  })
+  $('body').on('click', '[name=remove-account]', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    $(this).parent().remove();
+  })
+  $('body').on('click', '[name=add-user]', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    $panel = $(this).parent().parent();
+    var accounts = [];
+    $panel.find('.form-group').each(function(i, f) {
+        if (i >=1) {
+            accounts.push({
+                login_name: $(f).children('[name=login_name]').val(),
+                login_password: $(f).children('[name=login_password]').val(),
+            });
+        }
+    })
+    accounts = accounts.slice(0, -1);
+    var params = {
+      mobile: $panel.find('[name=mobile]').val(),
+      username: $panel.find('[name=username]').val(),
+      password: $panel.find('[name=password]').val(),
+      accounts: accounts,
+    }
+    $.post(
+        "{{ url_for('add_user') }}",
+        params,
+        function (r) {
+            if (r.status != 200) {
+                alert(r.reason);
+            } else {
+                location.href = "{{ url_for('admin') }}";
+            }
+        })
+  })
+  $('body').on('click', '[name=update-user]', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    alert('暂未实现');
+  })
+  $('body').on('click', '[name=view-user]', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    var user = $(this).data('id');
+    location.href = "{{ url_for('summary') }}" + '?user=' + user;
+  })
+</script>
 {% endblock %}
