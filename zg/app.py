@@ -3,8 +3,14 @@
 import logging
 
 from flask import Flask, render_template, request, jsonify
+from flask.ext.basicauth import BasicAuth
+
 
 app = Flask(__name__)
+app.config['BASIC_AUTH_USERNAME'] = 'ybk369'
+app.config['BASIC_AUTH_PASSWORD'] = 'ybk888'
+
+basic_auth = BasicAuth(app)
 
 
 @app.route('/')
@@ -18,6 +24,7 @@ def login():
 
 
 @app.route('/admin/')
+@basic_auth.required
 def admin():
     return render_template('admin.html', **locals())
 

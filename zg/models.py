@@ -22,9 +22,11 @@ class User(Document):
 
     """ 抢单用户 """
     class Meta:
-        idf = IDFormatter('{username}')
-        idx1 = Index('username', unique=True)
+        idf = IDFormatter('{mobile}')
+        idx1 = Index('mobile', unique=True)
+        idx2 = Index('username')
 
+    mobile = StringField(required=True)
     username = StringField(required=True)
     password = StringField(required=True)
 
