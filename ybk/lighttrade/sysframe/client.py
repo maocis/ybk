@@ -36,7 +36,7 @@ class Client(UserProtocol, TradeProtocol, MoneyProtocol, OfferProtocol):
                 self.front_url = self.tradeweb_url.rsplit('/', 2)[0]
                 break
         self.session = requests.Session()
-        adapter = requests.adapters.HTTPAdapter(pool_connections=5,
+        adapter = requests.adapters.HTTPAdapter(pool_connections=10,
                                                 pool_maxsize=10)
         self.session.mount('http://', adapter)
         self.session.headers = {

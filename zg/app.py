@@ -105,7 +105,7 @@ def summary():
     else:
         d = datetime.utcnow() + timedelta(hours=8)
         if d.hour == 9 and 20 <= d.minute <= 40:
-            return '抢单时间段, 不可查看'
+            return '跌零时间段, 不可查看'
         if d.hour < 9:
             d -= timedelta(days=1)
         today = d.replace(hour=0, minute=0, second=0, microsecond=0)
