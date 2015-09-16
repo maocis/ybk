@@ -43,7 +43,7 @@ class Client(UserProtocol, TradeProtocol, MoneyProtocol, OfferProtocol):
             'Content-Type': 'application/x-www-form-urlencoded',
         }
         self.executor = ThreadPoolExecutor(2)
-        self.executor.submit(self.warmup)
+        self.executor.submit(self.warmup, 1)
         self._reset()
 
     def _reset(self):

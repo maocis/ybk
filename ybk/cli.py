@@ -53,14 +53,13 @@ def do_cron(parser, args):
                 history_all()
 
         with doing():
-            # 更新所有交易账号的状态
-            if now.hour == 22 and 30 <= now.minute <= 35:
-                trade_account_all()
-
-        with doing():
             if 9 <= now.hour <= 20:
                 # 生成所有人的历史收益记录
                 ProfitLog.ensure_all_profits()
+
+        # 更新所有交易账号的状态
+        if now.hour == 22 and 30 <= now.minute <= 35:
+            trade_account_all()
     else:
         crawl_log.info('已有cron在跑, 直接退出')
 

@@ -201,9 +201,10 @@ def history_winner(exchange, url, force):
         try:
             if not force and history_exists(c):
                 continue
-            log.info('feching {}_{} on {}'.format(c.exchange, c.symbol, url))
-            data = get_day_data(c.symbol)
-            parse_day_data(data)
+            if '$' not in c.symbol:
+                log.info('feching {}_{} on {}'.format(c.exchange, c.symbol, url))
+                data = get_day_data(c.symbol)
+                parse_day_data(data)
         except:
             log.exception('{}_{}获取失败'.format(exchange, c.symbol))
 
