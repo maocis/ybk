@@ -12,6 +12,7 @@ log = logging.getLogger('trade')
 def trade_account_all():
     """ 更新全部账户 """
     for ta in TradeAccount.query():
+        Trader.traders = {}
         update_trade_account(ta)
 
 
@@ -217,3 +218,9 @@ def accounting(user):
             if pair not in p1pairs and p2.quantity > 0:
                 price = int(p2.average_price * 100) / 100.
                 add_transaction('buy', pair[0], pair[1], price, p2.quantity)
+
+
+if __name__ == '__main__':
+    from ybk.config import setup_config
+    setup_config() 
+    trade_account_all()
