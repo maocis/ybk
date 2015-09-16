@@ -1,0 +1,323 @@
+{% extends "layout.html" %}
+
+{% block css %}
+<style type="text/css">
+  .account {line-height: 30px; font-size: 1.1em;}
+  .timeline {overflow-x: scroll; width: 100%; height: 40px;}
+  .timeline .date {float:right; width: auto;}
+  .api th, .api td {padding:5px;}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div id="modal" class="modal fade">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">
+          loading...
+        </h4>
+      </div>
+      <div class="modal-body">
+         loading...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+
+<div class="page-header">
+  <h1>中港抢单状态汇总
+    {% if current_user.is_admin %}
+      去<a href="{{ url_for('admin') }}">后台</a>
+    {% endif %}</h1>
+  <p class="lead">
+    {{user.mobile}}/{{user.username}}
+  </p>
+</div>
+
+<div class="row">
+  <div class="col-md-9">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <span class="col-xs-3"><b>总市值:</b> {{ user.total_capital | money }}</span>
+        <span class="col-xs-3"><b>总浮盈:</b> {{ user.total_profit | money }}</span>
+        <span class="col-xs-3"><b>累计已实现收益:</b> {{ total_profit | money }}</span>
+        <span class="col-xs-3"><b>已支付抢单佣金:</b> {{ user.paid | money }}</span>
+      </div>
+    </div>
+    <div class="timeline">
+      <ul class="nav nav-pills">
+      {% for date in dates %}
+        <li class="date{% if today == date %} active{% endif %}"><a href="{{ url_for('summary', user=user._id, today=date) }}">{{ date | date }}</a></li>
+      {% endfor %}
+      </ul>
+    </div>
+    <div class="summary">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation"><a href="#position" aria-controls="position" role="tab" data-toggle="tab">持仓</a></li>
+        <li role="presentation"><a href="#status" aria-controls="status" role="tab" data-toggle="tab">委托</a></li>
+        <li role="presentation" class="active"><a href="#orders" aria-controls="orders" role="tab" data-toggle="tab">成交</a></li>
+      </ul>
+
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane" id="position">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>藏品</th>
+                <th class="text-right">代码</th>
+                <th class="text-right">买入均价</th>
+                <th class="text-right">数量</th>
+                <th class="text-right">现价(缓存)</th>
+                <th class="text-right">浮盈</th>
+                <th class="text-right">涨幅</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for p in position_list %}
+              {% if p.symbol in symbols %}
+              <tr>
+                <td>{{p.name}}</td>
+                <td class="text-right">{{p.symbol}}</td>
+                <td class="text-right">{{p.average_price|money}}</td>
+                <td class="text-right">{{p.quantity}}</td>
+                <td class="text-right">{{p.price|money}}</td>
+                <td class="text-right">{{p.profit|money}}</td>
+                <td class="text-right">{{p.increase}}</td>
+              </tr>
+              {% endif %}
+            {% else %}
+              <tr>
+                <td class="text-center" colspan="7">当前没有持仓</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="status">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th class="text-right">委托号</th>
+                <th class="text-right">委托时间</th>
+                <th>买入/卖出</th>
+                <th>藏品</th>
+                <th class="text-right">代码</th>
+                <th class="text-right">价格</th>
+                <th class="text-right">数量</th>
+                <th class="text-right">未成交数量</th>
+                <th>委托状态</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for s in status_list %}
+              <tr>
+                <td class="text-right">{{s.order}}</td>
+                <td class="text-right">{{s.order_at}}</td>
+                <td>{{s.type_}}</td>
+                <td>{{s.name}}</td>
+                <td class="text-right">{{s.symbol}}</td>
+                <td class="text-right">{{s.price|money}}</td>
+                <td class="text-right">{{s.quantity}}</td>
+                <td class="text-right">{{s.pending_quantity}}</td>
+                <td>{{s.status}}</td>
+              </tr>
+            {% else %}
+              <tr>
+                <td class="text-center" colspan="9">当前没有委托单</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div role="tabpanel" class="tab-pane active" id="orders">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>买入/卖出</th>
+                <th>藏品</th>
+                <th>代码</th>
+                <th>成本价</th>
+                <th>成交价</th>
+                <th>数量</th>
+                <th>佣金</th>
+                <th>盈利</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for o in order_list %}
+              <tr>
+                <td>{{o.type_}}</td>
+                <td>{{o.name}}</td>
+                <td class="text-right">{{o.symbol}}</td>
+                <td class="text-right">{{o.price|money}}</td>
+                <td class="text-right">{{o.current_price|money}}</td>
+                <td class="text-right">{{o.quantity}}</td>
+                <td class="text-right">{{o.commision|money}}</td>
+                <td class="text-right">{{o.profit|money}}</td>
+              </tr>
+            {% else %}
+              <tr>
+                <td class="text-center" colspan="8">当前没有成交</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <h3>账号一览</h3>
+    {% for a in accounts %}
+    <div class="account">
+      <span> {{ a.login_name }} </span>
+      <span> <button class="btn btn-xs btn-default" name="position">持仓</button> </span>
+      <span> <button class="btn btn-xs btn-default" name="order_status">委托</button> </span>
+      <span> <button class="btn btn-xs btn-default" name="orders">成交</button> </span>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script>
+  function render_position(login_name, position) {
+    html = '<table class="api table table-condensed table-bordered">' + 
+          '<thead><tr>' + 
+          '<th>简称</th>' + 
+          '<th>代码</th>' + 
+          '<th class="text-right">买入价</th>' +
+          '<th class="text-right">数量</th>' + 
+          '<th class="text-right">盈利</th>' + 
+          '<th class="text-right">涨幅</th>' +
+          '</tr></thead>' + 
+          '<tbody>';
+    for (var i = 0; i < position.length; i++) {
+      var d = position[i];
+      html += '<tr><td>' + d.name + '</td>' + 
+            '<td>' + d.symbol + '</td>' + 
+            '<td class="text-right">' + ((Math.round(d.average_price * 100) / 100) || '-') + '元</td>' + 
+            '<td class="text-right">' + d.quantity + 
+            '<td class="text-right">' + ((Math.round(d.profit * 100) / 100) || '-') + '元</td>' + 
+            '<td class="text-right">' + ((Math.round(d.profit / d.average_price / d.quantity * 10000) / 100) || '-') + '%</td>' +
+            '</tr>';
+    }
+    html += '</tbody></table>';
+    $('.modal-title').text(login_name + '持仓');
+    $('.modal-body').html(html);
+  }
+  function render_order_status(login_name, order_status) {
+    var html = '<table class="table table-condensed table-bordered">' + 
+          '<thead><tr>' + 
+          '<th style="padding:5px;">单号</th>' + 
+          '<th style="padding:5px;">时间</th>' + 
+          '<th style="padding:5px;">买/卖</th>' + 
+          '<th style="padding:5px;">名称</th>' + 
+          '<th class="text-right" style="padding:5px;">代码</th>' +
+          '<th class="text-right" style="padding:5px;">价格</th>' + 
+          '<th class="text-right" style="padding:5px;">数量</th>' + 
+          '<th class="text-right" style="padding:5px;">未成交</th>' + 
+          '<th style="padding:5px;">状态</th>' +
+          '</tr></thead>' + 
+          '<tbody>';
+    for (var i = 0; i < order_status.length; i++) {
+      var d = order_status[i];
+      html += '<tr><td>' + d.order + '</td>' + 
+            '<td>' + d.order_at + '</td>' + 
+            '<td>' + d.type_ + '</td>' + 
+            '<td>' + d.name + '</td>' + 
+            '<td>' + d.symbol + '</td>' + 
+            '<td class="text-right" style="padding:5px;">' + ((Math.round(d.price * 100) / 100) || '-') + '元</td>' + 
+            '<td class="text-right" style="padding:5px;">' + d.quantity + '</td>' + 
+            '<td class="text-right" style="padding:5px;">' + d.pending_quantity + '</td>' + 
+            '<td>' + d.status + '</td>' + 
+            '</tr>';
+    }
+    html += '</tbody></table>';
+    $('.modal-title').text(login_name + '委托');
+    $('.modal-body').html(html);
+  }
+  function render_orders(login_name, orders) {
+    var html = '<table class="table table-condensed table-bordered">' + 
+          '<thead><tr>' +  
+          '<th style="padding:5px;">名称</th>' + 
+          '<th class="text-right" style="padding:5px;">代码</th>' +
+          '<th class="text-right" style="padding:5px;">买/卖</th>' +
+          '<th class="text-right" style="padding:5px;">成本价</th>' +
+          '<th class="text-right" style="padding:5px;">成交价</th>' + 
+          '<th class="text-right" style="padding:5px;">数量</th>' + 
+          '</tr></thead>' + 
+          '<tbody>';
+    for (var i = 0; i < orders.length; i++) {
+      var d = orders[i];
+      html += '<tr>' +  
+            '<td>' + d.name + '</td>' + 
+            '<td class="text-right" style="padding:5px;">' + d.symbol + '</td>' + 
+            '<td class="text-right" style="padding:5px;">' + d.type_ + '</td>' +
+            '<td class="text-right" style="padding:5px;">' + ((Math.round(d.price * 100) / 100) || '-') + '元</td>' + 
+            '<td class="text-right" style="padding:5px;">' + ((Math.round(d.current_price * 100) / 100) || '-') + '元</td>' + 
+            '<td class="text-right" style="padding:5px;">' + d.quantity + '</td>' + 
+            '</tr>';
+    }
+    html += '</tbody></table>';
+    $('.modal-title').text(login_name + '成交');
+    $('.modal-body').html(html);
+    $('#modal').modal();
+  }
+  $('[name=position]').on('click', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    var login_name = $(this).parent().parent().children().first().text();
+    $('.modal-title').text('loading...');
+    $('.modal-body').html('loading...');
+    $('#modal').modal();
+    $.post(
+        "{{ url_for('call_api') }}",
+        {method: 'position',
+        login_name: login_name},
+        function (r) {
+            render_position(login_name, r.position);
+        })
+  })
+  $('[name=order_status]').on('click', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    var login_name = $(this).parent().parent().children().first().text();
+    $('.modal-title').text('loading...');
+    $('.modal-body').html('loading...');
+    $('#modal').modal();
+    $.post(
+        "{{ url_for('call_api') }}",
+        {method: 'order_status',
+        login_name: login_name},
+        function (r) {
+            render_order_status(login_name, r.order_status);
+        })
+  })
+  $('[name=orders]').on('click', function(e) {
+    e.preventDefault();
+    e.target.blur();
+    var login_name = $(this).parent().parent().children().first().text();
+    $('.modal-title').text('loading...');
+    $('.modal-body').html('loading...');
+    $('#modal').modal();
+    $.post(
+        "{{ url_for('call_api') }}",
+        {method: 'orders',
+        login_name: login_name},
+        function (r) {
+            render_orders(login_name, r.orders);
+        })
+  })
+</script>
+{% endblock %}

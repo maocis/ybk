@@ -699,7 +699,6 @@
           '<th class="text-right" style="padding:5px;">数量</th>' + 
           '<th class="text-right" style="padding:5px;">未成交</th>' + 
           '<th style="padding:5px;">状态</th>' + 
-          '<th style="padding:5px;">操作</th>' + 
           '</tr></thead>' + 
           '<tbody>';
     for (var i = 0; i < order_status.length; i++) {
@@ -713,7 +712,6 @@
             '<td class="text-right" style="padding:5px;">' + d.quantity + '</td>' + 
             '<td class="text-right" style="padding:5px;">' + d.pending_quantity + '</td>' + 
             '<td>' + d.status + '</td>' + 
-            '<td><button name="withdraw" class="btn btn-xs btn-default" data-order="' + d.order + '">撤单</button></td>' + 
             '</tr>';
     }
     html += '</tbody></table>';
