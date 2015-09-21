@@ -31,12 +31,12 @@ result:
     page: 
     maxpage: 1
 opening:
-    url: 
-    guide: 
-    bank: []
-    code: []
-    name: []
-    download: 
+    url: http://www.qxcape.com/web/news/openaccount.jsp
+    guide: http://www.qxcape.com/web/news/news.jsp?parentid=48&classid=73
+    bank: [农业银行]
+    code: [-]
+    name: [青岛青西文化艺术品产权交易中心]
+    download: http://www.qxcape.com/web/news/news.jsp?parentid=48&classid=97
 quote:
     realtime:
         url: 
