@@ -5,7 +5,7 @@ notrade: 6
 cashout: 2
 stock:
     index: 
-        - http://www.qxcape.com/web/news/news.jsp?parentid=46&classid=96
+        - http://www.qxcape.com/web/news/news.jsp?parentid=44&classid=52
     relative: http://www.qxcape.com
     detail: <a[^>]*href="([^"]+)"[^>]*>(<img[^>]*>)?([^<]*(征集|托管|入库)[^<]*)</a></li>\s*<li[^>]*>\[(\d+/\d+/\d+)\] 
     fields: [url, _, title, _, published_at]
@@ -14,7 +14,7 @@ stock:
     maxpage: 1
 offer:
     index: 
-        - http://www.qxcape.com/web/news/news.jsp?parentid=46&classid=96
+        - http://www.qxcape.com/web/news/news.jsp?parentid=44&classid=52
     relative: http://www.qxcape.com
     detail: <a[^>]*href="([^"]+)"[^>]*>(<img[^>]*>)?([^<]*(挂牌交易|申购)[^<]*)</a></li>\s*<li[^>]*>\[(\d+/\d+/\d+)\] 
     fields: [url, _, title, _, published_at]
@@ -23,7 +23,7 @@ offer:
     maxpage: 1
 result:
     index: 
-        - http://www.qxcape.com/web/news/news.jsp?parentid=46&classid=96
+        - http://www.qxcape.com/web/news/news.jsp?parentid=44&classid=52
     relative: http://www.qxcape.com
     detail: <a[^>]*href="([^"]+)"[^>]*>(<img[^>]*>)?([^<]*(中签)[^<]*)</a></li>\s*<li[^>]*>\[(\d+/\d+/\d+)\] 
     fields: [url, _, title, _, published_at]
