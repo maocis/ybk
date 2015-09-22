@@ -213,7 +213,7 @@ def parse_quotes(type_, text):
         trs = t.xpath('.//div[@class="list"]//tr')
         for tr in trs:
             tds = tr.xpath('.//td')
-            if len(tds) != 10:
+            if len(tds) != 11:
                 continue
             quotes.append({
                 'symbol': tds[1].text,
