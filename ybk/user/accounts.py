@@ -288,9 +288,7 @@ def trade_account_change_password():
         ta = TradeAccount.query_one({'exchange': ex,
                                      'login_name': name})
         pwd = ta.login_password
-        print(ex, name, pwd)
         t = Trader(ex, name, pwd)
-        print(new_login_password)
         t.change_password(new_login_password)
         if t.last_error:
             errors.append([ex, name, t.last_error])
@@ -298,7 +296,7 @@ def trade_account_change_password():
             ta.login_password = new_login_password
             ta.upsert()
     if errors:
-        log.exception(str(e))
+        log.exception(str(errors))
         return jsonify(status=500,
                        reason='部分账号修改失败',
                        details=errors)
