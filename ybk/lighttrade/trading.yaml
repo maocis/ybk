@@ -156,5 +156,5 @@
     quote_tcp: tcp://101.226.163.35:6001
     system: sysframe
     tradeweb_url:
-        - http://101.226.163.35:6003
-        - http://140.207.201.180:6003
+        - http://101.226.163.35:6003/issue_tradeweb/httpXmlServlet
+        - http://140.207.201.180:6003/issue_tradeweb/httpXmlServlet
