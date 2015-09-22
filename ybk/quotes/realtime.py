@@ -206,6 +206,26 @@ def parse_quotes(type_, text):
                 'volume': int(float(v[7])),
                 'amount': float(v[8]),
             })
+    elif type_ == 'xjsybk':
+        # 西部文交所
+        quotes = []
+        t = lxml.html.fromstring(text)
+        trs = t.xpath('.//div[@class="list"]//tr')
+        for tr in trs:
+            tds = tr.xpath('.//td')
+            if len(tds) != 10:
+                continue
+            quotes.append({
+                'symbol': tds[1].text,
+                'name': tds[2].text,
+                'lclose': float(tds[3].text or 0),
+                'open_': float(tds[4].text or 0),
+                'close': float(tds[5].text or 0),
+                'volume': int(tds[7].text or 0),
+                'amount': float(tds[8].text or 0),
+                'high': float(tds[9].text or 0),
+                'low': float(tds[10].text or 0),
+            })
     else:
         raise NotImplementedError
     return quotes
