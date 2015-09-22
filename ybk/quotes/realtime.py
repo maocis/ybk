@@ -174,6 +174,21 @@ def parse_quotes(type_, text):
                 'volume': int(float(vals[9])),
                 'amount': float(vals[34])/100,
             })
+    elif type_ == 'req!getsc.action':
+        quotes = []
+        rs = json.loads(text)[0]["ress"]
+        for r in rs:
+            quotes.append({
+                'symbol': r['commodityId'],
+                'name': r['fullname'],
+                'lclose': float(r['yesterBalancePrice']),
+                'open_': float(r['openPrice']),
+                'high': float(r['highPrice']),
+                'low': float(r['lowPrice']),
+                'close': float(r['closePrice']),
+                'volume': int(r['totalAmount']),
+                'amount': float(r['totalMoney']),
+            })
     else:
         raise NotImplementedError
     return quotes

@@ -142,3 +142,11 @@
         - http://118.145.4.146:16925/issue_tradeweb/httpXmlServlet
         - http://115.182.221.24:16915/issue_tradeweb/httpXmlServlet
         - http://115.182.221.24:16925/issue_tradeweb/httpXmlServlet
+华东林业所:
+    front_url: http://115.236.77.220:16722
+    quote_http: http://115.236.77.220:16714
+    quote_tcp: http://115.236.77.220:16713
+    system: sysframe
+    tradeweb_url:
+        - http://115.236.77.220:16715/issue_tradeweb/httpXmlServlet
+        - http://124.160.116.236:16715/issue_tradeweb/httpXmlServlet
