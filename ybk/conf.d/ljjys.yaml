@@ -40,8 +40,8 @@ opening:
     download: http://www.ljjys.com/article/down/index.htm
 quote:
     realtime:
-        url: 
-        type: getHqV_lbData
+        url: http://www.ljjys.com/dxjys_wms/goods_portal/viewStockMarketData.dc
+        type: viewStockMarketData.dc
     history:
-        url:  
-        type: sysframe
+        url: tcp://58.83.213.164:7002 
+        type: winner

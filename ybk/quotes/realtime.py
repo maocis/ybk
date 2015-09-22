@@ -175,6 +175,7 @@ def parse_quotes(type_, text):
                 'amount': float(vals[34])/100,
             })
     elif type_ == 'req!getsc.action':
+        # 华东林业
         quotes = []
         rs = json.loads(text)[0]["ress"]
         for r in rs:
@@ -188,6 +189,22 @@ def parse_quotes(type_, text):
                 'close': float(r['closePrice']),
                 'volume': int(r['totalAmount']),
                 'amount': float(r['totalMoney']),
+            })
+    elif type_ == 'viewStockMarketData.dc':
+        # 国版老酒
+        quotes = []
+        vals = json.loads(text)['values']
+        for v in vals:
+            quotes.append({
+                'symbol': v[1],
+                'name': v[2],
+                'lclose': float(v[4]),
+                'open_': float(v[5]),
+                'high': float(v[10]),
+                'low': float(v[11]),
+                'close': float(v[6]),
+                'volume': int(float(v[7])),
+                'amount': float(v[8]),
             })
     else:
         raise NotImplementedError
