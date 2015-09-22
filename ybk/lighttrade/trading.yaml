@@ -101,13 +101,6 @@
     quote_tcp: tcp://tradeweb1.dzp.wjybk.com:16973
     system: sysframe
     tradeweb_url: https://tradeweb1.dzp.wjybk.com:16975/tradeweb/httpXmlServlet
-西部文交所:
-    disabled: True
-    front_url:
-    quote_http: http://118.145.4.50:10104
-    quote_tcp: tcp://118.145.4.50:10103
-    system: sysframe
-    tradeweb_url: https://118.145.4.50:10105/tradeweb/httpXmlServlet
 东北商交所:
     front_url: http://59.44.131.116:16827
     quote_http: http://59.44.131.115:16894
