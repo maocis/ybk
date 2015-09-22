@@ -155,6 +155,6 @@
     quote_http: http://101.226.163.35:6002
     quote_tcp: tcp://101.226.163.35:6001
     system: sysframe
-    tradewb_url:
+    tradeweb_url:
         - http://101.226.163.35:6003
         - http://140.207.201.180:6003
