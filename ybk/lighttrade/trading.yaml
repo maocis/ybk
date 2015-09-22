@@ -150,3 +150,11 @@
     tradeweb_url:
         - http://115.236.77.220:16715/issue_tradeweb/httpXmlServlet
         - http://124.160.116.236:16715/issue_tradeweb/httpXmlServlet
+青西文交所:
+    front_url: http://101.226.163.35:6004
+    quote_http: http://101.226.163.35:6002
+    quote_tcp: tcp://101.226.163.35:6001
+    system: sysframe
+    tradewb_url:
+        - http://101.226.163.35:6003
+        - http://140.207.201.180:6003
