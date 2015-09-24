@@ -10,7 +10,7 @@ from ybk.lighttrade.sysframe import Client as SysframeClient
 
 log = logging.getLogger('trader')
 
-configfile = open(os.path.join(os.path.dirname(__file__), 'trading.yaml'))
+configfile = open(os.path.join(os.path.dirname(__file__), 'trading.yaml'), encoding='utf-8')
 config = yaml.load(configfile)
 try:
     accountfile = open(

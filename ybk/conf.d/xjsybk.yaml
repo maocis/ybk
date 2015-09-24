@@ -38,8 +38,8 @@ opening:
     download: http://www.xjsybk.com/xiangguanxiazai/xiangguanxiazai/
 quote:
     realtime:
+        url: http://www.xjsybk.com/market/trade/index.jsp
+        type: xjsybk 
+    history:
         url: 
         type: 
-    history:
-        url: http://118.145.4.50:10004
-        type: sysframe

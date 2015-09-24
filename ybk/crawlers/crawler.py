@@ -42,7 +42,7 @@ def crawl(site, maxpage=None):
         'abbr': conf['abbr'],
     })
     ex.upsert()
-    for type_ in ['stock', 'offer', 'result']:
+    for type_ in ['result', 'offer', 'stock']:
         tconf = conf.get(type_)
         if not tconf:
             continue

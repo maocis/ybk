@@ -31,8 +31,8 @@ opening:
     download: http://sc.hdlqjy.com/top/xzzx/jyrj.shtml
 quote:
     realtime:
-        url: 
-        type: getHqV_lbData
+        url: http://sc.hdlqjy.com/req!getsc.action
+        type: req!getsc.action
     history:
-        url:  
+        url: http://115.236.77.220:16714 
         type: sysframe

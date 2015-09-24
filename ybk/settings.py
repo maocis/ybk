@@ -1,3 +1,4 @@
+# coding: utf-8
 import pathlib
 import yaml
 
@@ -8,7 +9,7 @@ SITES = [p.parts[-1].split('.')[0]
 
 ABBRS = {
     yaml.load((pathlib.Path(__file__).parent / 'conf.d'
-               / (site + '.yaml')).open())['abbr']: site
+               / (site + '.yaml')).open(encoding='utf-8'))['abbr']: site
     for site in SITES
 }
 if None in ABBRS:
@@ -18,7 +19,7 @@ SITES = [p[1] for p in sorted(ABBRS.items())]
 
 CONFS = [
     yaml.load((pathlib.Path(__file__).parent / 'conf.d'
-               / (site + '.yaml')).open())
+               / (site + '.yaml')).open(encoding='utf-8'))
     for site in SITES
 ]
 

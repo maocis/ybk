@@ -174,6 +174,58 @@ def parse_quotes(type_, text):
                 'volume': int(float(vals[9])),
                 'amount': float(vals[34])/100,
             })
+    elif type_ == 'req!getsc.action':
+        # 华东林业
+        quotes = []
+        rs = json.loads(text)[0]["ress"]
+        for r in rs:
+            quotes.append({
+                'symbol': r['commodityId'],
+                'name': r['fullname'],
+                'lclose': float(r['yesterBalancePrice']),
+                'open_': float(r['openPrice']),
+                'high': float(r['highPrice']),
+                'low': float(r['lowPrice']),
+                'close': float(r['closePrice']),
+                'volume': int(r['totalAmount']),
+                'amount': float(r['totalMoney']),
+            })
+    elif type_ == 'viewStockMarketData.dc':
+        # 国版老酒
+        quotes = []
+        vals = json.loads(text)['values']
+        for v in vals:
+            quotes.append({
+                'symbol': v[1],
+                'name': v[2],
+                'lclose': float(v[4]),
+                'open_': float(v[5]),
+                'high': float(v[10]),
+                'low': float(v[11]),
+                'close': float(v[6]),
+                'volume': int(float(v[7])),
+                'amount': float(v[8]),
+            })
+    elif type_ == 'xjsybk':
+        # 西部文交所
+        quotes = []
+        t = lxml.html.fromstring(text)
+        trs = t.xpath('.//div[@class="list"]//tr')
+        for tr in trs:
+            tds = tr.xpath('.//td')
+            if len(tds) != 11:
+                continue
+            quotes.append({
+                'symbol': tds[1].text,
+                'name': tds[2].text,
+                'lclose': float(tds[3].text or 0),
+                'open_': float(tds[4].text or 0),
+                'close': float(tds[5].text or 0),
+                'volume': int(tds[7].text or 0),
+                'amount': float(tds[8].text or 0),
+                'high': float(tds[9].text or 0),
+                'low': float(tds[10].text or 0),
+            })
     else:
         raise NotImplementedError
     return quotes
