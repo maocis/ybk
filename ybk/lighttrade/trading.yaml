@@ -106,7 +106,9 @@
     quote_http: http://59.44.131.115:16894
     quote_tcp: tcp://59.44.131.115:16896
     system: sysframe
-    tradeweb_url: http://59.44.131.115:16895/issue_tradeweb/httpXmlServlet
+    tradeweb_url: 
+        - http://59.44.131.115:16895/issue_tradeweb/httpXmlServlet
+        - http://221.203.22.70:16895/issue_tradeweb/httpXmlServlet
 广州文交所:
     front_url: http://qbyp.gzcmex.com:16922
     quote_http: http://qbyp.gzcmex.com:16934
