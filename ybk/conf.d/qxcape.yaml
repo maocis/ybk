@@ -39,8 +39,8 @@ opening:
     download: http://www.qxcape.com/web/news/news.jsp?parentid=48&classid=97
 quote:
     realtime:
-        url: 
+        url: http://101.226.163.35:10021/tradeweb/hq/getHqV_lbData.jsp
         type: getHqV_lbData
     history:
-        url:  
+        url: http://101.226.163.35:6002
         type: sysframe
