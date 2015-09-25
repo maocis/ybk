@@ -72,7 +72,8 @@ class Client(UserProtocol, TradeProtocol, MoneyProtocol, OfferProtocol):
     def request_front(self, protocol, params):
         return self.request_xml(protocol, params, mode='front')
 
-    def request_xml(self, protocol, params, mode='tradeweb', headers={}):
+    def request_xml(self, protocol, params, mode='tradeweb', headers={},
+                    to=1):
         """ 发送交易指令
 
         - 拼接请求成xml
@@ -89,10 +90,13 @@ class Client(UserProtocol, TradeProtocol, MoneyProtocol, OfferProtocol):
         log.debug('发送请求 {}: {}'.format(url, xml))
         try:
             r = self.session.post(
-                url, headers=headers, data=xml, verify=False, timeout=(1, 1))
+                url, headers=headers, data=xml, verify=False,
+                timeout=(to, to))
         except requests.exceptions.RequestException:
             self.tradeweb_url = random.choice(self.tradeweb_urls)
-            return self.request_xml(protocol, params, mode, headers)
+            if to < 30:
+                to += 1
+            return self.request_xml(protocol, params, mode, headers, to=to)
         result = r.content.decode('gb18030', 'ignore')
         log.debug('收到返回 {}'.format(result))
         if len(result) > 0:
