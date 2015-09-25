@@ -1,7 +1,13 @@
+import traceback
 from datetime import datetime, timedelta
 
 from models import User, Account, Position, Order, Status
 from ybk.lighttrade import Trader
+
+symbols = ['100001', '100002',
+           '100010', '100011', '100014', '100019',
+           '100020', '100028', '100030',
+           '100012', '100015', '10022', '100024']
 
 
 def update_all_user_accounts():
@@ -9,7 +15,7 @@ def update_all_user_accounts():
         try:
             update_user_account(user)
         except:
-            pass
+            traceback.print_exc()
 
 
 def update_user_account(user):
@@ -59,15 +65,18 @@ def update_user_account(user):
                     o2['profit'] += o['profit']
 
         for s in t.order_status() or []:
-            for x in s:
-                x['name'] = namedict[x['symbol']]
-                status_list.append(x)
+            s['name'] = namedict[s['symbol']]
+            status_list.append(s)
 
         total_money += t.money()['usable']
 
     total_capital = sum(p['price'] * p['quantity']
-                        for p in position.values())
-    total_profit = sum(p['profit'] for p in position.values())
+                        for p in position.values()
+                        if p['symbol'] in symbols)
+    total_profit = sum(p['profit'] for p in position.values()
+                       if p['symbol'] in symbols)
+
+    print(user._id, total_capital, total_profit)
 
     position_list = sorted(
         position.values(), key=lambda x: x['profit'], reverse=True)

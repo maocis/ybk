@@ -51,7 +51,8 @@ def money(value):
 
 symbols = ['100001', '100002',
            '100010', '100011', '100014', '100019',
-           '100020', '100028', '100030']
+           '100020', '100028', '100030',
+           '100012', '100015', '10022', '100024']
 
 
 def admin_required(func):
@@ -110,12 +111,15 @@ def summary():
             d -= timedelta(days=1)
         today = d.replace(hour=0, minute=0, second=0, microsecond=0)
 
-    position_list = Position.query_one({'user_id': user._id,
-                                        'date': today}).position_list
-    status_list = Status.query_one({'user_id': user._id,
-                                    'date': today}).status_list
-    order_list = Order.query_one({'user_id': user._id,
-                                  'date': today}).order_list
+    try:
+        position_list = Position.query_one({'user_id': user._id,
+                                            'date': today}).position_list
+        status_list = Status.query_one({'user_id': user._id,
+                                        'date': today}).status_list
+        order_list = Order.query_one({'user_id': user._id,
+                                      'date': today}).order_list
+    except:
+        pass
 
     locals()['symbols'] = symbols
 
