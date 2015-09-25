@@ -118,6 +118,12 @@ class Client(UserProtocol, TradeProtocol, MoneyProtocol, OfferProtocol):
             log.info('重新连接{}个连接, 花费{}秒'
                      ''.format(count, time.time() - t0))
 
+    def clear_connections(self):
+        url = self.tradeweb_url
+        a = self.session.get_adapter(url)
+        p = a.get_connection(url)
+        p.pool.queue = []
+
     def request_ff(self, requests, interval=0.001, repeat=1, response=False):
         """ Fire and Forget Requests in Batch
 
