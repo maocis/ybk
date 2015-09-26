@@ -22,7 +22,7 @@ log = logging.getLogger('zg')
 
 class User(Document):
 
-    """ 抢单用户 """
+    """ 跌零用户 """
     class Meta:
         idf = IDFormatter('{mobile}')
         idx1 = Index('mobile', unique=True)
@@ -55,7 +55,7 @@ class User(Document):
 
 class Account(Document):
 
-    """ 抢单用户的账号 """
+    """ 跌零用户的账号 """
     class Meta:
         idf = IDFormatter('{user_id}_{login_name}')
 

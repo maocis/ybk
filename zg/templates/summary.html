@@ -33,7 +33,7 @@
 
 
 <div class="page-header">
-  <h1>中港抢单状态汇总
+  <h1>中港跌零状态汇总
     {% if current_user.is_admin %}
       去<a href="{{ url_for('admin') }}">后台</a>
     {% endif %}</h1>
@@ -49,7 +49,7 @@
         <span class="col-xs-3"><b>总市值:</b> {{ user.total_capital | money }}</span>
         <span class="col-xs-3"><b>总浮盈:</b> {{ user.total_profit | money }}</span>
         <span class="col-xs-3"><b>累计已实现收益:</b> {{ total_profit | money }}</span>
-        <span class="col-xs-3"><b>已支付抢单佣金:</b> {{ user.paid | money }}</span>
+        <span class="col-xs-3"><b>已支付跌零佣金:</b> {{ user.paid | money }}</span>
       </div>
     </div>
     <div class="timeline">
