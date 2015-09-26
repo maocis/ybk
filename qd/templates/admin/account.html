@@ -1,0 +1,152 @@
+{% extends "admin/layout.html" %}
+
+{% block css %}
+  <link href="{{ url_for('static', filename='bower_components/bootstrap-table/dist/bootstrap-table.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='bower_components/selectize/dist/css/selectize.bootstrap3.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+  {{ super() }}
+
+
+  <div class="page-header">
+    <h1>账号</h1>
+  </div>
+
+  <ul class="nav nav-pills nav-stacked col-md-2">
+    <li role="presentation" class="active"><a href="#account-list" data-toggle="tab">账号列表</a></li>
+    <li role="presentation"><a href="#edit-account" data-toggle="tab">添加/编辑</a></li>
+    <li role="presentation"><a href="#batch-import" data-toggle="tab">批量导入</a></li>
+    <li role="presentation"><a href="#settings" data-toggle="tab">账号设置</a></li>
+  </ul>
+  <div class="tab-content col-md-10">
+    <div role="tabpanel" class="tab-pane active" id="account-list">
+      <table class="table"
+        data-toggle="table"
+        data-classes="table table-condensed table-hover"
+        data-locale="zh-CN"
+        data-sort-name="exchange"
+        data-sort-order="asc"
+        data-pagination="true"
+        data-page-size="100"
+        data-search="true">
+      <thead>
+          <tr>
+            <th data-field="user" data-sortable="true">用户</th>
+            <th data-field="exchange" data-sortable="true">交易所</th>
+            <th data-sortable="true">交易账号</th>
+            <th class="text-right" data-sortable="true">总资金</th>
+            <th class="text-right" data-sortable="true">总市值</th>
+            <th class="text-right" data-sortable="true">总浮盈</th>
+            <th class="text-right">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for account in accounts %}
+        <tr>
+          <td data-user="{{ account.user }}">{{ account.mobile }}_{{ account.username }}</td>
+          <td>{{ account.exchange }}</td>
+          <td>{{ account.login_name }}</td>
+          <td>{{ account.total_money | money }}</td>
+          <td>{{ account.total_capital | money }}</td>
+          <td>{{ account.total_profit | money }}</td>
+          <td>
+            <button class="btn btn-xs btn-default" name="delete" data-account="{{ account._id }}">删除</button>
+            <button class="btn btn-xs btn-default" name="edit" data-account="{{ account._id }}">修改</button>
+            <button class="btn btn-xs btn-default" name="update" data-account="{{ account._id }}" disabled>更新</button>
+            <button class="btn btn-xs btn-default" name="settings" data-account="{{ account._id }}" disabled>设置</button>
+          </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="edit-account">
+      <h3>添加/编辑交易账号</h3>
+      <form class="form-horizontal">
+        <div class="form-group">
+          <label class="col-sm-2 control-label">用户</label>
+          <div class="col-sm-3">
+            <select class="form-control" name="user">
+            {% for user in users %}
+              <option name="user" value="{{ user._id }}">{{ user.mobile }}_{{ user.username }}</option>
+            {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label">交易所</label>
+          <div class="col-sm-3">
+            <select class="form-control" name="exchange">
+            {% for exchange in exchanges %}
+              <option name="exchange" value="{{ exchange }}">{{ exchange }}</option>
+            {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label">交易账号</label>
+          <div class="col-sm-3">
+            <input type="text" class="form-control" name="login_name" placeholder="交易账号">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label">交易密码</label>
+          <div class="col-sm-3">
+            <input type="text" class="form-control" name="login_password" placeholder="交易密码">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label">资金密码(可选)</label>
+          <div class="col-sm-3">
+            <input type="text" class="form-control" name="money_password" placeholder="资金密码(可选)">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label">银行密码(可选)</label>
+          <div class="col-sm-3">
+            <input type="text" class="form-control" name="bank_password" placeholder="银行密码(可选)">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-1 col-sm-3">
+            <button class="btn btn-default form-control" name="upsert">保存</button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="batch-import">
+      <h3>批量导入</h3>
+      <form class="form-horizontal">
+        <div class="form-group">
+          <div class="col-sm-10">
+            <textarea class="form-control" rows="10" placeholder="13611111111 中港邮币卡 10000000000 pass123 123456 123456
+13611111111 中港邮币卡 10000000000 pass123 123456 123456
+13611111111 中港邮币卡 10000000000 pass123 123456 123456
+" name="import"></textarea>
+          </div>
+        </div>
+
+        <button class="btn btn-default" class="form-control" name="import">导入</button>
+      </form>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="settings">
+      施工中...
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block js %}
+  <script src="{{ url_for('static', filename='bower_components/bootstrap-table/dist/bootstrap-table.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='bower_components/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='bower_components/selectize/dist/js/standalone/selectize.min.js') }}"></script>
+  <script>
+    // 放一些变量
+    var url_upsert_account = "{{ url_for('upsert_account') }}";
+    var url_delete_account = "{{ url_for('delete_account') }}";
+    var url_import_account = "{{ url_for('import_account') }}";
+  </script>
+  <script src="{{ url_for('static', filename='js/admin/account.js') }}"></script>
+{% endblock %}

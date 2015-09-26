@@ -1,0 +1,21 @@
+{
+  "name": "qd",
+  "version": "0.1",
+  "homepage": "https://github.com/observerss/ybk",
+  "authors": [
+    "jingchao <jingchaohu@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap-table": "~1.8.1",
+    "bootstrap": "~3.3.5",
+    "selectize": "~0.12.1"
+  }
+}
