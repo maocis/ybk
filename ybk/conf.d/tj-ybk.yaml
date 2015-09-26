@@ -5,7 +5,7 @@ notrade: 6
 cashout: 2
 stock:
     index: 
-        - http://www.tj-ybk.com/html/26/category-catid-126.html
+        - http://www.tj-ybk.com/?action-category-catid-126
     relative: http://www.tj-ybk.com
     detail: (\d+-\d+-\d+)</span><a[^>]*href="([^"]+)"[^>]*>([^<]*(征集|托管|入库)[^<]*)</a>
     fields: [published_at, url, title, _]
@@ -14,7 +14,7 @@ stock:
     maxpage: 1
 offer:
     index: 
-        - http://www.tj-ybk.com/html/27/category-catid-127.html
+        - http://www.tj-ybk.com/?action-category-catid-127
     relative: http://www.tj-ybk.com
     detail: (\d+-\d+-\d+)</span><a[^>]*href="([^"]+)"[^>]*>([^<]*(挂牌交易|申购)[^<]*)</a>
     fields: [published_at, url, title, _]
@@ -23,7 +23,7 @@ offer:
     maxpage: 1
 result:
     index: 
-        - http://www.tj-ybk.com/html/28/category-catid-128.html
+        - http://www.tj-ybk.com/?action-category-catid-128
     relative: http://www.tj-ybk.com
     detail: (\d+-\d+-\d+)</span><a[^>]*href="([^"]+)"[^>]*>([^<]*(中签)[^<]*)</a>
     fields: [published_at, url, title, _]
