@@ -20,7 +20,7 @@ class UserProtocol(object):
         assert r['@name'] == 'logon'
         rc = int(r['RESULT']['RETCODE'])
         if rc < 0:
-            self.error('登录失败:{}'.format(r['RESULT']['MESSAGE']))
+            self.error('{}登录失败:{}'.format(username, r['RESULT']['MESSAGE']))
             return False
         else:
             self.sid = rc
@@ -38,7 +38,7 @@ class UserProtocol(object):
                 # 服务器在多个线程多个连接的时候可能会有bug
                 # 给了不同的Cookies的Path, 导致出错, 用第一个即可
                 pass
-            log.info('用户{}登陆成功'.format(username))
+            log.info('用户{}登陆成功'.format(self.uid))
             self.market_query()
             self.sync_server_time()
             return True
@@ -64,10 +64,10 @@ class UserProtocol(object):
                              mode=mode)
         r = d['GNNT']['REP']['RESULT']
         if r['RETCODE'] == '0':
-            log.info('用户模块检查通过')
+            log.info('用户{}模块检查通过'.format(self.uid))
             return True
         else:
-            self.error('用户模块检查失败:{}'.format(r['MESSAGE']))
+            self.error('用户{}模块检查失败:{}'.format(self.uid, r['MESSAGE']))
             return False
 
     def keep_alive(self):

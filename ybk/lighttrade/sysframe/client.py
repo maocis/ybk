@@ -94,8 +94,10 @@ class Client(UserProtocol, TradeProtocol, MoneyProtocol, OfferProtocol):
                 timeout=(to, to))
         except requests.exceptions.RequestException:
             self.tradeweb_url = random.choice(self.tradeweb_urls)
-            if to < 30:
-                to += 1
+            if to <= 32:
+                to *= 2
+            else:
+                raise ValueError('连接超时')
             return self.request_xml(protocol, params, mode, headers, to=to)
         result = r.content.decode('gb18030', 'ignore')
         log.debug('收到返回 {}'.format(result))

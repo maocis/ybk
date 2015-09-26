@@ -29,7 +29,7 @@ setup(
         'pymongo>=3',
         'python-dateutil',
         'xpinyin',
-        'yamo>=0.2.16',
+        'yamo>=0.2.20',
         'xmltodict',
     ],
     classifiers=[

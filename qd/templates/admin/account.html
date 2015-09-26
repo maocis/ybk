@@ -48,9 +48,9 @@
           <td data-user="{{ account.user }}">{{ account.mobile }}_{{ account.username }}</td>
           <td>{{ account.exchange }}</td>
           <td>{{ account.login_name }}</td>
-          <td>{{ account.total_money | money }}</td>
-          <td>{{ account.total_capital | money }}</td>
-          <td>{{ account.total_profit | money }}</td>
+          <td>{{ account.money | money }}</td>
+          <td>{{ account.capital | money }}</td>
+          <td>{{ account.profit | money }}</td>
           <td>
             <button class="btn btn-xs btn-default" name="delete" data-account="{{ account._id }}">删除</button>
             <button class="btn btn-xs btn-default" name="edit" data-account="{{ account._id }}">修改</button>

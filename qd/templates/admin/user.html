@@ -48,9 +48,9 @@
           <td>{{ user.username }}</td>
           <td>{% if user.is_admin() %}管理员{% else %}客户{% endif %}</td>
           <td>{{ user.num_exchanges or 0 }} 个 / {{ user.num_accounts or 0 }} 个</td>
-          <td>{{ user.total_money | money }}</td>
-          <td>{{ user.total_capital | money }}</td>
-          <td>{{ user.total_profit | money }}</td>
+          <td>{{ user.money | money }}</td>
+          <td>{{ user.capital | money }}</td>
+          <td>{{ user.profit | money }}</td>
           <td>
             <button class="btn btn-xs btn-default" name="delete" data-user="{{ user._id }}">删除</button>
             <button class="btn btn-xs btn-default" name="edit" data-user="{{ user._id }}">修改</button>

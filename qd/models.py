@@ -64,74 +64,6 @@ exchanges = [
 ]
 
 
-class User(Document):
-
-    """ 抢单用户 """
-    class Meta:
-        idf = IDFormatter('{mobile}')
-        idx1 = Index('mobile', unique=True)
-        idx2 = Index('username')
-
-    mobile = StringField(required=True)
-    username = StringField(required=True)
-    password = StringField(required=True)
-    owning = FloatField(default=0)  # 欠款
-    paid = FloatField(default=0)  # 已结清
-
-    _is_admin = BooleanField()
-
-    def get_id(self):
-        return self._id
-
-    def is_active(self):
-        return True
-
-    def is_anonymous(self):
-        return False
-
-    def is_authenticated(self):
-        return True
-
-    def is_admin(self):
-        return self._is_admin
-
-
-class Collection(Document):
-    exchange = StringField(required=True)
-    symbol = StringField(required=True)
-    name = StringField(required=True)
-    trade_day = IntField(required=True)  # 现在是开始交易的第几个交易日?
-    average_price = FloatField(default=0, required=True)  # 平均买入价
-    total_quantity = IntField(default=0, required=True)  # 总持有数量
-    accounts = ListField(StringField)  # 持有这个品种的账号
-    users = ListField(StringField)  # 持有这个品种的用户
-    updated_at = DateTimeField(modified=True)
-
-
-class Account(Document):
-
-    """ 抢单用户的账号 """
-    class Meta:
-        idf = IDFormatter('{user}_{exchange}_{login_name}')
-
-    user = StringField(required=True)
-    exchange = StringField(required=True)
-    login_name = StringField(required=True)
-    login_password = StringField(required=True)
-    money_password = StringField()
-    bank_password = StringField()
-
-    @property
-    def mobile(self):
-        user = User.cached(60).query_one({'_id': self.user})
-        return user.mobile
-
-    @property
-    def username(self):
-        user = User.cached(60).query_one({'_id': self.user})
-        return user.username
-
-
 class MyPosition(EmbeddedDocument):
 
     """ 持仓汇总 """
@@ -142,6 +74,7 @@ class MyPosition(EmbeddedDocument):
     quantity = IntField(required=True)
     price = FloatField(required=True)
     sellable = IntField()
+    amount = FloatField()
     profit = FloatField()
 
     @property
@@ -182,6 +115,125 @@ class MyStatus(EmbeddedDocument):
     status = StringField(required=True)
 
 
+class Exchange(Document):
+
+    """ 交易所 """
+    class Meta:
+        idf = IDFormatter('{name}')
+
+    name = StringField(required=True)
+    num_users = IntField()
+    num_accounts = IntField()
+    position = ListField(EmbeddedField(MyPosition))
+    orders = ListField(EmbeddedField(MyOrder))
+    order_status = ListField(EmbeddedField(MyStatus))
+    money = FloatField()
+    capital = FloatField()
+    profit = FloatField()
+    earned = FloatField()  # 交易收入
+    lost = FloatField()  # 交易亏损
+
+
+class User(Document):
+
+    """ 抢单用户 """
+    class Meta:
+        idf = IDFormatter('{mobile}')
+        idx1 = Index('mobile', unique=True)
+        idx2 = Index('username')
+
+    mobile = StringField(required=True)
+    username = StringField(required=True)
+    password = StringField(required=True)
+    owning = FloatField(default=0)  # 欠款
+    paid = FloatField(default=0)  # 已结清
+    num_exchanges = IntField()
+    num_accounts = IntField()
+    profit = FloatField()
+    money = FloatField()
+    capital = FloatField()
+    earned = FloatField()  # 交易收入
+    lost = FloatField()  # 交易亏损
+    position = ListField(EmbeddedField(MyPosition))
+    orders = ListField(EmbeddedField(MyOrder))
+    order_status = ListField(EmbeddedField(MyStatus))
+
+    _is_admin = BooleanField()
+
+    def get_id(self):
+        return self._id
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def is_authenticated(self):
+        return True
+
+    def is_admin(self):
+        return self._is_admin
+
+
+class Collection(Document):
+
+    class Meta:
+        idf = IDFormatter('{exchange}_{symbol}')
+
+    exchange = StringField(required=True)
+    symbol = StringField(required=True)
+    name = StringField(required=True)
+    trade_day = IntField(required=True)  # 现在是开始交易的第几个交易日?
+    buy_price = FloatField(default=0, required=True)  # 平均买入价
+    quantity = IntField(default=0, required=True)  # 总持有数量
+    accounts = ListField(StringField)  # 持有这个品种的账号
+    users = ListField(StringField)  # 持有这个品种的用户
+    updated_at = DateTimeField(modified=True)
+
+    @property
+    def num_users(self):
+        return len(self.users)
+
+    @property
+    def num_accounts(self):
+        return len(self.accounts)
+
+
+class Account(Document):
+
+    """ 抢单用户的账号 """
+    class Meta:
+        idf = IDFormatter('{user}_{exchange}_{login_name}')
+
+    user = StringField(required=True)
+    exchange = StringField(required=True)
+    login_name = StringField(required=True)
+    login_password = StringField(required=True)
+    money_password = StringField()
+    bank_password = StringField()
+
+    collections = ListField(StringField, default=[])
+    position = ListField(EmbeddedField(MyPosition))
+    orders = ListField(EmbeddedField(MyOrder))
+    order_status = ListField(EmbeddedField(MyStatus))
+    money = FloatField()
+    capital = FloatField()
+    profit = FloatField()
+    earned = FloatField()  # 交易收入
+    lost = FloatField()  # 交易亏损
+
+    @property
+    def mobile(self):
+        user = User.cached(60).query_one({'_id': self.user})
+        return user.mobile
+
+    @property
+    def username(self):
+        user = User.cached(60).query_one({'_id': self.user})
+        return user.username
+
+
 class DailyTrading(Document):
 
     """ 当日账号汇总 """
@@ -192,9 +244,14 @@ class DailyTrading(Document):
 
     date = DateTimeField(required=True)
     account = StringField(required=True)
-    position = EmbeddedField(MyPosition)
-    orders = EmbeddedField(MyOrder)
-    order_status = EmbeddedField(MyStatus)
+    position = ListField(EmbeddedField(MyPosition))
+    orders = ListField(EmbeddedField(MyOrder))
+    order_status = ListField(EmbeddedField(MyStatus))
+    profit = FloatField()
+    money = FloatField()
+    capital = FloatField()
+    earned = FloatField()  # 交易收入
+    lost = FloatField()  # 交易亏损
 
 
 class Summary(Document):
@@ -213,11 +270,17 @@ class Summary(Document):
     user = StringField(default='', required=True)
     collection = StringField(default='', required=True)
 
-    total_money = FloatField()
-    total_capital = FloatField()
-    total_profit = FloatField()
-
+    position = ListField(EmbeddedField(MyPosition))
+    orders = ListField(EmbeddedField(MyOrder))
+    order_status = ListField(EmbeddedField(MyStatus))
+    money = FloatField()
+    capital = FloatField()
+    profit = FloatField()
+    earned = FloatField()  # 交易收入
+    lost = FloatField()  # 交易亏损
 
 conn = Connection('mongodb://localhost/qd')
-for d in [User, Collection, Account, DailyTrading, Summary]:
+for d in [Exchange, User, Collection, Account, DailyTrading, Summary]:
     conn.register(d)
+for exchange in exchanges:
+    Exchange({'name': exchange}).upsert()

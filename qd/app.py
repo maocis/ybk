@@ -10,7 +10,7 @@ from flask.ext.login import (LoginManager, login_user,
                              current_user, login_required)
 
 from ybk.lighttrade import Trader
-from qd.models import exchanges, User, Account
+from qd.models import exchanges, User, Account, Exchange
 from qd.tasks import add_user, add_account
 
 ##################
@@ -44,11 +44,9 @@ def date(value):
 @app.template_filter()
 def money(value):
     if not value:
-        return '0元'
-    if value > 10000:
-        return '{:4.2f}万'.format(value / 10000)
+        return '0'
     else:
-        return '{:4.2f}元'.format(value)
+        return '{:4.1f}'.format(value)
 
 
 def admin_required(func):
@@ -125,6 +123,7 @@ def admin_account():
 @app.route('/admin/exchange/')
 @admin_required
 def admin_exchange():
+    exchanges = list(Exchange.query())
     return render_template('admin/exchange.html', **locals())
 
 

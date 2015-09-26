@@ -118,7 +118,7 @@ class TradeProtocol(object):
                                ))
             return pos
         else:
-            self.error('持仓查询失败: {}'.format(r['RESULT']['MESSAGE']))
+            return
 
     def order(self, symbol, price, quantity, type_=1):
         """ 下单
@@ -178,14 +178,14 @@ class TradeProtocol(object):
 
         if repeat * len(requests) <= 90:
             results = self.request_ff(
-                requests, interval=interval, repeat=repeat, 
+                requests, interval=interval, repeat=repeat,
                 response=response)
         else:
             # cut and execute request_ff multiple times
             rp = 90 // len(requests)
             results = []
             for _ in range(repeat // rp):
-                r = self.request_ff(requests, interval=interval, 
+                r = self.request_ff(requests, interval=interval,
                                     repeat=rp, response=response)
                 if r:
                     results.extend(r)
@@ -296,5 +296,4 @@ class TradeProtocol(object):
                 'commision': float(rec['COMM']),
             } for rec in recs]
         else:
-            self.error('成交查询失败: {}'.format(r['RESULT']['MESSAGE']))
             return []

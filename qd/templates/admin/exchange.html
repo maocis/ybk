@@ -1,5 +1,72 @@
 {% extends "admin/layout.html" %}
 
+{% block css %}
+  <link href="{{ url_for('static', filename='bower_components/bootstrap-table/dist/bootstrap-table.min.css') }}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
+
   {{ super() }}
+
+
+  <div class="page-header">
+    <h1>交易所</h1>
+  </div>
+
+  <ul class="nav nav-pills nav-stacked col-md-2">
+    <li role="presentation" class="active"><a href="#exchange-list" data-toggle="tab">交易所列表</a></li>
+    <li role="presentation"><a href="#settings" data-toggle="tab">交易所设置</a></li>
+  </ul>
+  <div class="tab-content col-md-10">
+    <div role="tabpanel" class="tab-pane active" id="exchange-list">
+      <table class="table"
+        data-toggle="table"
+        data-classes="table table-condensed table-hover"
+        data-locale="zh-CN"
+        data-sort-order="desc"
+        data-sort-name="capital"
+        data-pagination="true"
+        data-page-size="100"
+        data-search="true">
+        <thead>
+          <tr>
+            <th data-field="exchange" data-sortable="true">交易所</th>
+            <th data-sortable="true">用户/账号</th>
+            <th class="text-right" data-sortable="true">总资金</th>
+            <th data-field="capital" class="text-right" data-sortable="true">总市值</th>
+            <th data-field="profit" class="text-right" data-sortable="true">总浮盈</th>
+            <th class="text-right">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for exchange in exchanges %}
+        <tr>
+          <td>{{ exchange.name }}</td>
+          <td>{{ exchange.num_users }}个/{{ exchange.num_accounts }}个</td>
+          <td>{{ exchange.money | money }}</td>
+          <td>{{ exchange.capital | money }}</td>
+          <td>{{ exchange.profit | money }}</td>
+          <td>
+            <button class="btn btn-xs btn-default" name="update" data-exchange="{{ exchange._id }}" disabled>更新</button>
+            <button class="btn btn-xs btn-default" name="settings" data-exchange="{{ exchange._id }}" disabled>设置</button>
+          </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="settings">
+      施工中...
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block js %}
+  <script src="{{ url_for('static', filename='bower_components/bootstrap-table/dist/bootstrap-table.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='bower_components/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js') }}"></script>
+  <script>
+    // 放一些变量
+  </script>
+  <script src="{{ url_for('static', filename='js/admin/exchange.js') }}"></script>
 {% endblock %}
