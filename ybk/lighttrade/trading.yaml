@@ -9,6 +9,7 @@
     quote_http: http://180.235.68.100:20004
     quote_tcp: tcp://180.235.68.100:20003
     system: sysframe
+    location: Shanghai
     tradeweb_url: 
         - http://180.235.68.100:10005/issue_tradeweb/httpXmlServlet
         - http://180.235.68.101:10105/issue_tradeweb/httpXmlServlet
@@ -19,6 +20,7 @@
     quote_http: http://jy.cacecybk.com.cn:16914
     quote_tcp: tcp://jy.cacecybk.com.cn:16913
     system: sysframe
+    location: Beijing
     tradeweb_url: http://jy.cacecybk.com.cn:16915/issue_tradeweb/httpXmlServlet
 中融邮币卡:
     front_url: http://118.145.4.48:16962
@@ -32,7 +34,10 @@
     quote_http: http://114.247.118.103:16914
     quote_tcp: tcp://114.247.118.103:16913
     system: sysframe
-    tradeweb_url: http://114.247.118.103:16915/issue_tradeweb/httpXmlServlet
+    location: Beijing
+    tradeweb_url: 
+        - http://114.247.118.103:16915/issue_tradeweb/httpXmlServlet
+        - http://114.247.118.104:16925/issue_tradeweb/httpXmlServlet
 华中文交所:
     front_url: https://trade.hbcpre.com:16902
     quote_http: http://61.183.138.62:19914
@@ -44,13 +49,18 @@
     quote_http: http://218.249.27.82:20504
     quote_tcp: tcp://218.249.27.82:20503
     system: sysframe
-    tradeweb_url: http://218.249.27.82:10505/issue_tradeweb/httpXmlServlet
+    location: Beijing
+    tradeweb_url: 
+        - http://218.249.27.82:10505/issue_tradeweb/httpXmlServlet
+        - http://124.42.91.145:10505/issue_tradeweb/httpXmlServlet
 华强文交所:
     front_url: http://180.96.50.179:16925
     quote_http: http://180.96.50.179:16914
     quote_tcp: tcp://180.96.50.179:16913
     system: sysframe
-    tradeweb_url: http://180.96.50.179:16925/tradeweb/httpXmlServlet
+    location: Hangzhou
+    tradeweb_url: 
+        - http://180.96.50.179:16925/tradeweb/httpXmlServlet
 南京文交所:
     front_url: http://180.97.2.67:19999
     quote_http: http://180.97.2.67:19914
@@ -106,6 +116,7 @@
     quote_http: http://59.44.131.115:16894
     quote_tcp: tcp://59.44.131.115:16896
     system: sysframe
+    location: Beijing
     tradeweb_url: 
         - http://59.44.131.115:16895/issue_tradeweb/httpXmlServlet
         - http://221.203.22.70:16895/issue_tradeweb/httpXmlServlet
@@ -132,6 +143,7 @@
     quote_http: http://118.145.4.146:16914
     quote_tcp: tcp://118.145.4.146:16913
     system: sysframe
+    location: Beijing
     tradeweb_url: 
         - http://118.145.4.146:16915/issue_tradeweb/httpXmlServlet
         - http://118.145.4.146:16925/issue_tradeweb/httpXmlServlet
@@ -150,6 +162,7 @@
     quote_http: http://101.226.163.35:6002
     quote_tcp: tcp://101.226.163.35:6001
     system: sysframe
+    location: Shanghai
     tradeweb_url:
         - http://101.226.163.35:6003/issue_tradeweb/httpXmlServlet
         - http://140.207.201.180:6003/issue_tradeweb/httpXmlServlet
