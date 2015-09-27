@@ -31,6 +31,7 @@ setup(
         'xpinyin',
         'yamo>=0.2.20',
         'xmltodict',
+	'invoke',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
